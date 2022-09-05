@@ -1,4 +1,4 @@
-import { View, Image } from 'react-native'
+import { View, Image, StatusBar } from 'react-native'
 import React from 'react'
 import { SHOPADLogo } from '../utils/imageManager'
 import SvgUri from '../utils/Svg';
@@ -12,6 +12,7 @@ export default function SplashScreen({ navigation }) {
 
     return (
         <View>
+            <StatusBar barStyle="dark-content" backgroundColor="#fff" />
             <Image
                 source={require("../assets/img/splash-bg.png")}
                 resizeMode="contain"

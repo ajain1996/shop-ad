@@ -1,4 +1,4 @@
-import { View, Text, TouchableHighlight } from 'react-native'
+import { View, Text, TouchableHighlight, StatusBar } from 'react-native'
 import React from 'react'
 import { SIZES } from '../utils/theme'
 import Auth_BG_Component from '../components/Auth_BG_Component'
@@ -9,6 +9,7 @@ import CustomTextInput from '../components/CustomTextInput'
 export default function LoginScreen({ navigation }) {
     return (
         <Auth_BG_Component>
+            <StatusBar barStyle="light-content" backgroundColor="#1572B9" />
             <View style={{ justifyContent: 'center', height: SIZES.height, paddingHorizontal: 20, justifyContent: "space-between", paddingVertical: "28%" }}>
 
                 <View>
@@ -44,7 +45,7 @@ export default function LoginScreen({ navigation }) {
 
                     <Custom_Auth_Btn
                         btnText="Register as Shop Owner"
-                        onPress={() => { }}
+                        onPress={() => { navigation.navigate("Root") }}
                     />
                 </View>
 

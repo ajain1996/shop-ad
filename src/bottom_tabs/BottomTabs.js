@@ -6,6 +6,8 @@ import { COLORS } from "../utils/theme";
 import HomeScreen from "../screens/home/HomeScreen";
 import { SIZES } from '../utils/theme';
 import LinearGradient from "react-native-linear-gradient";
+import WorksScreen from "../screens/works/WorksScreen";
+import JobsScreen from "../screens/jobs/JobsScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -44,8 +46,8 @@ const BottomTabs = () => {
                 }}
             />
             <Tab.Screen
-                name="OfferTab"
-                component={HomeScreen}
+                name="JobsTab"
+                component={JobsScreen}
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) => {
@@ -60,8 +62,8 @@ const BottomTabs = () => {
                 }}
             />
             <Tab.Screen
-                name="MyBusinessTab"
-                component={HomeScreen}
+                name="WorksTab"
+                component={WorksScreen}
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) => {

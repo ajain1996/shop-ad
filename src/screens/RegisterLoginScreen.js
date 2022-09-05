@@ -1,4 +1,4 @@
-import { View, Text, Image, ImageBackground, TouchableHighlight } from 'react-native'
+import { View, Text, Image, ImageBackground, TouchableHighlight, StatusBar } from 'react-native'
 import React from 'react'
 import { SIZES } from '../utils/theme'
 import Auth_BG_Component from '../components/Auth_BG_Component'
@@ -9,6 +9,7 @@ import Custom_Auth_Btn from '../components/Custom_Auth_Btn'
 export default function RegisterLoginScreen({ navigation }) {
     return (
         <Auth_BG_Component>
+            <StatusBar barStyle="light-content" backgroundColor="#1572B9" />
             <View style={{ alignItems: "center", justifyContent: 'center', height: SIZES.height, paddingHorizontal: 20 }}>
                 <Image
                     source={require("../assets/img/auth_svg.png")}
@@ -22,13 +23,13 @@ export default function RegisterLoginScreen({ navigation }) {
 
                 <Custom_Auth_Btn
                     btnText="Register as Shop Owner"
-                    onPress={() => { }}
+                    onPress={() => { navigation.navigate("RegisterScreen") }}
                 />
                 <View style={{ height: 14 }} />
 
                 <Custom_Auth_Btn
                     btnText="Register as User"
-                    onPress={() => { }}
+                    onPress={() => { navigation.navigate("RegisterScreen") }}
                 />
 
                 <View style={{ ...commonStyles.row, marginTop: 33, zIndex: 1 }}>

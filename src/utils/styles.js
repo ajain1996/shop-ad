@@ -41,10 +41,6 @@ export const commonStyles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center"
     },
-    row: {
-        flexDirection: "row",
-        alignItems: 'center'
-    },
     fs10_400: {
         fontSize: 10,
         fontWeight: "400",
@@ -195,9 +191,18 @@ export const commonStyles = StyleSheet.create({
         fontWeight: "700",
         color: "#000"
     },
+    row: {
+        flexDirection: "row",
+        alignItems: 'center'
+    },
     rowStart: {
         flexDirection: "row",
         justifyContent: "flex-start",
         alignItems: 'flex-start'
+    },
+    rowBetween: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: 'center'
     },
 });

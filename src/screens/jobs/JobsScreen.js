@@ -1,15 +1,15 @@
 import { View, Text, Image, StatusBar, TouchableHighlight, FlatList } from 'react-native'
 import React from 'react'
 import { commonStyles } from '../../utils/styles'
-import HomeHeader from './HomeHeader'
-import HomeSearch from './HomeSearch'
 import { SIZES } from '../../utils/theme'
+import HomeHeader from '../home/HomeHeader'
+import HomeSearch from '../home/HomeSearch'
 
-export default function HomeScreen({ navigation }) {
+export default function JobsScreen({ navigation }) {
     return (
         <>
             <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-            <HomeHeader navigation={navigation} onPress={() => { navigation.navigate("AddSaleOfferScreen") }} />
+            <HomeHeader navigation={navigation} onPress={() => navigation.navigate("AddJobScreen")} />
 
             <HomeSearch onChange={(val) => { }} />
 
