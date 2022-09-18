@@ -51,6 +51,7 @@ export default function AppNavigation() {
                 <Stack.Navigator initialRouteName="SplashScreen"
                     screenOptions={screenOptions}
                 >
+                    <Stack.Screen name="SplashScreen" component={SplashScreen} />
                     {!login
                         ? <Stack.Screen name="Auth" component={AuthStack} />
                         : <Stack.Screen name="AppStack" component={AppStack} />}

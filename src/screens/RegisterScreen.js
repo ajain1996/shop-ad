@@ -5,8 +5,44 @@ import Auth_BG_Component from '../components/Auth_BG_Component'
 import { commonStyles } from '../utils/styles'
 import Custom_Auth_Btn from '../components/Custom_Auth_Btn'
 import CustomTextInput from '../components/CustomTextInput'
+import { mobileRegisterPostRequest } from '../utils/API'
+import Toast from 'react-native-simple-toast'
+import Auth from '../services/Auth'
 
 export default function RegisterScreen({ navigation }) {
+    const [nameError, setNameError] = React.useState(false);
+    const [emailError, setEmailError] = React.useState(false);
+    const [passwordError, setPasswordError] = React.useState(false);
+
+    const [name, setName] = React.useState("");
+    const [email, setEmail] = React.useState("");
+    const [password, setPassword] = React.useState("");
+
+    const handleRegister = () => {
+        if (email.length === 0) {
+            setEmailError(true)
+        } if (name.length === 0) {
+            setNameError(true)
+        } if (password.length === 0) {
+            setPasswordError(true)
+        } else {
+            mobileRegisterPostRequest(email, password, name, "user", async (response) => {
+                if (response !== null) {
+                    console.log("\n\n Response mobileLoginPostRequest: ", response.message);
+                    if (response.message !== undefined) {
+                        dispatch(setUser(userData));
+                        await Auth.setAccount(userData);
+                        Toast.show('Register Successfully!');
+                        setName("")
+                        setEmail("")
+                        setPassword("")
+                        navigation.navigate("Root")
+                    }
+                }
+            })
+        }
+    }
+
     return (
         <Auth_BG_Component>
             <StatusBar barStyle="light-content" backgroundColor="#1572B9" />
@@ -20,25 +56,35 @@ export default function RegisterScreen({ navigation }) {
 
                     <CustomTextInput
                         placeholder='shopad@gmail.com'
-                        onChange={(val) => { }}
+                        value={email}
+                        keyboardType={'email-address'}
+                        autoCapitalize='none'
+                        onChange={(val) => { setEmail(val); setEmailError(false); }}
                     />
+                    {emailError ? <Text style={{ ...commonStyles.fs13_400, color: "red" }}>Email is required</Text> : <></>}
                     <View style={{ height: 14 }} />
 
                     <CustomTextInput
                         placeholder='Name'
-                        onChange={(val) => { }}
+                        value={name}
+                        keyboardType="default"
+                        onChange={(val) => { setName(val); setNameError(false); }}
                     />
+                    {nameError ? <Text style={{ ...commonStyles.fs13_400, color: "red" }}>Name is required</Text> : <></>}
                     <View style={{ height: 14 }} />
 
                     <CustomTextInput
                         placeholder='Password'
-                        onChange={(val) => { }}
+                        value={password}
+                        secureTextEntry={true}
+                        onChange={(val) => { setPassword(val); setPasswordError(false); }}
                     />
+                    {passwordError ? <Text style={{ ...commonStyles.fs13_400, color: "red" }}>Password is required</Text> : <></>}
                     <View style={{ height: 14 }} />
 
                     <Custom_Auth_Btn
                         btnText="Register as Shop Owner"
-                        onPress={() => { navigation.navigate("Root") }}
+                        onPress={() => { handleRegister(); /*navigation.navigate("Root")*/ }}
                     />
                 </View>
 

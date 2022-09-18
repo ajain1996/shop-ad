@@ -4,11 +4,23 @@ import HomeHeader from '../home/HomeHeader'
 import HomeSearch from '../home/HomeSearch'
 import { commonStyles } from '../../utils/styles'
 import { SIZES } from '../../utils/theme'
+import { useState } from 'react'
+import { useEffect } from 'react'
+import { getAllWorksPostRequest } from '../../utils/API'
 
-export default function WorksScreen() {
+export default function WorksScreen({ navigation }) {
+
+    const [allWorks, setAllWorks] = useState([]);
+
+    useEffect(() => {
+        getAllWorksPostRequest((response) => {
+            console.log("\n\n Res getAllJobsPostRequest: ", response);
+        })
+    }, [])
+
     return (
         <View style={{ backgroundColor: "#f7f8f9" }}>
-            <HomeHeader />
+            <HomeHeader navigation={navigation} onPress={() => { navigation.navigate("AddWorksScreen") }} />
             <HomeSearch onChange={() => { }} />
 
             <FlatList

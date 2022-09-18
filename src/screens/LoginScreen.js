@@ -5,8 +5,42 @@ import Auth_BG_Component from '../components/Auth_BG_Component'
 import { commonStyles } from '../utils/styles'
 import Custom_Auth_Btn from '../components/Custom_Auth_Btn'
 import CustomTextInput from '../components/CustomTextInput'
+import { mobileLoginPostRequest } from '../utils/API'
+import { useDispatch } from 'react-redux'
+import { setUser } from '../redux/reducer/user'
+import Toast from 'react-native-simple-toast'
+import Auth from '../services/Auth'
 
 export default function LoginScreen({ navigation }) {
+    const dispatch = useDispatch();
+
+    const [emailError, setEmailError] = React.useState(false);
+    const [passwordError, setPasswordError] = React.useState(false);
+
+    const [email, setEmail] = React.useState("");
+    const [password, setPassword] = React.useState("");
+
+    const handleLogin = () => {
+        if (email.length === 0) {
+            setEmailError(true)
+        } if (password.length === 0) {
+            setPasswordError(true)
+        } else {
+            mobileLoginPostRequest(email, password, "user", async (response) => {
+                if (response !== null) {
+                    console.log("\n\n Response mobileLoginPostRequest: ", response.message);
+                    if (response.message !== undefined) {
+                        var userData = response.user[0];
+                        dispatch(setUser(userData));
+                        await Auth.setAccount(userData);
+                        Toast.show("Login Successfully!");
+                        navigation.navigate("Root");
+                    }
+                }
+            })
+        }
+    }
+
     return (
         <Auth_BG_Component>
             <StatusBar barStyle="light-content" backgroundColor="#1572B9" />
@@ -20,16 +54,29 @@ export default function LoginScreen({ navigation }) {
 
                     <CustomTextInput
                         placeholder='shopad@gmail.com'
-                        onChange={(val) => { }}
+                        value={email}
+                        keyboardType={'email-address'}
+                        autoCapitalize='none'
+                        onChange={(val) => { setEmail(val); setEmailError(false); }}
                     />
+                    {emailError ? <Text style={{ ...commonStyles.fs13_400, color: "red" }}>Email is required</Text> : <></>}
                     <View style={{ height: 14 }} />
 
                     <CustomTextInput
                         placeholder='Password'
-                        onChange={(val) => { }}
+                        value={password}
+                        secureTextEntry={true}
+                        onChange={(val) => { setPassword(val); setPasswordError(false); }}
                     />
+                    {passwordError ? <Text style={{ ...commonStyles.fs13_400, color: "red" }}>Password is required</Text> : <></>}
                     <View style={{ alignItems: "flex-end" }}>
-                        <TouchableHighlight onPress={() => { navigation.navigate("ForgotPasswordPassword") }} underlayColor="#1572B9">
+                        <TouchableHighlight underlayColor="#1572B9"
+                            onPress={() => {
+                                navigation.navigate("ForgotPasswordPassword", {
+                                    email: email,
+                                })
+                            }}
+                        >
                             <Text
                                 style={{
                                     ...commonStyles.fs15_500, color: "#303030",
@@ -45,7 +92,7 @@ export default function LoginScreen({ navigation }) {
 
                     <Custom_Auth_Btn
                         btnText="Register as Shop Owner"
-                        onPress={() => { navigation.navigate("Root") }}
+                        onPress={() => { handleLogin(); }}
                     />
                 </View>
 

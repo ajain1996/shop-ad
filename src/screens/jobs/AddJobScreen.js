@@ -9,6 +9,7 @@ import moment from 'moment'
 import Custom_Auth_Btn from '../../components/Custom_Auth_Btn'
 import LinearGradient from 'react-native-linear-gradient'
 import DocumentPicker from 'react-native-document-picker'
+import { addNewJobPostRequest } from '../../utils/API'
 
 export default function AddJobScreen({ navigation }) {
 
@@ -73,6 +74,23 @@ export default function AddJobScreen({ navigation }) {
                 // const source = { uri: 'data:image/jpeg;base64,' + response.data };
             }
         });
+    }
+
+    const handleSubmit = () => {
+        addNewJobPostRequest(
+            description,
+            shopName,
+            "location",
+            salaryOffered,
+            shift,
+            contactPersonName,
+            "ownerId",
+            contactNumber,
+            "contactEmail",
+            (res) => {
+                console.log("\n\n Res addNewJobPostRequest: ", res);
+            }
+        );
     }
 
     const selectPdfFile = async (text) => {
@@ -290,7 +308,7 @@ export default function AddJobScreen({ navigation }) {
                         <View style={{ ...commonStyles.rowBetween, marginBottom: 20 }}>
                             <RenderDatePicker
                                 title="Start Date"
-                                callback={(res) => { }}
+                                callback={(res) => { setShift(res) }}
                             />
 
                             <RenderDatePicker
@@ -513,7 +531,7 @@ export default function AddJobScreen({ navigation }) {
 
                         <Custom_Auth_Btn
                             btnText="Submit"
-                            onPress={() => { }}
+                            onPress={() => { handleSubmit() }}
                         />
                         <View style={{ marginTop: 20 }} />
                     </View>

@@ -8,6 +8,7 @@ import { SIZES } from '../utils/theme';
 import LinearGradient from "react-native-linear-gradient";
 import WorksScreen from "../screens/works/WorksScreen";
 import JobsScreen from "../screens/jobs/JobsScreen";
+import GetMembershipScreen from "../screens/membership/GetMembershipScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -78,8 +79,8 @@ const BottomTabs = () => {
                 }}
             />
             <Tab.Screen
-                name="BillNotifications"
-                component={HomeScreen}
+                name="MembershipScreen"
+                component={GetMembershipScreen}
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) => {

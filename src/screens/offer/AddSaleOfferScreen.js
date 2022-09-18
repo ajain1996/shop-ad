@@ -7,12 +7,15 @@ import { commonStyles } from '../../utils/styles'
 import DatePicker from 'react-native-date-picker'
 import moment from 'moment'
 import Custom_Auth_Btn from '../../components/Custom_Auth_Btn'
+import { addNewOfferPostRequest } from '../../utils/API'
 
 export default function AddSaleOfferScreen({ navigation }) {
 
     const [image, setImage] = React.useState("");
     const [description, setDescription] = React.useState("New user need to get membership to continue to use ShopAd.");
     const [location, setLocation] = React.useState("Indore, India");
+    const [startDate, setStartDate] = React.useState("");
+    const [endDate, setEndDate] = React.useState("");
 
     let options = {
         storageOptions: {
@@ -35,6 +38,22 @@ export default function AddSaleOfferScreen({ navigation }) {
             }
         });
     }
+
+    const handleSubmit = () => {
+        addNewOfferPostRequest(
+            description,
+            location,
+            startDate,
+            endDate,
+            image,
+            "6310986978bdedcb4e68b948",
+            null,
+            (response) => {
+                console.log("\n\n Response: ", response)
+            }
+        );
+    }
+
     return (
         <View>
             <CustomInputHeader navigation={navigation} title="Add Sale Offer" />
@@ -76,18 +95,18 @@ export default function AddSaleOfferScreen({ navigation }) {
                 <View style={{ ...commonStyles.rowBetween, marginBottom: 20 }}>
                     <RenderDatePicker
                         title="Start Date"
-                        callback={(res) => { }}
+                        callback={(res) => { setStartDate(res) }}
                     />
 
                     <RenderDatePicker
                         title="End Date"
-                        callback={(res) => { }}
+                        callback={(res) => { setEndDate(res) }}
                     />
                 </View>
 
                 <Custom_Auth_Btn
                     btnText="Upload"
-                    onPress={() => { }}
+                    onPress={() => { handleSubmit() }}
                 />
             </View>
         </View>

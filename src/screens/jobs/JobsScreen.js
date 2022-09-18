@@ -4,8 +4,20 @@ import { commonStyles } from '../../utils/styles'
 import { SIZES } from '../../utils/theme'
 import HomeHeader from '../home/HomeHeader'
 import HomeSearch from '../home/HomeSearch'
+import { useEffect } from 'react'
+import { getAllJobsPostRequest } from '../../utils/API'
+import { useState } from 'react'
 
 export default function JobsScreen({ navigation }) {
+
+    const [allJobs, setAllJobs] = useState([]);
+
+    useEffect(() => {
+        getAllJobsPostRequest((response) => {
+            console.log("\n\n Res getAllJobsPostRequest: ", response);
+        })
+    }, [])
+
     return (
         <>
             <StatusBar barStyle="dark-content" backgroundColor="#fff" />

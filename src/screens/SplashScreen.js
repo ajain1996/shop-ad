@@ -1,13 +1,20 @@
 import { View, Image, StatusBar } from 'react-native'
 import React from 'react'
-import { SHOPADLogo } from '../utils/imageManager'
-import SvgUri from '../utils/Svg';
 import { SIZES } from '../utils/theme';
+import { useSelector } from 'react-redux';
 
 export default function SplashScreen({ navigation }) {
 
+    const { userData, login } = useSelector(state => state.User);
+
+    console.log("\n\n userData: ", userData, login)
+
     setTimeout(() => {
-        navigation.navigate("RegisterLoginScreen")
+        if (login) {
+            navigation.navigate("AppStack")
+        } else {
+            navigation.navigate("Auth")
+        }
     }, 2000);
 
     return (

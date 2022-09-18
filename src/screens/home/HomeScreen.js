@@ -4,8 +4,20 @@ import { commonStyles } from '../../utils/styles'
 import HomeHeader from './HomeHeader'
 import HomeSearch from './HomeSearch'
 import { SIZES } from '../../utils/theme'
+import { useEffect } from 'react'
+import { getAllOffersPostRequest } from '../../utils/API'
+import { useState } from 'react'
 
 export default function HomeScreen({ navigation }) {
+
+    const [allOffers, setAllOffers] = useState([]);
+
+    useEffect(() => {
+        getAllOffersPostRequest((response) => {
+            console.log("\n\n getAllOffersPostRequest: ", response);
+        })
+    }, [])
+
     return (
         <>
             <StatusBar barStyle="dark-content" backgroundColor="#fff" />
