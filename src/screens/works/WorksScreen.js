@@ -7,14 +7,25 @@ import { SIZES } from '../../utils/theme'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { getAllWorksPostRequest } from '../../utils/API'
+import Auth from '../../services/Auth'
+import CustomLoader, { CustomPanel } from '../../components/CustomLoader'
 
 export default function WorksScreen({ navigation }) {
 
     const [allWorks, setAllWorks] = useState([]);
+    const [bearerToken, setBearerToken] = useState("");
+    const [loading, setLoading] = React.useState(false);
 
     useEffect(() => {
-        getAllWorksPostRequest((response) => {
-            console.log("\n\n Res getAllJobsPostRequest: ", response);
+        setLoading(true);
+        Auth.getLocalStorageData("bearer").then((token) => {
+            setLoading(false);
+            setBearerToken(token);
+            getAllWorksPostRequest(token, (response) => {
+                if (response !== null) {
+                    setAllWorks(response?.data)
+                }
+            })
         })
     }, [])
 
@@ -24,8 +35,9 @@ export default function WorksScreen({ navigation }) {
             <HomeSearch onChange={() => { }} />
 
             <FlatList
-                data={[1, 2, 3, 4, 5, 6]}
-                renderItem={({ }) => {
+                data={allWorks}
+                renderItem={({ item }) => {
+                    console.log("\n\n Res getAllWorksPostRequest item: ", item);
                     return (
                         <View style={{ margin: 15, padding: 9, backgroundColor: "#fff", borderWidth: 1, borderColor: "#D8D8D8", borderRadius: 4 }}>
                             <View style={{ ...commonStyles.rowBetween, alignItems: "flex-start" }}>
@@ -34,15 +46,15 @@ export default function WorksScreen({ navigation }) {
                                     style={{ width: 101, height: 61 }}
                                 />
                                 <View style={{ width: SIZES.width / 1.5, marginHorizontal: 10 }}>
-                                    <Text style={{ ...commonStyles.fs18_700 }}>ZaraMan Clothing Brand</Text>
+                                    <Text style={{ ...commonStyles.fs18_700 }}>{item?.description}</Text>
                                     <Text style={{ ...commonStyles.fs16_700, marginTop: 12 }}>Designation: </Text>
                                     <Text style={{ ...commonStyles.fs14_400 }}>
-                                        New user need to get membership to continue to use ShopAd.
+                                        {item?.designationName}
                                     </Text>
 
                                     <Text style={{ ...commonStyles.fs16_700, marginTop: 12 }}>Contact Info: </Text>
                                     <Text style={{ ...commonStyles.fs14_400 }}>
-                                        +31 1548784658
+                                        {item?.contactNumber}
                                     </Text>
                                 </View>
                             </View>
@@ -53,6 +65,9 @@ export default function WorksScreen({ navigation }) {
                     <View style={{ height: 200 }} />
                 }
             />
+
+            <CustomPanel loading={loading} />
+            <CustomLoader loading={loading} />
         </View>
     )
 }

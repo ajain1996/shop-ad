@@ -4,8 +4,13 @@ import MembershipHeader from './MembershipHeader'
 import { commonStyles } from '../../utils/styles'
 import { SIZES } from '../../utils/theme'
 import Custom_Auth_Btn from '../../components/Custom_Auth_Btn'
+import Auth from '../../services/Auth'
+import { useDispatch } from 'react-redux'
+import { removeUser } from '../../redux/reducer/user'
 
 export default function GetMembershipScreen({ navigation }) {
+    const dispatch = useDispatch();
+
     return (
         <ScrollView style={{ width: "100%", height: "100%", backgroundColor: "#fff" }}>
             <MembershipHeader navigation={navigation} title="Premium" />
@@ -64,7 +69,11 @@ export default function GetMembershipScreen({ navigation }) {
 
                 <Custom_Auth_Btn
                     btnText="Get Now"
-                    onPress={() => { }}
+                    onPress={async () => {
+                        Auth.logout().then(() => {
+                            dispatch(removeUser([]));
+                        })
+                    }}
                 />
             </View>
         </ScrollView>

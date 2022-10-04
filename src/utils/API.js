@@ -1,3 +1,5 @@
+import Auth from "../services/Auth";
+
 const BASE_URL = "https://shop-ad-strix.herokuapp.com/user/";
 const BASE_URL2 = "https://shop-ad-strix.herokuapp.com/";
 
@@ -87,7 +89,7 @@ export const updatePasswordPostRequest = async (email, resetToken, password, suc
     }
 };
 
-export const addNewOfferPostRequest = async (desc, location, startDate, endDate, image, ownerId, shopId, successCallBack) => {
+export const addNewOfferPostRequest = async (desc, location, startDate, endDate, image, ownerId, shopId, bearerToken, successCallBack) => {
     console.log('\n\n addNewOfferPostRequest Called : ', desc, location, startDate, endDate, image, ownerId, shopId);
 
     let formData = new FormData();
@@ -96,16 +98,20 @@ export const addNewOfferPostRequest = async (desc, location, startDate, endDate,
     formData.append('location', location);
     formData.append('startDate', startDate);
     formData.append('endDate', endDate);
-    formData.append('offerImage', image);
+    formData.append("offerImage", image.assets[0].uri);
+    // formData.append("offerImage", "image.assets[0], image.assets[0].uri");
     formData.append('ownerId', ownerId);
     formData.append('shopId', shopId);
+
+
+    console.log("\n After formdata", image)
 
     try {
         let response = await fetch(BASE_URL2 + 'salesoffer', {
             method: 'POST',
             headers: {
-                "Accept": 'application/json',
-                "Content-Type": "application/json",
+                // "Content-Type": "application/json",
+                "Authorization": `Bearer ${bearerToken}`
             },
             body: formData,
         });
@@ -119,11 +125,14 @@ export const addNewOfferPostRequest = async (desc, location, startDate, endDate,
     }
 };
 
-export const getAllOffersPostRequest = async (successCallBack) => {
+export const getAllOffersPostRequest = async (bearerToken, successCallBack) => {
     console.log('\n\n getAllOffersPostRequest Called : ');
 
     try {
-        let response = await fetch(BASE_URL2 + 'salesoffer');
+        let response = await fetch(BASE_URL2 + 'salesoffer', {
+            method: "GET",
+            headers: { "Authorization": `Bearer ${bearerToken}` }
+        });
         let json = await response.json();
         console.log('\n\n getAllOffersPostRequest success: ', json);
         successCallBack(json);
@@ -168,11 +177,14 @@ export const addNewJobPostRequest = async (description, shopName, location, sala
     }
 };
 
-export const getAllJobsPostRequest = async (successCallBack) => {
+export const getAllJobsPostRequest = async (bearerToken, successCallBack) => {
     console.log('\n\n getAllJobsPostRequest Called : ');
 
     try {
-        let response = await fetch(BASE_URL2 + 'job');
+        let response = await fetch(BASE_URL2 + 'job', {
+            method: "GET",
+            headers: { "Authorization": `Bearer ${bearerToken}` }
+        });
         let json = await response.json();
         console.log('\n\n getAllJobsPostRequest success: ', json);
         successCallBack(json);
@@ -217,16 +229,47 @@ export const addNewWorkPostRequest = async (description, shopName, location, sal
     }
 };
 
-export const getAllWorksPostRequest = async (successCallBack) => {
+export const getAllWorksPostRequest = async (bearerToken, successCallBack) => {
     console.log('\n\n getAllWorksPostRequest Called : ');
 
     try {
-        let response = await fetch(BASE_URL2 + 'work');
+        let response = await fetch(BASE_URL2 + 'work', {
+            method: "GET",
+            headers: { "Authorization": `Bearer ${bearerToken}` }
+        });
+
         let json = await response.json();
         console.log('\n\n getAllWorksPostRequest success: ', json);
         successCallBack(json);
     } catch (error) {
         console.log('\n\n getAllWorksPostRequest Failed : ');
+        console.error('error', error);
+        successCallBack(null);
+    }
+};
+
+export const getUserByIDPostAPI = async (id, bearerToken, successCallBack) => {
+    console.log('\n\n getUserByIDPostAPI Called : ', id);
+
+    var body = {
+        "id": id,
+    }
+
+    try {
+        let response = await fetch(BASE_URL + 'uid', {
+            method: 'POST',
+            headers: {
+                "Accept": 'application/json',
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${bearerToken}`
+            },
+            body: JSON.stringify(body),
+        });
+        let json = await response.json();
+        console.log('\n\n getUserByIDPostAPI success: ', json);
+        successCallBack(json);
+    } catch (error) {
+        console.log('\n\n getUserByIDPostAPI Failed : ');
         console.error('error', error);
         successCallBack(null);
     }

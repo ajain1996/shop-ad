@@ -10,12 +10,14 @@ import { useDispatch } from 'react-redux'
 import { setUser } from '../redux/reducer/user'
 import Toast from 'react-native-simple-toast'
 import Auth from '../services/Auth'
+import CustomLoader, { CustomPanel } from '../components/CustomLoader'
 
 export default function LoginScreen({ navigation }) {
     const dispatch = useDispatch();
 
     const [emailError, setEmailError] = React.useState(false);
     const [passwordError, setPasswordError] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
 
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
@@ -26,15 +28,30 @@ export default function LoginScreen({ navigation }) {
         } if (password.length === 0) {
             setPasswordError(true)
         } else {
+            setLoading(true);
             mobileLoginPostRequest(email, password, "user", async (response) => {
+                setLoading(false);
                 if (response !== null) {
-                    console.log("\n\n Response mobileLoginPostRequest: ", response.message);
-                    if (response.message !== undefined) {
-                        var userData = response.user[0];
-                        dispatch(setUser(userData));
-                        await Auth.setAccount(userData);
-                        Toast.show("Login Successfully!");
-                        navigation.navigate("Root");
+                    console.log("\n\n Response mobileLoginPostRequest: ", response);
+                    if (response?.message !== undefined) {
+                        if (response?.message === "Mail exists") {
+                            Alert.alert("Alert", response?.message);
+                        } else {
+                            const userData = response?.user;
+                            dispatch(setUser(userData));
+                            await Auth.setAccount(userData);
+                            await Auth.setLocalStorageData("bearer", response.token.toString())
+                            const email_password = [];
+                            const userEmail = email;
+                            const userPassword = password;
+                            email_password.push(userEmail);
+                            email_password.push(userPassword);
+                            await Auth.setLocalStorageData("email_password", email_password.toString())
+                            Toast.show('Register Successfully!');
+                            setEmail("")
+                            setPassword("")
+                            // navigation.navigate("Root")
+                        }
                     }
                 }
             })
@@ -105,6 +122,10 @@ export default function LoginScreen({ navigation }) {
                     </View>
                 </View>
             </View>
+
+            <CustomPanel loading={loading} />
+
+            <CustomLoader loading={loading} />
         </Auth_BG_Component>
     )
 }

@@ -1,4 +1,4 @@
-import { View, Text, TouchableHighlight, StatusBar } from 'react-native'
+import { View, Text, TouchableHighlight, StatusBar, Alert } from 'react-native'
 import React from 'react'
 import { SIZES } from '../utils/theme'
 import Auth_BG_Component from '../components/Auth_BG_Component'
@@ -8,11 +8,16 @@ import CustomTextInput from '../components/CustomTextInput'
 import { mobileRegisterPostRequest } from '../utils/API'
 import Toast from 'react-native-simple-toast'
 import Auth from '../services/Auth'
+import { useDispatch } from 'react-redux'
+import { setUser } from '../redux/reducer/user'
+import CustomLoader, { CustomPanel } from '../components/CustomLoader'
 
 export default function RegisterScreen({ navigation }) {
+    const dispatch = useDispatch();
     const [nameError, setNameError] = React.useState(false);
     const [emailError, setEmailError] = React.useState(false);
     const [passwordError, setPasswordError] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
 
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
@@ -28,15 +33,20 @@ export default function RegisterScreen({ navigation }) {
         } else {
             mobileRegisterPostRequest(email, password, name, "user", async (response) => {
                 if (response !== null) {
-                    console.log("\n\n Response mobileLoginPostRequest: ", response.message);
-                    if (response.message !== undefined) {
-                        dispatch(setUser(userData));
-                        await Auth.setAccount(userData);
-                        Toast.show('Register Successfully!');
-                        setName("")
-                        setEmail("")
-                        setPassword("")
-                        navigation.navigate("Root")
+                    console.log("\n\n Response mobileLoginPostRequest: ", response?.message);
+                    if (response?.message !== undefined) {
+                        if (response?.message === "Mail exists") {
+                            Alert.alert("Alert", response?.message);
+                        } else {
+                            const userData = response?.user;
+                            dispatch(setUser(userData));
+                            await Auth.setAccount(userData);
+                            Toast.show('Register Successfully!');
+                            setName("")
+                            setEmail("")
+                            setPassword("")
+                            navigation.navigate("LoginScreen")
+                        }
                     }
                 }
             })
@@ -97,6 +107,9 @@ export default function RegisterScreen({ navigation }) {
                     </View>
                 </View>
             </View>
+            <CustomPanel loading={loading} />
+
+            <CustomLoader loading={loading} />
         </Auth_BG_Component>
     )
 }

@@ -10,6 +10,8 @@ import JobsScreen from "../screens/jobs/JobsScreen";
 import AddJobScreen from "../screens/jobs/AddJobScreen";
 import GetMembershipScreen from "../screens/membership/GetMembershipScreen";
 import AddWorksScreen from "../screens/works/AddWorksScreen";
+import UserDetailsScreen from "../screens/home/details/UserDetailsScreen";
+import UserPostScreen from "../screens/home/details/UserPostScreen";
 
 export default function AppStack() {
     const Stack = createStackNavigator();
@@ -32,6 +34,8 @@ export default function AppStack() {
                 <Stack.Screen name="AddJobScreen" component={AddJobScreen} />
                 <Stack.Screen name="GetMembershipScreen" component={GetMembershipScreen} />
                 <Stack.Screen name="AddWorksScreen" component={AddWorksScreen} />
+                <Stack.Screen name="UserDetailsScreen" component={UserDetailsScreen} />
+                <Stack.Screen name="UserPostScreen" component={UserPostScreen} />
             </Stack.Navigator>
         </>
     );

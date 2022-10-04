@@ -5,7 +5,7 @@ import { commonStyles } from '../../utils/styles'
 export default function HomeHeader({ navigation, onPress }) {
     return (
         <View style={{ width: "100%", height: 70, ...commonStyles.rowBetween, padding: 20, backgroundColor: "#fff" }}>
-            <TouchableHighlight onPress={() => { navigation.goBack() }} underlayColor="#f7f8f9">
+            <TouchableHighlight onPress={() => { }} underlayColor="#f7f8f9">
                 <Image
                     source={require("../../assets/img/menu.png")}
                     resizeMode="contain"

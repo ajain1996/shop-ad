@@ -1,4 +1,4 @@
-import { FlatList, Image, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableHighlight, TouchableOpacity, View } from 'react-native'
+import { Alert, FlatList, Image, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableHighlight, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import CustomInputHeader from '../../components/CustomInputHeader'
 import { SIZES } from '../../utils/theme'
@@ -10,6 +10,7 @@ import Custom_Auth_Btn from '../../components/Custom_Auth_Btn'
 import LinearGradient from 'react-native-linear-gradient'
 import DocumentPicker from 'react-native-document-picker'
 import { addNewJobPostRequest } from '../../utils/API'
+import Auth from '../../services/Auth'
 
 export default function AddJobScreen({ navigation }) {
 
@@ -77,20 +78,40 @@ export default function AddJobScreen({ navigation }) {
     }
 
     const handleSubmit = () => {
-        addNewJobPostRequest(
-            description,
-            shopName,
-            "location",
-            salaryOffered,
-            shift,
-            contactPersonName,
-            "ownerId",
-            contactNumber,
-            "contactEmail",
-            (res) => {
-                console.log("\n\n Res addNewJobPostRequest: ", res);
-            }
-        );
+        if (description.length === 0) {
+            Alert.alert("Alert", "Description is mandatory")
+        } else if (shopName.length === 0) {
+            Alert.alert("Alert", "Shop name is mandatory")
+        } else if (facilities.length === 0) {
+            Alert.alert("Alert", "Facility is mandatory")
+        } else if (salaryOffered.length === 0) {
+            Alert.alert("Alert", "Salary offered is mandatory")
+        } else if (shift.length === 0) {
+            Alert.alert("Alert", "Shift is mandatory")
+        } else if (contactPersonName.length === 0) {
+            Alert.alert("Alert", "Owner of Firm is mandatory")
+        } else if (contactNumber.length === 0) {
+            Alert.alert("Alert", "Contact number is mandatory")
+        } else {
+            Auth.getAccount().then((userData) => {
+                addNewJobPostRequest(
+                    description,
+                    shopName,
+                    facilities,
+                    salaryOffered,
+                    shift,
+                    contactPersonName,
+                    userData[0]._id,
+                    contactNumber,
+                    userData[0].email,
+                    (response) => {
+                        if (response !== null) {
+                            console.log("\n\n Res addNewJobPostRequest: ", res);
+                        }
+                    }
+                );
+            })
+        }
     }
 
     const selectPdfFile = async (text) => {

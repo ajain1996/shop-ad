@@ -15,7 +15,7 @@ export default function AddWorksScreen({ navigation }) {
     const handleSubmit = () => {
         addNewWorkPostRequest(
             "description",
-            "shopName",
+            name,
             "location",
             "salary",
             "shiftTime",

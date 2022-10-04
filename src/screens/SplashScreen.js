@@ -1,9 +1,15 @@
 import { View, Image, StatusBar } from 'react-native'
 import React from 'react'
 import { SIZES } from '../utils/theme';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { mobileLoginPostRequest } from '../utils/API';
+import Auth from '../services/Auth';
+import Toast from 'react-native-simple-toast'
+import { setUser } from '../redux/reducer/user';
 
 export default function SplashScreen({ navigation }) {
+    const dispatch = useDispatch();
 
     const { userData, login } = useSelector(state => state.User);
 
@@ -16,6 +22,29 @@ export default function SplashScreen({ navigation }) {
             navigation.navigate("Auth")
         }
     }, 2000);
+
+    useEffect(() => {
+        Auth.getLocalStorageData("email_password").then((email_password) => {
+            console.log("\n\n email_password: ", email_password.split(",")[0])
+            mobileLoginPostRequest(email_password.split(",")[0], email_password.split(",")[1], "user", async (response) => {
+                if (response !== null) {
+                    console.log("\n\n Response mobileLoginPostRequest: ", response);
+                    if (response?.message !== undefined) {
+                        if (response?.message === "Mail exists") {
+                            Alert.alert("Alert", response?.message);
+                        } else {
+                            const userData = response?.user;
+                            dispatch(setUser(userData));
+                            await Auth.setAccount(userData);
+                            await Auth.setLocalStorageData("bearer", response.token.toString())
+                            Toast.show('Register Successfully!');
+                        }
+                    }
+                }
+            })
+        })
+    }, [])
+
 
     return (
         <View>

@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TextInput, TouchableHighlight, View } from 'react-native'
+import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableHighlight, View } from 'react-native'
 import React from 'react'
 import CustomInputHeader from '../../components/CustomInputHeader'
 import { SIZES } from '../../utils/theme'
@@ -8,14 +8,19 @@ import DatePicker from 'react-native-date-picker'
 import moment from 'moment'
 import Custom_Auth_Btn from '../../components/Custom_Auth_Btn'
 import { addNewOfferPostRequest } from '../../utils/API'
+import Auth from '../../services/Auth'
+import CustomLoader, { CustomPanel } from '../../components/CustomLoader'
 
 export default function AddSaleOfferScreen({ navigation }) {
 
     const [image, setImage] = React.useState("");
-    const [description, setDescription] = React.useState("New user need to get membership to continue to use ShopAd.");
-    const [location, setLocation] = React.useState("Indore, India");
+    const [imageData, setImageData] = React.useState("");
+    const [description, setDescription] = React.useState("");
+    const [location, setLocation] = React.useState("");
     const [startDate, setStartDate] = React.useState("");
     const [endDate, setEndDate] = React.useState("");
+
+    const [loading, setLoading] = React.useState(false);
 
     let options = {
         storageOptions: {
@@ -34,28 +39,54 @@ export default function AddSaleOfferScreen({ navigation }) {
                 console.log('User tapped custom button: ', response?.customButton);
             } else {
                 setImage(response?.assets[0].uri);
+                setImageData(response);
+                console.log("\n\n Image Picked: ", response)
                 // const source = { uri: 'data:image/jpeg;base64,' + response.data };
             }
         });
     }
 
     const handleSubmit = () => {
-        addNewOfferPostRequest(
-            description,
-            location,
-            startDate,
-            endDate,
-            image,
-            "6310986978bdedcb4e68b948",
-            null,
-            (response) => {
-                console.log("\n\n Response: ", response)
-            }
-        );
+        if (description.length === 0) {
+            Alert.alert("Alert", "Description is required");
+        } else if (location.length === 0) {
+            Alert.alert("Alert", "Location is required");
+        } else if (startDate.length === 0) {
+            Alert.alert("Alert", "Startdate is required");
+        } else if (endDate.length === 0) {
+            Alert.alert("Alert", "Enddate is required");
+        } else {
+            setLoading(true);
+            Auth.getLocalStorageData("bearer").then((token) => {
+                Auth.getAccount().then((userData) => {
+                    console.log("\n\n Userdata userid: ", userData[0]);
+                    addNewOfferPostRequest(
+                        description,
+                        location,
+                        startDate,
+                        endDate,
+                        imageData,
+                        userData[0]._id,
+                        null,
+                        token,
+                        (response) => {
+                            setLoading(false);
+                            if (response !== null) {
+                                if (response.errors) {
+                                    Alert.alert("Alert", response.errors.offerImage.message)
+                                }
+                            }
+                            // navigation.goBack();
+                            console.log("\n\n Response: ", response.errors.offerImage.message)
+                        }
+                    );
+                })
+            })
+        }
     }
 
     return (
-        <View>
+        <ScrollView>
             <CustomInputHeader navigation={navigation} title="Add Sale Offer" />
 
             <View style={{ paddingHorizontal: 16 }}>
@@ -64,7 +95,7 @@ export default function AddSaleOfferScreen({ navigation }) {
                 <>
                     <Text style={{ ...commonStyles.fs16_500, marginTop: 10 }}>Description</Text>
                     <TextInput
-                        placeholder=''
+                        placeholder='Description'
                         placeholderTextColor="#999"
                         value={description}
                         numberOfLines={4}
@@ -95,7 +126,7 @@ export default function AddSaleOfferScreen({ navigation }) {
                 <View style={{ ...commonStyles.rowBetween, marginBottom: 20 }}>
                     <RenderDatePicker
                         title="Start Date"
-                        callback={(res) => { setStartDate(res) }}
+                        callback={(res) => { setStartDate(res); console.log("\n\n setStartDate: ", res) }}
                     />
 
                     <RenderDatePicker
@@ -106,10 +137,14 @@ export default function AddSaleOfferScreen({ navigation }) {
 
                 <Custom_Auth_Btn
                     btnText="Upload"
-                    onPress={() => { handleSubmit() }}
+                    onPress={handleSubmit}
                 />
             </View>
-        </View>
+
+            <CustomPanel loading={loading} />
+
+            <CustomLoader loading={loading} />
+        </ScrollView>
     )
 }
 
@@ -168,6 +203,7 @@ const RenderDatePicker = ({ title, callback }) => {
                     setOpen(false)
                     setDate(date)
                     console.log('\n\n date: ', moment(date).format("DD-MM-YYYY"))
+                    callback(moment(date).format("DD-MM-YYYY"))
                 }}
                 onCancel={() => {
                     setOpen(false)

@@ -171,6 +171,11 @@ export const commonStyles = StyleSheet.create({
         fontWeight: "600",
         color: "#000"
     },
+    fs22_700: {
+        fontSize: 22,
+        fontWeight: "700",
+        color: "#000"
+    },
     fs24_400: {
         fontSize: 24,
         fontWeight: "400",
@@ -203,6 +208,16 @@ export const commonStyles = StyleSheet.create({
     rowBetween: {
         flexDirection: "row",
         justifyContent: "space-between",
+        alignItems: 'center'
+    },
+    rowAround: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        alignItems: 'center'
+    },
+    rowEvenly: {
+        flexDirection: "row",
+        justifyContent: "space-evenly",
         alignItems: 'center'
     },
 });
