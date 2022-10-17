@@ -20,7 +20,7 @@ export default function AuthStack() {
             <StatusBar barStyle="light-content" backgroundColor="#1572B9" />
             <Stack.Navigator
                 screenOptions={screenOptions}
-                initialRouteName={"LoginScreen"}
+                initialRouteName={"RegisterLoginScreen"}
             >
                 <Stack.Screen name="LoginScreen" component={LoginScreen} />
                 <Stack.Screen name="RegisterScreen" component={RegisterScreen} />

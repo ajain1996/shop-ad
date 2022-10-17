@@ -1,4 +1,4 @@
-import { View, Text, Image, StatusBar, TouchableHighlight, FlatList } from 'react-native'
+import { View, Text, Image, StatusBar, TouchableHighlight, FlatList, Share } from 'react-native'
 import React from 'react'
 import { useEffect } from 'react'
 import { useState } from 'react'
@@ -6,16 +6,15 @@ import UserdetailsHeader from './UserdetailsHeader'
 import CustomLoader, { CustomPanel } from '../../../components/CustomLoader'
 import { commonStyles } from '../../../utils/styles'
 import { SIZES } from '../../../utils/theme'
-import { getUserByIDPostAPI } from '../../../utils/API'
+import { addLikesByIDPostAPI, getUserByIDPostAPI, unLikesByIDPostAPI } from '../../../utils/API'
 import Auth from '../../../services/Auth'
+import Toast from 'react-native-simple-toast'
 
 export default function UserPostScreen({ navigation, route }) {
 
-    const { item } = route.params;
+    const { item, userName } = route.params;
 
-    const [allOffers, setAllOffers] = useState([]);
     const [bearerToken, setBearerToken] = useState("");
-
     const [loading, setLoading] = React.useState(false);
 
     useEffect(() => {
@@ -23,8 +22,6 @@ export default function UserPostScreen({ navigation, route }) {
             setBearerToken(token);
         })
     }, [])
-
-    console.log("\n\n Item passed: ", item);
 
     return (
         <>
@@ -38,6 +35,7 @@ export default function UserPostScreen({ navigation, route }) {
                 item={item}
                 bearerToken={bearerToken}
                 navigation={navigation}
+                userName={userName}
             />
 
             <CustomPanel loading={loading} />
@@ -46,17 +44,66 @@ export default function UserPostScreen({ navigation, route }) {
     )
 }
 
-const RenderSingleOffer = ({ item, bearerToken, navigation }) => {
+const RenderSingleOffer = ({ item, userName, bearerToken, navigation }) => {
     const [user, setUser] = useState([]);
+    const [likesCount, setLikesCount] = useState(0);
+    const [isLike, setIsLike] = useState(false);
+
+    const [commentsCount, setCommentsCount] = useState(0);
 
     useEffect(() => {
-        getUserByIDPostAPI(item?.ownerId, bearerToken, (response) => {
+        getUserByIDPostAPI(item?._id, bearerToken, (response) => {
             if (response !== null) {
                 setUser(response?.data[0])
             }
         })
     }, [])
-    console.log("\n\n getUserByIDPostAPI user: ", user);
+
+    const handleLike = () => {
+        if (isLike) {
+            setLikesCount(prev => prev - 1);
+            setIsLike(false);
+            unLikesByIDPostAPI(item?._id, item?.ownerId, bearerToken, (response) => {
+                if (response !== null) {
+                    if (response?.message) {
+                        Toast.show('Un Liked Successfully!');
+                    }
+                }
+            })
+        } else if (!isLike) {
+            setLikesCount(prev => prev + 1);
+            setIsLike(true);
+            addLikesByIDPostAPI(item?._id, item?.ownerId, bearerToken, (response) => {
+                if (response !== null) {
+                    if (response?.message === "Already Liked") {
+                        Toast.show(response?.message);
+                    } else if (response?.status.toString().toLowerCase() === "true") {
+                        Toast.show('Liked Successfully!');
+                    }
+                }
+            })
+        }
+    }
+
+    const handleShare = async () => {
+        try {
+            const result = await Share.share({
+                message:
+                    'React Native | A framework for building native apps using React',
+            });
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                } else {
+                    // shared
+                }
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+            }
+        } catch (error) {
+            alert(error.message);
+        }
+    }
 
     return (
         <View style={{ borderBottomColor: "#D8D8D8", borderBottomWidth: 1, backgroundColor: "#fff" }}>
@@ -70,11 +117,11 @@ const RenderSingleOffer = ({ item, bearerToken, navigation }) => {
 
                     <TouchableHighlight underlayColor="#f7f8f9" onPress={() => {
                         navigation.navigate("UserDetailsScreen", {
-                            userName: user?.name,
+                            userName: userName,
                             userImage: require("../../../assets/img/user_profile.png"),
                         })
                     }}>
-                        <Text style={{ ...commonStyles.fs16_700, marginLeft: 10 }}>{user?.name}</Text>
+                        <Text style={{ ...commonStyles.fs16_700, marginLeft: 10 }}>{userName}</Text>
                     </TouchableHighlight>
                 </View>
                 <Image
@@ -91,25 +138,25 @@ const RenderSingleOffer = ({ item, bearerToken, navigation }) => {
 
             <View style={{ ...commonStyles.rowBetween, padding: 20 }}>
                 <View style={{ ...commonStyles.rowStart }}>
-                    <View style={{ ...commonStyles.row }}>
-                        <TouchableHighlight onPress={() => { }} underlayColor="#fff">
+                    <TouchableHighlight onPress={handleLike} underlayColor="#eee" style={{ padding: 5 }}>
+                        <View style={{ ...commonStyles.row }}>
                             <Image
-                                source={require("../../../assets/img/heart.png")}
-                                style={{ width: 24, height: 24, tintColor: "#FF0000" }}
+                                source={isLike ? require("../../../assets/img/heart.png") : require("../../../assets/img/hearto.png")}
+                                style={{ width: 24, height: 24, tintColor: isLike ? "#FF0000" : "#000" }}
                             />
-                        </TouchableHighlight>
-                        <Text style={{ ...commonStyles.fs14_500, marginLeft: 9 }}>120 Likes</Text>
-                    </View>
+                            <Text style={{ ...commonStyles.fs14_500, marginLeft: 9 }}>{likesCount} Likes</Text>
+                        </View>
+                    </TouchableHighlight>
 
-                    <View style={{ ...commonStyles.row, marginLeft: 34 }}>
-                        <TouchableHighlight onPress={() => { }} underlayColor="#fff">
+                    <TouchableHighlight onPress={handleShare} underlayColor="#eee" style={{ padding: 5, marginLeft: 34 }}>
+                        <View style={{ ...commonStyles.row }}>
                             <Image
-                                source={require("../../../assets/img/send.png")}
-                                style={{ width: 20, height: 20, tintColor: "#000000" }}
+                                source={require("../../../assets/img/share.png")}
+                                style={{ width: 21, height: 21, tintColor: "#000000" }}
                             />
-                        </TouchableHighlight>
-                        <Text style={{ ...commonStyles.fs14_500, marginLeft: 9 }}>20 Shares</Text>
-                    </View>
+                            <Text style={{ ...commonStyles.fs14_500, marginLeft: 9 }}>Share</Text>
+                        </View>
+                    </TouchableHighlight>
                 </View>
                 <TouchableHighlight onPress={() => { }} underlayColor="#fff">
                     <Image

@@ -9,6 +9,7 @@ import LinearGradient from "react-native-linear-gradient";
 import WorksScreen from "../screens/works/WorksScreen";
 import JobsScreen from "../screens/jobs/JobsScreen";
 import GetMembershipScreen from "../screens/membership/GetMembershipScreen";
+import ProfileScreen from "../screens/profile/ProfileScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -79,15 +80,15 @@ const BottomTabs = () => {
                 }}
             />
             <Tab.Screen
-                name="MembershipScreen"
-                component={GetMembershipScreen}
+                name="ProfileScreen"
+                component={ProfileScreen}
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) => {
                         return (
                             <BuildTabComponent
                                 image={require("../assets/img/profile-tab.png")}
-                                text="Profile"
+                                text="All"
                                 focused={focused}
                             />
                         );

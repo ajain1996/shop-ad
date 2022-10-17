@@ -1,4 +1,4 @@
-import { View, Text, Image } from 'react-native'
+import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import { commonStyles } from '../../../utils/styles'
@@ -16,11 +16,13 @@ export default function UserdetailsHeader({ navigation, title }) {
                 </TouchableHighlight>
                 <Text style={{ ...commonStyles.fs22_600, marginLeft: 20 }}>{title}</Text>
             </View>
-            <Image
-                source={require("../../../assets/img/3dots.png")}
-                resizeMode="contain"
-                style={{ width: 24, height: 24, marginLeft: 8 }}
-            />
+            <TouchableOpacity onPress={() => { navigation.navigate("UpdateProfileScreen") }}>
+                <Image
+                    source={require("../../../assets/img/edit.png")}
+                    resizeMode="contain"
+                    style={{ width: 24, height: 24, marginLeft: 8 }}
+                />
+            </TouchableOpacity>
         </View>
     )
 }

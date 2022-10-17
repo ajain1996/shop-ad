@@ -12,6 +12,10 @@ import GetMembershipScreen from "../screens/membership/GetMembershipScreen";
 import AddWorksScreen from "../screens/works/AddWorksScreen";
 import UserDetailsScreen from "../screens/home/details/UserDetailsScreen";
 import UserPostScreen from "../screens/home/details/UserPostScreen";
+import CommentScreen from "../screens/home/comment/CommentScreen";
+import ProfileScreen from "../screens/profile/ProfileScreen";
+import UpdateProfileScreen from "../screens/profile/UpdateProfileScreen";
+import LocationScreen from "../screens/location/LocationScreen";
 
 export default function AppStack() {
     const Stack = createStackNavigator();
@@ -36,6 +40,10 @@ export default function AppStack() {
                 <Stack.Screen name="AddWorksScreen" component={AddWorksScreen} />
                 <Stack.Screen name="UserDetailsScreen" component={UserDetailsScreen} />
                 <Stack.Screen name="UserPostScreen" component={UserPostScreen} />
+                <Stack.Screen name="CommentScreen" component={CommentScreen} />
+                <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+                <Stack.Screen name="UpdateProfileScreen" component={UpdateProfileScreen} />
+                <Stack.Screen name="LocationScreen" component={LocationScreen} />
             </Stack.Navigator>
         </>
     );

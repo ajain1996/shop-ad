@@ -1,12 +1,15 @@
-import { View, Text, Image, ImageBackground, TouchableHighlight, StatusBar } from 'react-native'
+import { View, Text, Image, TouchableHighlight, StatusBar } from 'react-native'
 import React from 'react'
 import { SIZES } from '../utils/theme'
 import Auth_BG_Component from '../components/Auth_BG_Component'
 import { commonStyles } from '../utils/styles'
-import LinearGradient from 'react-native-linear-gradient'
 import Custom_Auth_Btn from '../components/Custom_Auth_Btn'
+import { useDispatch } from 'react-redux'
+import { setUserType } from '../redux/reducer/userType'
 
 export default function RegisterLoginScreen({ navigation }) {
+    const dispatch = useDispatch();
+
     return (
         <Auth_BG_Component>
             <StatusBar barStyle="light-content" backgroundColor="#1572B9" />
@@ -23,13 +26,13 @@ export default function RegisterLoginScreen({ navigation }) {
 
                 <Custom_Auth_Btn
                     btnText="Register as Shop Owner"
-                    onPress={() => { navigation.navigate("RegisterScreen") }}
+                    onPress={() => { navigation.navigate("RegisterScreen"); dispatch(setUserType("shop")); }}
                 />
                 <View style={{ height: 14 }} />
 
                 <Custom_Auth_Btn
                     btnText="Register as User"
-                    onPress={() => { navigation.navigate("RegisterScreen") }}
+                    onPress={() => { navigation.navigate("RegisterScreen"); dispatch(setUserType("user")); }}
                 />
 
                 <View style={{ ...commonStyles.row, marginTop: 33, zIndex: 1 }}>

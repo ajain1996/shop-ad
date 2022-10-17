@@ -5,16 +5,38 @@ import { SIZES } from '../../utils/theme'
 import HomeHeader from '../home/HomeHeader'
 import HomeSearch from '../home/HomeSearch'
 import { useEffect } from 'react'
-import { getAllJobsPostRequest, getUserByIDPostAPI } from '../../utils/API'
+import { addLikesByIDPostAPI, getAllJobsPostRequest, getCommentsCountByIDPostAPI, getJobsByLocationPostRequest, getLikesCountByIDPostAPI, getUserByIDPostAPI, unLikesByIDPostAPI } from '../../utils/API'
 import { useState } from 'react'
 import Auth from '../../services/Auth'
 import CustomLoader, { CustomPanel } from '../../components/CustomLoader'
+import PTRView from 'react-native-pull-to-refresh';
+import { useDispatch, useSelector } from 'react-redux'
+import { setJob } from '../../redux/reducer/jobs'
+import Toast from 'react-native-simple-toast'
+import HomeModal from '../home/HomeModal'
 
 export default function JobsScreen({ navigation }) {
+    const dispatch = useDispatch();
+    const { jobsData } = useSelector(state => state.Job);
 
-    const [allJobs, setAllJobs] = useState([]);
     const [bearerToken, setBearerToken] = useState("");
     const [loading, setLoading] = React.useState(false);
+
+    React.useEffect(() => {
+        (async () => {
+            const unsubscribe = navigation.addListener('focus', () => {
+                Auth.getLocalStorageData("bearer").then((token) => {
+                    setBearerToken(token);
+                    getAllJobsPostRequest(token, (response) => {
+                        if (response !== null) {
+                            dispatch(setJob(response?.data));
+                        }
+                    })
+                })
+            });
+            return unsubscribe;
+        })()
+    }, [navigation]);
 
     useEffect(() => {
         setLoading(true);
@@ -23,52 +45,129 @@ export default function JobsScreen({ navigation }) {
             setBearerToken(token);
             getAllJobsPostRequest(token, (response) => {
                 if (response !== null) {
-                    setAllJobs(response?.data)
+                    dispatch(setJob(response?.data));
                 }
             })
         })
     }, [])
 
-    // console.log("\n\n Res getAllJobsPostRequest allJobs: ", allJobs);
+    function _refresh() {
+        setLoading(true);
+        Auth.getLocalStorageData("bearer").then((token) => {
+            setLoading(false);
+            setBearerToken(token);
+            getAllJobsPostRequest(token, (response) => {
+                if (response !== null) {
+                    dispatch(setJob(response?.data));
+                }
+            })
+        })
+    }
 
     return (
         <>
-            <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-            <HomeHeader navigation={navigation} onPress={() => navigation.navigate("AddJobScreen")} />
+            <PTRView onRefresh={_refresh}>
+                <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+                <HomeHeader navigation={navigation} onPress={() => navigation.navigate("AddJobScreen")} />
 
-            <HomeSearch onChange={(val) => { }} />
+                <HomeSearch onChange={(val) => {
+                    setLoading(true);
+                    Auth.getLocalStorageData("bearer").then((token) => {
+                        setLoading(false);
+                        getJobsByLocationPostRequest(val, token, (response) => {
+                            if (response !== null) {
+                                dispatch(setJob(response?.data));
+                            }
+                        })
+                    })
+                }} />
 
-            <FlatList
-                data={allJobs}
-                renderItem={({ item }) => {
-                    return (
-                        <RenderSingleJob
-                            item={item}
-                            bearerToken={bearerToken}
-                        />
-                    );
-                }}
-            />
+                <FlatList
+                    data={jobsData}
+                    renderItem={({ item }) => {
+                        return (
+                            <RenderSingleJob
+                                item={item}
+                                bearerToken={bearerToken}
+                                navigation={navigation}
+                            />
+                        );
+                    }}
+                />
 
-            <View style={{ height: 64 }} />
+                <View style={{ height: 64 }} />
 
-            <CustomPanel loading={loading} />
-            <CustomLoader loading={loading} />
+                <CustomPanel loading={loading} />
+                <CustomLoader loading={loading} />
+            </PTRView>
         </>
     )
 }
 
-const RenderSingleJob = ({ item, bearerToken }) => {
+const RenderSingleJob = ({ item, bearerToken, navigation }) => {
     const [user, setUser] = useState([]);
+    const [likesCount, setLikesCount] = useState(0);
+    const [isLike, setIsLike] = useState(false);
+
+    const [commentsCount, setCommentsCount] = useState(0);
 
     useEffect(() => {
         getUserByIDPostAPI(item?.ownerId, bearerToken, (response) => {
-            console.log("\n\n getUserByIDPostAPI response: ", response?.data[0]);
             if (response !== null) {
                 setUser(response?.data[0])
             }
         })
+
+        getLikesCountByIDPostAPI(item?.ownerId, bearerToken, (response) => {
+            if (response !== null) {
+                setLikesCount(response?.count)
+            }
+        })
+
+        getCommentsCountByIDPostAPI(item?.ownerId, bearerToken, (response) => {
+            if (response !== null) {
+                setCommentsCount(response?.count)
+            }
+        })
     }, [])
+
+    const handleLike = () => {
+        if (isLike) {
+            setLikesCount(prev => prev - 1);
+            setIsLike(false);
+            unLikesByIDPostAPI(item?._id, item?.ownerId, bearerToken, (response) => {
+                if (response !== null) {
+                    if (response?.message) {
+                        Toast.show('Un Liked Successfully!');
+                    }
+                }
+            })
+        } else if (!isLike) {
+            setLikesCount(prev => prev + 1);
+            setIsLike(true);
+            addLikesByIDPostAPI(item?._id, item?.ownerId, bearerToken, (response) => {
+                if (response !== null) {
+                    if (response?.message === "Already Liked") {
+                        Toast.show(response?.message);
+                    } else if (response?.status.toString().toLowerCase() === "true") {
+                        Toast.show('Liked Successfully!');
+                    }
+                }
+            })
+        }
+    }
+
+    const handleComment = () => {
+        navigation.navigate("CommentScreen", {
+            userData: user,
+            bearerToken: bearerToken,
+            offerItem: item
+        })
+    }
+
+    var email = user?.email?.split("@")[0]
+
+    const [homeModalVisible, setHomeModalVisible] = useState(false);
 
     return (
         <View style={{ borderBottomColor: "#D8D8D8", borderBottomWidth: 1, backgroundColor: "#fff" }}>
@@ -80,15 +179,31 @@ const RenderSingleJob = ({ item, bearerToken }) => {
                         style={{ width: 40, height: 40, borderRadius: 100 }}
                     />
 
-                    <Text style={{ ...commonStyles.fs16_700, marginLeft: 10 }}>
-                        {user?.name !== undefined ? user?.name : "User Name"}
-                    </Text>
+                    <View>
+                        <TouchableHighlight underlayColor="#f7f8f9" onPress={() => {
+                            navigation.navigate("UserDetailsScreen", {
+                                userName: user?.name,
+                                userImage: require("../../assets/img/user_profile.png"),
+                            })
+                        }}>
+                            <Text style={{ ...commonStyles.fs16_700, marginLeft: 10 }}>{user?.name}</Text>
+                        </TouchableHighlight>
+                        <View style={{ ...commonStyles.rowStart, marginLeft: 8, alignItems: "center", marginTop: 3 }}>
+                            <Image
+                                source={require("../../assets/img/location.png")}
+                                style={{ width: 20, height: 18 }}
+                            />
+                            <Text style={{ ...commonStyles.fs13_400, marginLeft: 2 }}>{item?.location}</Text>
+                        </View>
+                    </View>
                 </View>
-                <Image
-                    source={require("../../assets/img/3dots.png")}
-                    resizeMode="contain"
-                    style={{ width: 24, height: 24, borderRadius: 100 }}
-                />
+                <TouchableHighlight onPress={() => setHomeModalVisible(true)} underlayColor="#f7f8f9">
+                    <Image
+                        source={require("../../assets/img/3dots.png")}
+                        resizeMode="contain"
+                        style={{ width: 24, height: 24, borderRadius: 100 }}
+                    />
+                </TouchableHighlight>
             </View>
 
             <Image
@@ -98,25 +213,25 @@ const RenderSingleJob = ({ item, bearerToken }) => {
 
             <View style={{ ...commonStyles.rowBetween, padding: 20 }}>
                 <View style={{ ...commonStyles.rowStart }}>
-                    <View style={{ ...commonStyles.row }}>
-                        <TouchableHighlight onPress={() => { }} underlayColor="#fff">
+                    <TouchableHighlight onPress={handleLike} underlayColor="#eee" style={{ padding: 5 }}>
+                        <View style={{ ...commonStyles.row }}>
                             <Image
-                                source={require("../../assets/img/heart.png")}
-                                style={{ width: 24, height: 24, tintColor: "#FF0000" }}
+                                source={isLike ? require("../../assets/img/heart.png") : require("../../assets/img/hearto.png")}
+                                style={{ width: 24, height: 24, tintColor: isLike ? "#FF0000" : "#000" }}
                             />
-                        </TouchableHighlight>
-                        <Text style={{ ...commonStyles.fs14_500, marginLeft: 9 }}>120 Likes</Text>
-                    </View>
+                            <Text style={{ ...commonStyles.fs14_500, marginLeft: 9 }}>{likesCount} Likes</Text>
+                        </View>
+                    </TouchableHighlight>
 
-                    <View style={{ ...commonStyles.row, marginLeft: 34 }}>
-                        <TouchableHighlight onPress={() => { }} underlayColor="#fff">
+                    <TouchableHighlight onPress={handleComment} underlayColor="#eee" style={{ padding: 5, marginLeft: 34 }}>
+                        <View style={{ ...commonStyles.row }}>
                             <Image
-                                source={require("../../assets/img/send.png")}
-                                style={{ width: 20, height: 20, tintColor: "#000000" }}
+                                source={require("../../assets/img/comment.png")}
+                                style={{ width: 26, height: 26, tintColor: "#000000" }}
                             />
-                        </TouchableHighlight>
-                        <Text style={{ ...commonStyles.fs14_500, marginLeft: 9 }}>20 Shares</Text>
-                    </View>
+                            <Text style={{ ...commonStyles.fs14_500, marginLeft: 9 }}>{commentsCount} Comments</Text>
+                        </View>
+                    </TouchableHighlight>
                 </View>
                 <TouchableHighlight onPress={() => { }} underlayColor="#fff">
                     <Image
@@ -125,6 +240,20 @@ const RenderSingleJob = ({ item, bearerToken }) => {
                     />
                 </TouchableHighlight>
             </View>
+
+            <View style={{ ...commonStyles.rowStart, marginLeft: 20, marginTop: -16 }}>
+                <Text style={{ ...commonStyles.fs15_600, marginBottom: 12 }}>@{email}</Text>
+                <Text style={{ ...commonStyles.fs14_400, marginLeft: 8, marginBottom: 12 }}>{item?.description}</Text>
+            </View>
+            <Text style={{ ...commonStyles.fs14_400, marginLeft: 8, marginBottom: 12 }}>{item?.date}</Text>
+
+            <HomeModal
+                modalVisible={homeModalVisible}
+                setModalVisible={setHomeModalVisible}
+                feedbackFor="job"
+                feedbackNumber={item?.ownerId}
+                callback={() => setHomeModalVisible(!homeModalVisible)}
+            />
         </View>
     );
 }

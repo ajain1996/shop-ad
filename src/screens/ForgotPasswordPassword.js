@@ -25,7 +25,6 @@ export default function ForgotPasswordPassword({ route }) {
         } else {
             updatePasswordPostRequest(email, "resetToken", password, async (response) => {
                 if (response !== null) {
-                    console.log("\n\n Response updatePasswordPostRequest: ", response.message);
                     if (response.message !== undefined) {
                         var userData = response.user[0];
                         dispatch(setUser(userData));

@@ -1,19 +1,14 @@
 import { View, Image, StatusBar } from 'react-native'
 import React from 'react'
 import { SIZES } from '../utils/theme';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { mobileLoginPostRequest } from '../utils/API';
 import Auth from '../services/Auth';
-import Toast from 'react-native-simple-toast'
-import { setUser } from '../redux/reducer/user';
 
 export default function SplashScreen({ navigation }) {
-    const dispatch = useDispatch();
-
-    const { userData, login } = useSelector(state => state.User);
-
-    console.log("\n\n userData: ", userData, login)
+    const { login } = useSelector(state => state.User);
+    const { userType } = useSelector(state => state.UserType);
 
     setTimeout(() => {
         if (login) {
@@ -23,25 +18,18 @@ export default function SplashScreen({ navigation }) {
         }
     }, 2000);
 
+
     useEffect(() => {
         Auth.getLocalStorageData("email_password").then((email_password) => {
-            console.log("\n\n email_password: ", email_password.split(",")[0])
-            mobileLoginPostRequest(email_password.split(",")[0], email_password.split(",")[1], "user", async (response) => {
-                if (response !== null) {
-                    console.log("\n\n Response mobileLoginPostRequest: ", response);
-                    if (response?.message !== undefined) {
-                        if (response?.message === "Mail exists") {
-                            Alert.alert("Alert", response?.message);
-                        } else {
-                            const userData = response?.user;
-                            dispatch(setUser(userData));
-                            await Auth.setAccount(userData);
-                            await Auth.setLocalStorageData("bearer", response.token.toString())
-                            Toast.show('Register Successfully!');
+            if (email_password !== null) {
+                mobileLoginPostRequest(email_password[0], email_password[1], userType, async (response) => {
+                    if (response !== null) {
+                        if (response?.message !== undefined) {
+                            await Auth.setLocalStorageData("bearer", response?.token)
                         }
                     }
-                }
-            })
+                })
+            }
         })
     }, [])
 
@@ -55,7 +43,6 @@ export default function SplashScreen({ navigation }) {
                 style={{ width: "100%", height: SIZES.height / 2 }}
             />
             <View style={{ alignItems: "center", position: "absolute", width: "100%", height: SIZES.height, justifyContent: "center" }}>
-                {/* <SvgUri source={SHOPADLogo} width="213" height="251" /> */}
                 <Image
                     source={require("../assets/img/shopad-logo.png")}
                     resizeMode="contain"

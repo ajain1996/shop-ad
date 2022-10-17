@@ -10,8 +10,15 @@ import Custom_Auth_Btn from '../../components/Custom_Auth_Btn'
 import { addNewOfferPostRequest } from '../../utils/API'
 import Auth from '../../services/Auth'
 import CustomLoader, { CustomPanel } from '../../components/CustomLoader'
+import PersonalLeaveDatePicker from '../../components/CustomDatePicker'
 
 export default function AddSaleOfferScreen({ navigation }) {
+
+    const [imageError, setImageError] = React.useState(false);
+    const [descriptionError, setDescriptionError] = React.useState(false);
+    const [locationError, setLocationError] = React.useState(false);
+    const [startDateError, setStartDateError] = React.useState(false);
+    const [endDateError, setEndDateError] = React.useState(false);
 
     const [image, setImage] = React.useState("");
     const [imageData, setImageData] = React.useState("");
@@ -41,43 +48,49 @@ export default function AddSaleOfferScreen({ navigation }) {
                 setImage(response?.assets[0].uri);
                 setImageData(response);
                 console.log("\n\n Image Picked: ", response)
-                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
             }
         });
     }
 
     const handleSubmit = () => {
         if (description.length === 0) {
-            Alert.alert("Alert", "Description is required");
+            setDescriptionError(true);
         } else if (location.length === 0) {
-            Alert.alert("Alert", "Location is required");
+            setLocationError(true)
         } else if (startDate.length === 0) {
-            Alert.alert("Alert", "Startdate is required");
+            setStartDateError(true);
         } else if (endDate.length === 0) {
-            Alert.alert("Alert", "Enddate is required");
+            setEndDateError(true)
+        } else if (image.length === 0) {
+            setImageError(true)
         } else {
             setLoading(true);
             Auth.getLocalStorageData("bearer").then((token) => {
                 Auth.getAccount().then((userData) => {
-                    console.log("\n\n Userdata userid: ", userData[0]);
                     addNewOfferPostRequest(
                         description,
                         location,
                         startDate,
                         endDate,
                         imageData,
-                        userData[0]._id,
+                        userData._id,
                         null,
                         token,
                         (response) => {
                             setLoading(false);
                             if (response !== null) {
+                                if (response?.message) {
+                                    Alert.alert("Alert", response.message, [{
+                                        text: 'OK',
+                                        onPress: async () => {
+                                            navigation.goBack();
+                                        },
+                                    }], { cancelable: false },)
+                                }
                                 if (response.errors) {
                                     Alert.alert("Alert", response.errors.offerImage.message)
                                 }
                             }
-                            // navigation.goBack();
-                            console.log("\n\n Response: ", response.errors.offerImage.message)
                         }
                     );
                 })
@@ -90,7 +103,7 @@ export default function AddSaleOfferScreen({ navigation }) {
             <CustomInputHeader navigation={navigation} title="Add Sale Offer" />
 
             <View style={{ paddingHorizontal: 16 }}>
-                <RenderUpload image={image} getImage={getImage} />
+                <RenderUpload image={image} getImage={getImage} imageError={imageError} setImageError={setImageError} />
 
                 <>
                     <Text style={{ ...commonStyles.fs16_500, marginTop: 10 }}>Description</Text>
@@ -101,9 +114,12 @@ export default function AddSaleOfferScreen({ navigation }) {
                         numberOfLines={4}
                         multiline={true}
                         textAlignVertical="top"
-                        onChangeText={(val) => { setDescription(val) }}
-                        style={[styles.descriptionInput]}
+                        onChangeText={(val) => { setDescription(val); setDescriptionError(false); }}
+                        style={[styles.descriptionInput, { borderColor: descriptionError ? "red" : "#BDBDBD" }]}
                     />
+                    {descriptionError
+                        ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Description is mandatory</Text>
+                        : <></>}
                 </>
 
                 <>
@@ -113,26 +129,56 @@ export default function AddSaleOfferScreen({ navigation }) {
                             placeholder='Location'
                             placeholderTextColor="#999"
                             value={location}
-                            onChangeText={(val) => { setLocation(val) }}
-                            style={[styles.locationInput]}
+                            onChangeText={(val) => { setLocation(val); setLocationError(false); }}
+                            style={[styles.locationInput, { borderColor: locationError ? "red" : "#BDBDBD" }]}
                         />
                         <Image
                             source={require("../../assets/img/location-track.png")}
                             style={{ width: 24, height: 24, position: "absolute", right: 16, top: 22 }}
                         />
                     </View>
+                    {locationError
+                        ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Location is mandatory</Text>
+                        : <></>}
                 </>
 
                 <View style={{ ...commonStyles.rowBetween, marginBottom: 20 }}>
-                    <RenderDatePicker
-                        title="Start Date"
-                        callback={(res) => { setStartDate(res); console.log("\n\n setStartDate: ", res) }}
-                    />
+                    <View>
+                        <PersonalLeaveDatePicker
+                            heading="Start Date"
+                            placeholderText="Start Date"
+                            minimumDate={''}
+                            maximumDate={endDate === '' ? '' : endDate}
+                            initialDate={startDate === '' ? endDate : startDate}
+                            isStart="yes"
+                            error={startDateError}
+                            onDateSelected={function (selectedStartDate) {
+                                setStartDate(moment(selectedStartDate).format('DD-MMM-YYYY'));
+                                setStartDateError(false);
+                            }}
+                        />
+                        {startDateError
+                            ? <Text style={{ ...commonStyles.fs12_400, color: "red", marginTop: -15 }}>Startdate is mandatory</Text>
+                            : <></>}
+                    </View>
 
-                    <RenderDatePicker
-                        title="End Date"
-                        callback={(res) => { setEndDate(res) }}
-                    />
+                    <View>
+                        <PersonalLeaveDatePicker
+                            heading="End Date"
+                            placeholderText="End Date"
+                            minimumDate={''}
+                            maximumDate=""
+                            error={endDateError}
+                            initialDate={endDate === '' ? startDate : endDate}
+                            onDateSelected={function (selectedStartDate) {
+                                setEndDate(moment(selectedStartDate).format('DD-MMM-YYYY'));
+                                setEndDateError(false);
+                            }}
+                        />
+                        {endDateError
+                            ? <Text style={{ ...commonStyles.fs12_400, color: "red", marginTop: -15 }}>Enddate is mandatory</Text>
+                            : <></>}
+                    </View>
                 </View>
 
                 <Custom_Auth_Btn
@@ -142,73 +188,39 @@ export default function AddSaleOfferScreen({ navigation }) {
             </View>
 
             <CustomPanel loading={loading} />
-
             <CustomLoader loading={loading} />
         </ScrollView>
     )
 }
 
-const RenderUpload = ({ image, getImage }) => {
-    return (
-        <TouchableHighlight onPress={getImage} style={{ paddingVertical: 16 }}>
-            {image.length === 0
-                ? <View style={{ alignItems: "center", justifyContent: "center" }}>
-                    <Image
-                        source={require("../../assets/img/work_img.png")}
-                        resizeMode="contain"
-                        style={{ width: "100%", height: SIZES.width / 1.36, opacity: 0.8 }}
-                    />
-                    <View style={[styles.upload]}>
-                        <Image
-                            source={require("../../assets/img/upload.png")}
-                            resizeMode="contain"
-                            style={{ width: 23, height: 23, tintColor: "#000" }}
-                        />
-                    </View>
-                </View>
-                : <Image
-                    source={{ uri: image }}
-                    resizeMode="contain"
-                    style={{ width: "100%", height: SIZES.width / 1.36 }}
-                />}
-        </TouchableHighlight>
-    );
-}
-
-const RenderDatePicker = ({ title, callback }) => {
-    const [date, setDate] = React.useState("")
-    const [open, setOpen] = React.useState(false)
-
+export const RenderUpload = ({ image, getImage, imageError, setImageError }) => {
     return (
         <View>
-            <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>{title}</Text>
-            <TouchableHighlight onPress={() => setOpen(true)} underlayColor="#f7f8f9">
-                <View style={[styles.datePicker]}>
-                    <Image
-                        source={require("../../assets/img/date.png")}
-                        style={{ width: 20, height: 20, marginRight: 14 }}
-                    />
-                    {date.length === 0
-                        ? <Text style={{ ...commonStyles.fs14_500 }}>{title}</Text>
-                        : <Text style={{ ...commonStyles.fs14_500 }}>{moment(date).format("DD-MM-YYYY").toString()}</Text>}
-                    {/* new Date() */}
-                </View>
+            <TouchableHighlight onPress={() => { getImage(); setImageError(false) }} style={{ paddingVertical: 16 }}>
+                {image.length === 0
+                    ? <View style={{ alignItems: "center", justifyContent: "center" }}>
+                        <Image
+                            source={require("../../assets/img/work_img.png")}
+                            resizeMode="contain"
+                            style={{ width: "100%", height: SIZES.width / 1.36, opacity: 0.8 }}
+                        />
+                        <View style={[styles.upload]}>
+                            <Image
+                                source={require("../../assets/img/upload.png")}
+                                resizeMode="contain"
+                                style={{ width: 23, height: 23, tintColor: "#000" }}
+                            />
+                        </View>
+                    </View>
+                    : <Image
+                        source={{ uri: image }}
+                        resizeMode="contain"
+                        style={{ width: "100%", height: SIZES.width / 1.36 }}
+                    />}
             </TouchableHighlight>
-            <DatePicker
-                modal
-                theme='dark'
-                open={open}
-                date={date.length === 0 ? new Date() : date}
-                onConfirm={(date) => {
-                    setOpen(false)
-                    setDate(date)
-                    console.log('\n\n date: ', moment(date).format("DD-MM-YYYY"))
-                    callback(moment(date).format("DD-MM-YYYY"))
-                }}
-                onCancel={() => {
-                    setOpen(false)
-                }}
-            />
+            {imageError
+                ? <Text style={{ ...commonStyles.fs12_400, color: "red", marginTop: -24 }}>Image is mandatory</Text>
+                : <></>}
         </View>
     );
 }
