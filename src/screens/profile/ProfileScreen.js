@@ -1,34 +1,49 @@
-import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native'
+import { View, Text, Image, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native'
 import React from 'react'
 import { useSelector } from 'react-redux';
 import UserdetailsHeader from '../home/details/UserdetailsHeader';
 import { commonStyles } from '../../utils/styles';
-import { followersAndFollowingCount } from '../../utils/API';
+import { followersAndCount, followingAndCount } from '../../utils/API';
 import Auth from '../../services/Auth';
 import { RenderSingleWork } from '../works/WorksScreen';
 import { SIZES } from '../../utils/theme';
+import CustomLoader, { CustomPanel } from '../../components/CustomLoader';
 
 export default function ProfileScreen({ navigation, route }) {
     const { offerData } = useSelector(state => state.Offer);
     const { jobsData } = useSelector(state => state.Job);
     const { workData } = useSelector(state => state.Work);
 
-    // const { userName, userImage } = route.params;
     const { userData } = useSelector(state => state.User);
     const [followerCount, setFollowerCount] = React.useState(0);
+    const [followingCount, setFollowingCount] = React.useState(0);
+
     var userName = "";
     if (userData[0] !== null && userData[0] !== undefined) {
         userName = userData[0].email?.split("@")[0];
     }
     const userImage = require("../../assets/img/auth-svg.png")
 
+    const [loading, setLoading] = React.useState(false);
+
     React.useEffect(() => {
+        setLoading(true);
         Auth.getLocalStorageData("bearer").then((token) => {
-            followersAndFollowingCount(userData[0]._id, token, (response) => {
+            followersAndCount(userData[0]?._id, token, (response) => {
+                setLoading(false);
                 if (response !== null) {
                     setFollowerCount(response?.count)
+                    console.log('\n\n followersAndCount: count', response?.count)
                 }
-            })
+            });
+
+            followingAndCount(userData[0]?._id, token, (response) => {
+                setLoading(false);
+                if (response !== null) {
+                    setFollowingCount(response?.count)
+                    console.log('\n\n followingAndCount: count', response?.count)
+                }
+            });
         })
     }, [])
 
@@ -40,7 +55,7 @@ export default function ProfileScreen({ navigation, route }) {
             />
 
             <View style={{ marginBottom: 20 }}>
-                <View style={{ paddingHorizontal: 24, paddingTop: 24, ...commonStyles.rowBetween, alignItems: 'flex-start' }}>
+                <View style={{ paddingHorizontal: 14, paddingTop: 24, ...commonStyles.rowBetween, alignItems: 'flex-start' }}>
                     <View style={{ width: 90, alignItems: 'center' }}>
                         <Image
                             source={userImage} resizeMode="contain"
@@ -50,23 +65,27 @@ export default function ProfileScreen({ navigation, route }) {
 
                     <View style={{ ...commonStyles.rowEvenly, width: SIZES.width - 120, marginTop: 20 }}>
                         <View style={{ alignItems: "center" }}>
-                            <Text style={{ ...commonStyles.fs24_700 }}>16</Text>
+                            <Text style={{ ...commonStyles.fs24_700 }}>{offerData?.length + jobsData?.length + workData?.length}</Text>
                             <Text style={{ ...commonStyles.fs14_500 }}>Post</Text>
                         </View>
 
                         <View style={{ alignItems: "center" }}>
-                            <Text style={{ ...commonStyles.fs24_700 }}>{followerCount}</Text>
+                            {loading
+                                ? <ActivityIndicator color="#000" size={34} />
+                                : <Text style={{ ...commonStyles.fs24_700 }}>{followerCount}</Text>}
                             <Text style={{ ...commonStyles.fs14_500 }}>Followers</Text>
                         </View>
 
                         <View style={{ alignItems: "center" }}>
-                            <Text style={{ ...commonStyles.fs24_700 }}>276</Text>
+                            {loading
+                                ? <ActivityIndicator color="#000" size={34} />
+                                : <Text style={{ ...commonStyles.fs24_700 }}>{followingCount}</Text>}
                             <Text style={{ ...commonStyles.fs14_500 }}>Followings</Text>
                         </View>
                     </View>
                 </View>
 
-                <View style={{ paddingHorizontal: 24, alignItems: "flex-start", marginTop: 5 }}>
+                <View style={{ paddingHorizontal: 14, alignItems: "flex-start", marginTop: 5 }}>
                     <Text style={{ ...commonStyles.fs16_700, textAlign: 'center' }}>{userName}</Text>
                     <View style={{ ...commonStyles.rowStart }}>
                         <Image
@@ -80,7 +99,7 @@ export default function ProfileScreen({ navigation, route }) {
             </View>
 
             <View style={{ padding: 9 }}>
-                <Text style={{ ...commonStyles.fs18_500 }}>All Offers</Text>
+                <Text style={{ ...commonStyles.fs18_500, marginBottom: 5 }}>All Offers</Text>
                 <ScrollView horizontal>
                     {
                         offerData.map((item, index) => {
@@ -93,9 +112,9 @@ export default function ProfileScreen({ navigation, route }) {
                                         })
                                     }}>
                                         <Image
-                                            source={{ uri: item?.offerImage }}
+                                            source={{ uri: item?.offerImage ? item?.offerImage : "https://plus.unsplash.com/premium_photo-1661679026942-db5aef08c093?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" }}
                                             resizeMode="cover"
-                                            style={{ width: SIZES.width / 1.2, height: SIZES.width / 1.2 }}
+                                            style={{ width: SIZES.width / 1.2, height: SIZES.width / 1.2, borderRadius: 12 }}
                                         />
                                     </TouchableOpacity>
                                 </View>
@@ -106,7 +125,7 @@ export default function ProfileScreen({ navigation, route }) {
             </View>
 
             <View style={{ padding: 9 }}>
-                <Text style={{ ...commonStyles.fs18_500 }}>All Jobs</Text>
+                <Text style={{ ...commonStyles.fs18_500, marginBottom: 5, marginTop: 8 }}>All Jobs</Text>
                 <ScrollView horizontal>
                     {
                         jobsData.map((item, index) => {
@@ -119,9 +138,9 @@ export default function ProfileScreen({ navigation, route }) {
                                         })
                                     }}>
                                         <Image
-                                            source={{ uri: item?.offerImage }}
+                                            source={{ uri: item?.offerImage ? item?.offerImage : "https://plus.unsplash.com/premium_photo-1661679026942-db5aef08c093?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" }}
                                             resizeMode="cover"
-                                            style={{ width: SIZES.width / 1.2, height: SIZES.width / 1.2 }}
+                                            style={{ width: SIZES.width / 1.2, height: SIZES.width / 1.2, borderRadius: 12 }}
                                         />
                                     </TouchableOpacity>
                                 </View>
@@ -131,13 +150,13 @@ export default function ProfileScreen({ navigation, route }) {
                 </ScrollView>
             </View>
 
-            <View style={{ padding: 9 }}>
-                <Text style={{ ...commonStyles.fs18_500 }}>All Works</Text>
+            <View style={{ paddingVertical: 9 }}>
+                <Text style={{ ...commonStyles.fs18_500, marginLeft: 9, marginTop: 2 }}>All Works</Text>
                 <ScrollView horizontal>
                     {
                         workData.map((item, index) => {
                             return (
-                                <View key={index}>
+                                <View key={index} style={{ marginTop: -4 }}>
                                     <RenderSingleWork
                                         item={item}
                                     />
@@ -151,6 +170,9 @@ export default function ProfileScreen({ navigation, route }) {
             <View>
                 <View style={{ height: 60 }} />
             </View>
+
+            <CustomPanel loading={loading} />
+            <CustomLoader loading={loading} />
 
         </ScrollView>
     )

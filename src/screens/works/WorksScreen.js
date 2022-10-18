@@ -104,7 +104,7 @@ export const RenderSingleWork = ({ item }) => {
     const [homeModalVisible, setHomeModalVisible] = useState(false);
 
     return (
-        <View style={{ margin: 15, padding: 9, backgroundColor: "#fff", borderWidth: 1, borderColor: "#D8D8D8", borderRadius: 4 }}>
+        <View style={{ margin: 10, padding: 9, backgroundColor: "#fff", borderWidth: 1, borderColor: "#D8D8D8", borderRadius: 4 }}>
             <View style={{ ...commonStyles.rowBetween, alignItems: "flex-start" }}>
                 <Image
                     source={require('../../assets/img/work_img.png')}

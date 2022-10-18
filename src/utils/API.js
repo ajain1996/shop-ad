@@ -31,10 +31,10 @@ export const mobileRegisterPostRequest = async (email, password, name, phone, us
             body: JSON.stringify(body),
         });
         let json = await response.json();
-        console.log('\n\n mobileRegisterPostRequest success: ', json);
+        console.log('\n\n mobileRegisterPostRequest success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n mobileRegisterPostRequest Failed : ');
+        console.log('\n\n mobileRegisterPostRequest Failed');
         console.error('error', error);
         successCallBack(null);
     }
@@ -59,10 +59,10 @@ export const mobileLoginPostRequest = async (email, password, userType, successC
             body: JSON.stringify(body),
         });
         let json = await response.json();
-        console.log('\n\n mobileLoginPostRequest success: ', json);
+        console.log('\n\n mobileLoginPostRequest success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n mobileLoginPostRequest Failed : ');
+        console.log('\n\n mobileLoginPostRequest Failed');
         console.error('error', error);
         successCallBack(null);
     }
@@ -87,10 +87,10 @@ export const updatePasswordPostRequest = async (email, resetToken, password, suc
             body: JSON.stringify(body),
         });
         let json = await response.json();
-        console.log('\n\n updatePasswordPostRequest success: ', json);
+        console.log('\n\n updatePasswordPostRequest success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n updatePasswordPostRequest Failed : ');
+        console.log('\n\n updatePasswordPostRequest Failed');
         console.error('error', error);
         successCallBack(null);
     }
@@ -129,10 +129,10 @@ export const addNewOfferPostRequest = async (desc, location, startDate, endDate,
             body: formData,
         });
         let json = await response.json();
-        console.log('\n\n addNewOfferPostRequest success: ', json);
+        console.log('\n\n addNewOfferPostRequest success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n addNewOfferPostRequest Failed : ');
+        console.log('\n\n addNewOfferPostRequest Failed');
         console.error('error', error);
         successCallBack(null);
     }
@@ -147,10 +147,10 @@ export const getAllOffersPostRequest = async (bearerToken, successCallBack) => {
             headers: { "Authorization": `Bearer ${bearerToken}` }
         });
         let json = await response.json();
-        console.log('\n\n getAllOffersPostRequest success: ', json);
+        console.log('\n\n getAllOffersPostRequest success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n getAllOffersPostRequest Failed : ');
+        console.log('\n\n getAllOffersPostRequest Failed');
         console.error('error', error);
         successCallBack(null);
     }
@@ -174,10 +174,10 @@ export const getOffersByLocationPostRequest = async (location, bearerToken, succ
             body: JSON.stringify(body),
         });
         let json = await response.json();
-        console.log('\n\n getOffersByLocationPostRequest success: ', json);
+        console.log('\n\n getOffersByLocationPostRequest success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n getOffersByLocationPostRequest Failed : ');
+        console.log('\n\n getOffersByLocationPostRequest Failed');
         console.error('error', error);
         successCallBack(null);
     }
@@ -211,10 +211,10 @@ export const addNewJobPostRequest = async (description, shopName, location, sala
             body: JSON.stringify(body),
         });
         let json = await response.json();
-        console.log('\n\n addNewJobPostRequest success: ', json);
+        console.log('\n\n addNewJobPostRequest success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n addNewJobPostRequest Failed : ');
+        console.log('\n\n addNewJobPostRequest Failed');
         console.error('error', error);
         successCallBack(null);
     }
@@ -229,10 +229,10 @@ export const getAllJobsPostRequest = async (bearerToken, successCallBack) => {
             headers: { "Authorization": `Bearer ${bearerToken}` }
         });
         let json = await response.json();
-        console.log('\n\n getAllJobsPostRequest success: ', json);
+        console.log('\n\n getAllJobsPostRequest success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n getAllJobsPostRequest Failed : ');
+        console.log('\n\n getAllJobsPostRequest Failed');
         console.error('error', error);
         successCallBack(null);
     }
@@ -256,10 +256,10 @@ export const getJobsByLocationPostRequest = async (location, bearerToken, succes
             body: JSON.stringify(body),
         });
         let json = await response.json();
-        console.log('\n\n getJobsByLocationPostRequest success: ', json);
+        console.log('\n\n getJobsByLocationPostRequest success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n getJobsByLocationPostRequest Failed : ');
+        console.log('\n\n getJobsByLocationPostRequest Failed');
         console.error('error', error);
         successCallBack(null);
     }
@@ -291,10 +291,10 @@ export const addNewWorkPostRequest = async (description, shopName, location, sal
             body: JSON.stringify(body),
         });
         let json = await response.json();
-        console.log('\n\n addNewWorkPostRequest success: ', json);
+        console.log('\n\n addNewWorkPostRequest success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n addNewWorkPostRequest Failed : ');
+        console.log('\n\n addNewWorkPostRequest Failed');
         console.error('error', error);
         successCallBack(null);
     }
@@ -310,10 +310,10 @@ export const getAllWorksPostRequest = async (bearerToken, successCallBack) => {
         });
 
         let json = await response.json();
-        console.log('\n\n getAllWorksPostRequest success: ', json);
+        console.log('\n\n getAllWorksPostRequest success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n getAllWorksPostRequest Failed : ');
+        console.log('\n\n getAllWorksPostRequest Failed');
         console.error('error', error);
         successCallBack(null);
     }
@@ -337,17 +337,17 @@ export const getWorksByLocationPostAPI = async (location, bearerToken, successCa
             body: JSON.stringify(body),
         });
         let json = await response.json();
-        console.log('\n\n getWorksByLocationPostAPI success: ', json);
+        console.log('\n\n getWorksByLocationPostAPI success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n getWorksByLocationPostAPI Failed : ');
+        console.log('\n\n getWorksByLocationPostAPI Failed');
         console.error('error', error);
         successCallBack(null);
     }
 };
 
 export const getUserByIDPostAPI = async (id, bearerToken, successCallBack) => {
-    console.log('\n\n getUserByIDPostAPI Called : ', id);
+    // console.log('\n\n getUserByIDPostAPI Called: ', id, bearerToken);
 
     var body = {
         "id": id,
@@ -364,20 +364,20 @@ export const getUserByIDPostAPI = async (id, bearerToken, successCallBack) => {
             body: JSON.stringify(body),
         });
         let json = await response.json();
-        console.log('\n\n getUserByIDPostAPI success: ', json);
+        console.log('\n\n getUserByIDPostAPI success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n getUserByIDPostAPI Failed : ');
+        console.log('\n\n getUserByIDPostAPI Failed');
         console.error('error', error);
         successCallBack(null);
     }
 };
 
-export const getLikesCountByIDPostAPI = async (id, bearerToken, successCallBack) => {
-    console.log('\n\n getLikesCountByIDPostAPI Called : ', id);
+export const getLikesCountByIDPostAPI = async (itemId, bearerToken, successCallBack) => {
+    console.log('\n\n getLikesCountByIDPostAPI Called : ', itemId);
 
     var body = {
-        "itemId": id,
+        "itemId": itemId,
     }
 
     try {
@@ -391,10 +391,10 @@ export const getLikesCountByIDPostAPI = async (id, bearerToken, successCallBack)
             body: JSON.stringify(body),
         });
         let json = await response.json();
-        console.log('\n\n getLikesCountByIDPostAPI success: ', json);
+        console.log('\n\n getLikesCountByIDPostAPI success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n getLikesCountByIDPostAPI Failed : ');
+        console.log('\n\n getLikesCountByIDPostAPI Failed');
         console.error('error', error);
         successCallBack(null);
     }
@@ -419,10 +419,10 @@ export const addLikesByIDPostAPI = async (itemId, ownerId, bearerToken, successC
             body: JSON.stringify(body),
         });
         let json = await response.json();
-        console.log('\n\n addLikesByIDPostAPI success: ', json);
+        console.log('\n\n addLikesByIDPostAPI success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n addLikesByIDPostAPI Failed : ');
+        console.log('\n\n addLikesByIDPostAPI Failed');
         console.error('error', error);
         successCallBack(null);
     }
@@ -437,7 +437,7 @@ export const unLikesByIDPostAPI = async (itemId, ownerId, bearerToken, successCa
     }
 
     try {
-        let response = await fetch(BASE_URL2 + 'like/addlike', {
+        let response = await fetch(BASE_URL2 + 'like/unlike', {
             method: 'POST',
             headers: {
                 "Accept": 'application/json',
@@ -447,20 +447,20 @@ export const unLikesByIDPostAPI = async (itemId, ownerId, bearerToken, successCa
             body: JSON.stringify(body),
         });
         let json = await response.json();
-        console.log('\n\n unLikesByIDPostAPI success: ', json);
+        console.log('\n\n unLikesByIDPostAPI success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n unLikesByIDPostAPI Failed : ');
+        console.log('\n\n unLikesByIDPostAPI Failed');
         console.error('error', error);
         successCallBack(null);
     }
 };
 
-export const getCommentsCountByIDPostAPI = async (id, bearerToken, successCallBack) => {
-    console.log('\n\n getCommentsCountByIDPostAPI Called : ', id);
+export const getCommentsCountByIDPostAPI = async (itemId, bearerToken, successCallBack) => {
+    console.log('\n\n getCommentsCountByIDPostAPI Called : ', itemId);
 
     var body = {
-        "itemId": id,
+        "itemId": itemId,
     }
 
     try {
@@ -474,20 +474,20 @@ export const getCommentsCountByIDPostAPI = async (id, bearerToken, successCallBa
             body: JSON.stringify(body),
         });
         let json = await response.json();
-        console.log('\n\n getCommentsCountByIDPostAPI success: ', json);
+        console.log('\n\n getCommentsCountByIDPostAPI success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n getCommentsCountByIDPostAPI Failed : ');
+        console.log('\n\n getCommentsCountByIDPostAPI Failed');
         console.error('error', error);
         successCallBack(null);
     }
 };
 
-export const addCommentPostAPI = async (id, ownerId, commentBody, bearerToken, successCallBack) => {
-    console.log('\n\n addCommentPostAPI Called : ', id);
+export const addCommentPostAPI = async (itemId, ownerId, commentBody, bearerToken, successCallBack) => {
+    console.log('\n\n addCommentPostAPI Called : ', itemId, ownerId, bearerToken);
 
     var body = {
-        "itemId": id,
+        "itemId": itemId,
         "commentBy": ownerId,
         "comment": commentBody
     }
@@ -503,17 +503,17 @@ export const addCommentPostAPI = async (id, ownerId, commentBody, bearerToken, s
             body: JSON.stringify(body),
         });
         let json = await response.json();
-        console.log('\n\n addCommentPostAPI success: ', json);
+        console.log('\n\n addCommentPostAPI success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n addCommentPostAPI Failed : ');
+        console.log('\n\n addCommentPostAPI Failed');
         console.error('error', error);
         successCallBack(null);
     }
 };
 
-export const followersAndFollowingCount = async (userId, bearerToken, successCallBack) => {
-    console.log('\n\n followersAndFollowingCount Called : ', userId);
+export const followersAndCount = async (userId, bearerToken, successCallBack) => {
+    console.log('\n\n followersAndCount Called : ', userId);
 
     var body = {
         "userId": userId,
@@ -530,10 +530,37 @@ export const followersAndFollowingCount = async (userId, bearerToken, successCal
             body: JSON.stringify(body),
         });
         let json = await response.json();
-        console.log('\n\n followersAndFollowingCount success: ', json);
+        console.log('\n\n followersAndCount success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n followersAndFollowingCount Failed : ');
+        console.log('\n\n followersAndCount Failed');
+        console.error('error', error);
+        successCallBack(null);
+    }
+};
+
+export const followingAndCount = async (userId, bearerToken, successCallBack) => {
+    console.log('\n\n followingAndCount Called : ', userId);
+
+    var body = {
+        "userId": userId,
+    }
+
+    try {
+        let response = await fetch(BASE_URL + 'followingcountbyid', {
+            method: 'POST',
+            headers: {
+                "Accept": 'application/json',
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${bearerToken}`
+            },
+            body: JSON.stringify(body),
+        });
+        let json = await response.json();
+        console.log('\n\n followingAndCount success');
+        successCallBack(json);
+    } catch (error) {
+        console.log('\n\n followingAndCount Failed');
         console.error('error', error);
         successCallBack(null);
     }
@@ -561,17 +588,17 @@ export const updateUserPostRequest = async (uid, email, name, mobile, userType, 
         let response = await fetch(BASE_URL + 'update', {
             method: "POST",
             headers: {
-                // "Accept": 'application/json',
-                // "Content-Type": "application/json",
+                "Accept": 'application/json',
+                "Content-Type": "application/json",
                 "Authorization": `Bearer ${bearerToken}`
             },
             body: formData,
         });
         let json = await response.json();
-        console.log('\n\n updateUserPostRequest success: ', json);
+        console.log('\n\n updateUserPostRequest success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n updateUserPostRequest Failed : ');
+        console.log('\n\n updateUserPostRequest Failed');
         console.error('error', error);
         successCallBack(null);
     }
@@ -600,10 +627,10 @@ export const addNewFeedbackPostAPI = async (customerName, customerNumber, custom
             body: JSON.stringify(body),
         });
         let json = await response.json();
-        console.log('\n\n addNewFeedbackPostAPI success: ', json);
+        console.log('\n\n addNewFeedbackPostAPI success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n addNewFeedbackPostAPI Failed : ');
+        console.log('\n\n addNewFeedbackPostAPI Failed');
         console.error('error', error);
         successCallBack(null);
     }
@@ -628,10 +655,53 @@ export const followUserPostAPI = async (userId, follwedId, bearerToken, successC
             body: JSON.stringify(body),
         });
         let json = await response.json();
-        console.log('\n\n followUserPostAPI success: ', json);
+        console.log('\n\n followUserPostAPI success');
         successCallBack(json);
     } catch (error) {
-        console.log('\n\n followUserPostAPI Failed : ');
+        console.log('\n\n followUserPostAPI Failed');
+        console.error('error', error);
+        successCallBack(null);
+    }
+};
+
+export const applyJobPostAPI = async (
+    jobId, applicantId, applicantEmail, applicantName, applicantContact, resumeLink, policeLink, experienceLink, certificateLink, bearerToken, successCallBack
+) => {
+    console.log(
+        '\n\n applyJobPostAPI Called: ', jobId, applicantId, applicantEmail, applicantName, applicantContact, bearerToken,
+        '\n resumeLink: ', resumeLink,
+        '\n policeLink: ', policeLink,
+        '\n experienceLink: ', experienceLink,
+        '\n certificateLink: ', certificateLink,
+    );
+
+    let formData = new FormData();
+
+    formData.append('jobId', jobId);
+    formData.append('applicantId', applicantId);
+    formData.append('applicantEmail', applicantEmail);
+    formData.append('applicantName', applicantName);
+    formData.append('applicantContact', applicantContact);
+    formData.append('resumeLink', resumeLink);
+    formData.append('policeLink', policeLink);
+    formData.append("experienceLink", experienceLink);
+    formData.append('certificateLink', certificateLink);
+
+    try {
+        let response = await fetch(BASE_URL2 + 'jobapply', {
+            method: "POST",
+            headers: {
+                // "Accept": 'application/json',
+                // "Content-Type": "application/json",
+                "Authorization": `Bearer ${bearerToken}`
+            },
+            body: formData,
+        });
+        let json = await response.json();
+        console.log('\n\n applyJobPostAPI success');
+        successCallBack(json);
+    } catch (error) {
+        console.log('\n\n applyJobPostAPI Failed');
         console.error('error', error);
         successCallBack(null);
     }

@@ -122,37 +122,85 @@ export default function HomeScreen({ navigation }) {
 }
 
 const RenderSingleOffer = ({ item, bearerToken, navigation }) => {
+    const { userData } = useSelector(state => state.User);
+
     const [user, setUser] = useState([]);
     const [likesCount, setLikesCount] = useState(0);
     const [isLike, setIsLike] = useState(false);
-
     const [commentsCount, setCommentsCount] = useState(0);
 
     React.useEffect(() => {
-        getUserByIDPostAPI(item?.ownerId, bearerToken, (response) => {
-            if (response !== null) {
-                setUser(response?.data[0])
-            }
-        })
+        (async () => {
+            const unsubscribe = navigation.addListener('focus', () => {
+                getUserByIDPostAPI(item?.ownerId, bearerToken, (response) => {
+                    if (response !== null) {
+                        setUser(response?.data[0])
+                    }
+                })
 
-        getLikesCountByIDPostAPI(item?.ownerId, bearerToken, (response) => {
-            if (response !== null) {
-                setLikesCount(response?.count)
-            }
-        })
+                getLikesCountByIDPostAPI(item?._id, bearerToken, (response) => {
+                    if (response !== null) {
+                        if (response.data) {
+                            setLikesCount(response?.count)
+                            const data = response?.data;
+                            for (let i = 0; i < data.length; i++) {
+                                if (data[i].likedBy === userData[0]?._id) {
+                                    setIsLike(true);
+                                }
+                            }
+                        }
+                    }
+                })
 
-        getCommentsCountByIDPostAPI(item?.ownerId, bearerToken, (response) => {
-            if (response !== null) {
-                setCommentsCount(response?.count)
-            }
-        })
-    }, [])
+                getCommentsCountByIDPostAPI(item?._id, bearerToken, (response) => {
+                    if (response !== null) {
+                        if (response.data) {
+                            setCommentsCount(response?.count)
+                        }
+                    }
+                })
+            });
+            return unsubscribe;
+        })()
+    }, [navigation, user, item]);
+
+    React.useEffect(() => {
+        (async () => {
+            getUserByIDPostAPI(item?.ownerId, bearerToken, (response) => {
+                if (response !== null) {
+                    setUser(response?.data[0])
+                }
+            })
+
+            getLikesCountByIDPostAPI(item?._id, bearerToken, (response) => {
+                if (response !== null) {
+                    if (response.data) {
+                        setLikesCount(response?.count)
+                        const data = response?.data;
+                        for (let i = 0; i < data.length; i++) {
+                            if (data[i]?.likedBy === userData[0]?._id) {
+                                setIsLike(true);
+                            }
+                        }
+                    }
+                }
+            })
+
+            getCommentsCountByIDPostAPI(item?._id, bearerToken, (response) => {
+                if (response !== null) {
+                    if (response?.data) {
+                        setCommentsCount(response?.count)
+                    }
+                }
+            })
+        })()
+    }, [user, item])
 
     const handleLike = () => {
         if (isLike) {
             setLikesCount(prev => prev - 1);
             setIsLike(false);
-            unLikesByIDPostAPI(item?._id, item?.ownerId, bearerToken, (response) => {
+            unLikesByIDPostAPI(item?._id, userData[0]?._id, bearerToken, (response) => {
                 if (response !== null) {
                     if (response?.message) {
                         Toast.show('Un Liked Successfully!');
@@ -162,7 +210,7 @@ const RenderSingleOffer = ({ item, bearerToken, navigation }) => {
         } else if (!isLike) {
             setLikesCount(prev => prev + 1);
             setIsLike(true);
-            addLikesByIDPostAPI(item?._id, item?.ownerId, bearerToken, (response) => {
+            addLikesByIDPostAPI(item?._id, userData[0]?._id, bearerToken, (response) => {
                 if (response !== null) {
                     if (response?.message === "Already Liked") {
                         Toast.show(response?.message);

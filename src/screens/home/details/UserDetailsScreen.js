@@ -1,10 +1,10 @@
-import { View, Text, Image, TouchableOpacity, ScrollView, TouchableHighlight } from 'react-native'
+import { View, Text, Image, TouchableOpacity, ScrollView, TouchableHighlight, ActivityIndicator } from 'react-native'
 import React from 'react'
 import UserdetailsHeader from './UserdetailsHeader'
 import { commonStyles } from '../../../utils/styles';
 import { SIZES } from '../../../utils/theme';
 import { useSelector } from 'react-redux';
-import { followersAndFollowingCount, followUserPostAPI } from '../../../utils/API';
+import { followersAndCount, followingAndCount, followUserPostAPI } from '../../../utils/API';
 import Auth from '../../../services/Auth';
 import { RenderSingleWork } from '../../works/WorksScreen';
 import Toast from 'react-native-simple-toast'
@@ -17,16 +17,33 @@ export default function UserDetailsScreen({ navigation, route }) {
     const { userName, userImage } = route.params;
     const { userData } = useSelector(state => state.User);
     const [followerCount, setFollowerCount] = React.useState(0);
+    const [followingCount, setFollowingCount] = React.useState(0);
+    const [isFollowed, setIsFollowed] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
 
     React.useEffect(() => {
+        setLoading(true);
         Auth.getLocalStorageData("bearer").then((token) => {
-            followersAndFollowingCount(userData?._id, token, (response) => {
+            followersAndCount(userData[0]?._id, token, (response) => {
+                setLoading(false);
                 if (response !== null) {
                     setFollowerCount(response?.count)
+                    const data = response?.data;
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i]?.follwedId === userData[0]?._id) {
+                            setIsFollowed(true);
+                        }
+                    }
                 }
-            })
+            });
+
+            followingAndCount(userData[0]?._id, token, (response) => {
+                if (response !== null) {
+                    setFollowingCount(response?.count)
+                }
+            });
         })
-    }, [])
+    }, [followerCount, followingCount])
 
     const handleFollow = () => {
         setIsFollowed(true);
@@ -42,8 +59,6 @@ export default function UserDetailsScreen({ navigation, route }) {
             })
         })
     }
-
-    const [isFollowed, setIsFollowed] = React.useState(false);
 
     return (
         <ScrollView style={{ width: "100%", height: "100%" }}>
@@ -63,17 +78,21 @@ export default function UserDetailsScreen({ navigation, route }) {
 
                     <View style={{ ...commonStyles.rowEvenly, width: SIZES.width - 120, marginTop: 20 }}>
                         <View style={{ alignItems: "center" }}>
-                            <Text style={{ ...commonStyles.fs24_700 }}>16</Text>
+                            <Text style={{ ...commonStyles.fs24_700 }}>{offerData?.length + jobsData?.length + workData?.length}</Text>
                             <Text style={{ ...commonStyles.fs14_500 }}>Post</Text>
                         </View>
 
                         <View style={{ alignItems: "center" }}>
-                            <Text style={{ ...commonStyles.fs24_700 }}>{followerCount}</Text>
+                            {loading
+                                ? <ActivityIndicator color="#000" size={34} />
+                                : <Text style={{ ...commonStyles.fs24_700 }}>{followerCount}</Text>}
                             <Text style={{ ...commonStyles.fs14_500 }}>Followers</Text>
                         </View>
 
                         <View style={{ alignItems: "center" }}>
-                            <Text style={{ ...commonStyles.fs24_700 }}>276</Text>
+                            {loading
+                                ? <ActivityIndicator color="#000" size={34} />
+                                : <Text style={{ ...commonStyles.fs24_700 }}>{followingCount}</Text>}
                             <Text style={{ ...commonStyles.fs14_500 }}>Followings</Text>
                         </View>
                     </View>
@@ -97,7 +116,7 @@ export default function UserDetailsScreen({ navigation, route }) {
             </View>
 
             <View style={{ padding: 9 }}>
-                <Text style={{ ...commonStyles.fs18_500 }}>All Offers</Text>
+                <Text style={{ ...commonStyles.fs18_500, marginBottom: 5 }}>All Offers</Text>
                 <ScrollView horizontal>
                     {
                         offerData.map((item, index) => {
@@ -110,9 +129,9 @@ export default function UserDetailsScreen({ navigation, route }) {
                                         })
                                     }}>
                                         <Image
-                                            source={{ uri: item?.offerImage }}
+                                            source={{ uri: item?.offerImage ? item?.offerImage : "https://plus.unsplash.com/premium_photo-1661679026942-db5aef08c093?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" }}
                                             resizeMode="cover"
-                                            style={{ width: SIZES.width / 1.2, height: SIZES.width / 1.2 }}
+                                            style={{ width: SIZES.width / 1.2, height: SIZES.width / 1.2, borderRadius: 12 }}
                                         />
                                     </TouchableOpacity>
                                 </View>
@@ -123,12 +142,12 @@ export default function UserDetailsScreen({ navigation, route }) {
             </View>
 
             <View style={{ padding: 9 }}>
-                <Text style={{ ...commonStyles.fs18_500 }}>All Jobs</Text>
+                <Text style={{ ...commonStyles.fs18_500, marginBottom: 5, marginTop: 8 }}>All Jobs</Text>
                 <ScrollView horizontal>
                     {
                         jobsData.map((item, index) => {
                             return (
-                                item?.offerImage ? <View key={index} style={{ marginRight: 20 }}>
+                                <View key={index} style={{ marginRight: 20 }}>
                                     <TouchableOpacity activeOpacity={0.5} onPress={() => {
                                         navigation.navigate("UserPostScreen", {
                                             item: item,
@@ -136,25 +155,25 @@ export default function UserDetailsScreen({ navigation, route }) {
                                         })
                                     }}>
                                         <Image
-                                            source={{ uri: item?.offerImage }}
+                                            source={{ uri: item?.offerImage ? item?.offerImage : "https://plus.unsplash.com/premium_photo-1661679026942-db5aef08c093?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" }}
                                             resizeMode="cover"
-                                            style={{ width: SIZES.width / 1.2, height: SIZES.width / 1.2 }}
+                                            style={{ width: SIZES.width / 1.2, height: SIZES.width / 1.2, borderRadius: 12 }}
                                         />
                                     </TouchableOpacity>
-                                </View> : <></>
+                                </View>
                             );
                         })
                     }
                 </ScrollView>
             </View>
 
-            <View style={{ padding: 9 }}>
-                <Text style={{ ...commonStyles.fs18_500 }}>All Works</Text>
+            <View style={{ paddingVertical: 9 }}>
+                <Text style={{ ...commonStyles.fs18_500, marginLeft: 10 }}>All Works</Text>
                 <ScrollView horizontal>
                     {
                         workData.map((item, index) => {
                             return (
-                                <View key={index}>
+                                <View key={index} style={{ marginTop: -4 }}>
                                     <RenderSingleWork
                                         item={item}
                                     />
@@ -168,6 +187,9 @@ export default function UserDetailsScreen({ navigation, route }) {
             <View>
                 <View style={{ height: 4 }} />
             </View>
+
+            {/* <CustomPanel loading={loading} />
+            <CustomLoader loading={loading} /> */}
 
         </ScrollView>
     )

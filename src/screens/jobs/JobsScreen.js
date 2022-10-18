@@ -105,37 +105,86 @@ export default function JobsScreen({ navigation }) {
 }
 
 const RenderSingleJob = ({ item, bearerToken, navigation }) => {
+    const { userType } = useSelector(state => state.UserType);
+    const { userData } = useSelector(state => state.User);
+
     const [user, setUser] = useState([]);
     const [likesCount, setLikesCount] = useState(0);
     const [isLike, setIsLike] = useState(false);
-
     const [commentsCount, setCommentsCount] = useState(0);
 
+    React.useEffect(() => {
+        (async () => {
+            const unsubscribe = navigation.addListener('focus', () => {
+                getUserByIDPostAPI(item?.ownerId, bearerToken, (response) => {
+                    if (response !== null) {
+                        setUser(response?.data[0])
+                    }
+                })
+
+                getLikesCountByIDPostAPI(item?._id, bearerToken, (response) => {
+                    if (response !== null) {
+                        if (response.data) {
+                            setLikesCount(response?.count)
+                            const data = response?.data;
+                            for (let i = 0; i < data.length; i++) {
+                                if (data[i].likedBy === userData[0]?._id) {
+                                    setIsLike(true);
+                                }
+                            }
+                        }
+                    }
+                })
+
+                getCommentsCountByIDPostAPI(item?._id, bearerToken, (response) => {
+                    if (response !== null) {
+                        if (response.data) {
+                            setCommentsCount(response?.count)
+                        }
+                    }
+                })
+            });
+            return unsubscribe;
+        })()
+    }, [navigation, user]);
+
     useEffect(() => {
-        getUserByIDPostAPI(item?.ownerId, bearerToken, (response) => {
-            if (response !== null) {
-                setUser(response?.data[0])
-            }
-        })
+        (async () => {
+            getUserByIDPostAPI(item?.ownerId, bearerToken, (response) => {
+                if (response !== null) {
+                    setUser(response?.data[0])
+                }
+            })
 
-        getLikesCountByIDPostAPI(item?.ownerId, bearerToken, (response) => {
-            if (response !== null) {
-                setLikesCount(response?.count)
-            }
-        })
+            getLikesCountByIDPostAPI(item?._id, bearerToken, (response) => {
+                if (response !== null) {
+                    if (response.data) {
+                        setLikesCount(response?.count)
+                        const data = response?.data;
+                        for (let i = 0; i < data.length; i++) {
+                            if (data[i].likedBy === userData[0]?._id) {
+                                setIsLike(true);
+                            }
+                        }
+                    }
+                }
+            })
 
-        getCommentsCountByIDPostAPI(item?.ownerId, bearerToken, (response) => {
-            if (response !== null) {
-                setCommentsCount(response?.count)
-            }
-        })
-    }, [])
+            getCommentsCountByIDPostAPI(item?._id, bearerToken, (response) => {
+                if (response !== null) {
+                    if (response.data) {
+                        setCommentsCount(response?.count)
+                    }
+                }
+            })
+        })()
+    }, [user])
 
     const handleLike = () => {
         if (isLike) {
             setLikesCount(prev => prev - 1);
             setIsLike(false);
-            unLikesByIDPostAPI(item?._id, item?.ownerId, bearerToken, (response) => {
+            unLikesByIDPostAPI(item?._id, userData[0]?._id, bearerToken, (response) => {
                 if (response !== null) {
                     if (response?.message) {
                         Toast.show('Un Liked Successfully!');
@@ -145,7 +194,7 @@ const RenderSingleJob = ({ item, bearerToken, navigation }) => {
         } else if (!isLike) {
             setLikesCount(prev => prev + 1);
             setIsLike(true);
-            addLikesByIDPostAPI(item?._id, item?.ownerId, bearerToken, (response) => {
+            addLikesByIDPostAPI(item?._id, userData[0]?._id, bearerToken, (response) => {
                 if (response !== null) {
                     if (response?.message === "Already Liked") {
                         Toast.show(response?.message);
@@ -169,15 +218,23 @@ const RenderSingleJob = ({ item, bearerToken, navigation }) => {
 
     const [homeModalVisible, setHomeModalVisible] = useState(false);
 
+    const handleApplyJob = () => {
+        navigation.navigate("ApplyJobScreen", {
+            jobId: item?._id,
+        });
+    }
+
     return (
         <View style={{ borderBottomColor: "#D8D8D8", borderBottomWidth: 1, backgroundColor: "#fff" }}>
             <View style={{ ...commonStyles.rowBetween, height: 62, width: "100%", padding: 20 }}>
                 <View style={{ ...commonStyles.rowStart, alignItems: "center" }}>
-                    <Image
-                        source={require("../../assets/img/user_profile.png")}
-                        resizeMode="contain"
-                        style={{ width: 40, height: 40, borderRadius: 100 }}
-                    />
+                    <View>
+                        <Image
+                            source={require("../../assets/img/user_profile.png")}
+                            resizeMode="contain"
+                            style={{ width: 40, height: 40, borderRadius: 100 }}
+                        />
+                    </View>
 
                     <View>
                         <TouchableHighlight underlayColor="#f7f8f9" onPress={() => {
@@ -206,10 +263,19 @@ const RenderSingleJob = ({ item, bearerToken, navigation }) => {
                 </TouchableHighlight>
             </View>
 
-            <Image
-                source={{ uri: item?.offerImage }}
-                style={{ width: SIZES.width, height: 311 }}
-            />
+            <View>
+                <Image
+                    source={{ uri: item?.offerImage ? item?.offerImage : "https://plus.unsplash.com/premium_photo-1661679026942-db5aef08c093?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" }}
+                    style={{ width: SIZES.width, height: 311 }}
+                />
+                {userType === "user" ? <TouchableHighlight
+                    style={{ width: "100%", height: 52, backgroundColor: "rgba(0,0,0,0.3)", position: "absolute", bottom: 0, ...commonStyles.centerStyles }}
+                    onPress={handleApplyJob}
+                    underlayColor="rgba(0,0,0,0.4)"
+                >
+                    <Text>Apply Job</Text>
+                </TouchableHighlight> : <></>}
+            </View>
 
             <View style={{ ...commonStyles.rowBetween, padding: 20 }}>
                 <View style={{ ...commonStyles.rowStart }}>

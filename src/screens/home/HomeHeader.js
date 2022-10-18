@@ -4,8 +4,10 @@ import { commonStyles } from '../../utils/styles'
 import ModalMenu from './ModalMenu'
 import HomeModal from './HomeModal'
 import { useState } from 'react';
+import { useSelector } from 'react-redux'
 
 export default function HomeHeader({ navigation, onPress }) {
+    const { userType } = useSelector(state => state.UserType);
     const [modalVisible, setModalVisible] = useState(false);
 
     return (
@@ -25,7 +27,7 @@ export default function HomeHeader({ navigation, onPress }) {
                     style={{ width: 111, height: 48 }}
                 />
 
-                <TouchableHighlight onPress={() => {
+                {userType === "shop" ? <TouchableHighlight onPress={() => {
                     if (onPress) {
                         onPress()
                     }
@@ -35,7 +37,7 @@ export default function HomeHeader({ navigation, onPress }) {
                         resizeMode="contain"
                         style={{ width: 28, height: 28 }}
                     />
-                </TouchableHighlight>
+                </TouchableHighlight> : <View style={{ width: 28, height: 28 }} />}
 
             </View>
             <ModalMenu
