@@ -20,7 +20,7 @@ const HomeModal = ({ modalVisible, feedbackFor, feedbackNumber, callback, setMod
     const [error, setError] = useState(false);
 
     useEffect(() => {
-        if (userData !== null && userData[0] !== undefined) {
+        if (userData !== null && userData !== undefined) {
             setUData(userData[0]);
         }
     }, [])

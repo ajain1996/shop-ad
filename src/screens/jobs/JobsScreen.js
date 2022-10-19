@@ -146,7 +146,7 @@ const RenderSingleJob = ({ item, bearerToken, navigation }) => {
             });
             return unsubscribe;
         })()
-    }, [navigation, user]);
+    }, [navigation, item]);
 
     useEffect(() => {
         (async () => {
@@ -178,7 +178,7 @@ const RenderSingleJob = ({ item, bearerToken, navigation }) => {
                 }
             })
         })()
-    }, [user])
+    }, [item])
 
     const handleLike = () => {
         if (isLike) {

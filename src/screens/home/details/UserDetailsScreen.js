@@ -4,7 +4,7 @@ import UserdetailsHeader from './UserdetailsHeader'
 import { commonStyles } from '../../../utils/styles';
 import { SIZES } from '../../../utils/theme';
 import { useSelector } from 'react-redux';
-import { followersAndCount, followingAndCount, followUserPostAPI } from '../../../utils/API';
+import { followersAndCount, followingAndCount, followUserPostAPI, getUserByIDPostAPI } from '../../../utils/API';
 import Auth from '../../../services/Auth';
 import { RenderSingleWork } from '../../works/WorksScreen';
 import Toast from 'react-native-simple-toast'
@@ -14,30 +14,32 @@ export default function UserDetailsScreen({ navigation, route }) {
     const { jobsData } = useSelector(state => state.Job);
     const { workData } = useSelector(state => state.Work);
 
-    const { userName, userImage } = route.params;
+    const { userName, userImage, userId } = route.params;
     const { userData } = useSelector(state => state.User);
     const [followerCount, setFollowerCount] = React.useState(0);
     const [followingCount, setFollowingCount] = React.useState(0);
     const [isFollowed, setIsFollowed] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
 
+    const [user, setUser] = React.useState([]);
+
     React.useEffect(() => {
         setLoading(true);
         Auth.getLocalStorageData("bearer").then((token) => {
-            followersAndCount(userData[0]?._id, token, (response) => {
+            followersAndCount(userId, token, (response) => {
                 setLoading(false);
                 if (response !== null) {
                     setFollowerCount(response?.count)
                     const data = response?.data;
                     for (let i = 0; i < data.length; i++) {
-                        if (data[i]?.follwedId === userData[0]?._id) {
+                        if (data[i]?.follwedId === userId) {
                             setIsFollowed(true);
                         }
                     }
                 }
             });
 
-            followingAndCount(userData[0]?._id, token, (response) => {
+            followingAndCount(userId, token, (response) => {
                 if (response !== null) {
                     setFollowingCount(response?.count)
                 }
@@ -48,7 +50,7 @@ export default function UserDetailsScreen({ navigation, route }) {
     const handleFollow = () => {
         setIsFollowed(true);
         Auth.getLocalStorageData("bearer").then((token) => {
-            followUserPostAPI(userData[0]?._id, route?.params?.userId, token, (response) => {
+            followUserPostAPI(userId, userData[0]?._id, token, (response) => {
                 if (response !== null) {
                     if (response?.message === "Follwed Sucessfully.") {
                         Toast.show('Followed Successfully!');
@@ -69,11 +71,14 @@ export default function UserDetailsScreen({ navigation, route }) {
 
             <View style={{ marginBottom: 20 }}>
                 <View style={{ paddingHorizontal: 24, paddingTop: 24, ...commonStyles.rowBetween, alignItems: 'flex-start' }}>
-                    <View style={{ width: 90, alignItems: 'center' }}>
-                        <Image
-                            source={userImage} resizeMode="contain"
+                    <View style={{ width: 90, ...commonStyles.centerStyles, height: 90, backgroundColor: "#dcdcdc", borderRadius: 100 }}>
+                        {userImage !== undefined ? <Image
+                            source={{ uri: userImage }} resizeMode="contain"
                             style={{ width: 85, height: 85, borderRadius: 100 }}
-                        />
+                        /> : <Image
+                            source={require("../../../assets/img/auth_svg.png")} resizeMode="contain"
+                            style={{ width: 85, height: 85, borderRadius: 100 }}
+                        />}
                     </View>
 
                     <View style={{ ...commonStyles.rowEvenly, width: SIZES.width - 120, marginTop: 20 }}>

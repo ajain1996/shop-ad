@@ -1,15 +1,19 @@
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Image, StatusBar, TouchableHighlight, StyleSheet, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Image, StatusBar, TouchableHighlight, StyleSheet, FlatList } from 'react-native';
 import React, { useState } from 'react';
 import { commonStyles } from '../../../utils/styles';
 import { SIZES } from '../../../utils/theme';
-import { addCommentPostAPI, getCommentsCountByIDPostAPI } from '../../../utils/API';
+import { addCommentPostAPI, getCommentsCountByIDPostAPI, getUserByIDPostAPI } from '../../../utils/API';
 import Toast from 'react-native-simple-toast'
+import Auth from '../../../services/Auth';
+import { useSelector } from 'react-redux';
 
 export default function CommentScreen({ navigation, route }) {
+    const { userData } = useSelector(state => state.User);
 
-    const { userData, bearerToken, offerItem } = route.params;
+    const { postUserData, bearerToken, offerItem, ownerId } = route.params;
     const [commentBody, setCommentBody] = useState("");
     const [commentsData, setCommentsData] = useState([]);
+    const [user, setUser] = useState([]);
 
     React.useEffect(() => {
         getCommentsCountByIDPostAPI(offerItem?._id, bearerToken, (response) => {
@@ -17,10 +21,18 @@ export default function CommentScreen({ navigation, route }) {
                 setCommentsData(response?.data)
             }
         })
+
+        Auth.getLocalStorageData("bearer").then((token) => {
+            getUserByIDPostAPI(ownerId, bearerToken, (response) => {
+                if (response !== null) {
+                    setUser(response?.data[0])
+                }
+            })
+        })
     }, [commentsData])
 
     const submitComment = () => {
-        addCommentPostAPI(offerItem?._id, userData._id, commentBody, bearerToken, (response) => {
+        addCommentPostAPI(offerItem?._id, userData[0]?._id, commentBody, bearerToken, (response) => {
             if (response !== null) {
                 if (response?.created_feedback) {
                     Toast.show('Comment added successfully!');
@@ -29,6 +41,8 @@ export default function CommentScreen({ navigation, route }) {
             }
         })
     }
+
+    console.log("\n\n\n\n\n user: ", user)
 
     return (
         <>
@@ -39,30 +53,15 @@ export default function CommentScreen({ navigation, route }) {
                 <FlatList
                     data={commentsData}
                     renderItem={({ item, index }) => {
-                        var commentUser = userData?.email;
+                        var commentUser = postUserData?.email;
                         commentUser = commentUser?.split("@")[0];
 
                         return (
                             <View key={index} style={{ ...commonStyles.rowBetween, width: SIZES.width }}>
-                                <View style={{ paddingHorizontal: 12, paddingTop: 14, ...commonStyles.rowStart }}>
-                                    {userData?.userImg ? <Image
-                                        source={{ uri: userData?.userImg }}
-                                        resizeMode="contain"
-                                        style={{ width: 46, height: 46, borderRadius: 100, borderWidth: 2, borderColor: "#0073FF" }}
-                                    /> : <Image
-                                        source={require("../../../assets/img/auth-svg.png")}
-                                        resizeMode="contain"
-                                        style={{ width: 46, height: 46, borderRadius: 100, borderWidth: 2, borderColor: "#0073FF" }}
-                                    />}
-                                    <View style={{ marginLeft: 12 }}>
-                                        <Text style={{ fontSize: 14, color: "#000", fontWeight: "700" }}>
-                                            @{commentUser}
-                                        </Text>
-                                        <Text style={{ fontSize: 13, color: "#000" }}>
-                                            {item?.comment}
-                                        </Text>
-                                    </View>
-                                </View>
+                                <RenderSingleComment
+                                    item={item}
+                                    navigation={navigation}
+                                />
                             </View>
                         );
                     }}
@@ -73,8 +72,8 @@ export default function CommentScreen({ navigation, route }) {
 
                 <View style={[styles.postComment]}>
                     <View style={{ ...commonStyles.rowStart, alignItems: "center" }}>
-                        {userData?.userImg ? <Image
-                            source={{ uri: userData?.img }}
+                        {userData[0]?.userProfile ? <Image
+                            source={{ uri: userData[0]?.userProfile }}
                             resizeMode="contain"
                             style={{ width: 40, height: 40, borderRadius: 100, borderWidth: 2, borderColor: "#0073FF" }}
                         /> : <Image
@@ -104,6 +103,63 @@ export default function CommentScreen({ navigation, route }) {
             </View>
         </>
     )
+}
+
+const RenderSingleComment = ({ item, navigation }) => {
+    const [user, setUser] = React.useState([]);
+
+    React.useEffect(() => {
+        (async () => {
+            const unsubscribe = navigation.addListener('focus', () => {
+                Auth.getLocalStorageData("bearer").then((token) => {
+                    getUserByIDPostAPI(item?.commentBy, token, (response) => {
+                        if (response !== null) {
+                            setUser(response?.data[0])
+                        }
+                    })
+                })
+            });
+            return unsubscribe;
+        })()
+    }, [navigation]);
+
+    React.useEffect(() => {
+        (async () => {
+            Auth.getLocalStorageData("bearer").then((token) => {
+                getUserByIDPostAPI(item?.commentBy, token, (response) => {
+                    if (response !== null) {
+                        setUser(response?.data[0])
+                    }
+                })
+            })
+        })()
+    }, [navigation]);
+
+    const userEmail = user?.email?.split("@")[0];
+
+    console.log("\n\n \n\n item: ", userEmail)
+
+    return (
+
+        <View style={{ paddingHorizontal: 12, paddingTop: 14, ...commonStyles.rowStart }}>
+            {user?.userProfile !== undefined ? <Image
+                source={{ uri: user?.userProfile }}
+                resizeMode="contain"
+                style={{ width: 46, height: 46, borderRadius: 100, borderWidth: 2, borderColor: "#0073FF" }}
+            /> : <Image
+                source={require("../../../assets/img/profile-tab.png")}
+                style={{ width: 46, height: 46, borderRadius: 100, borderWidth: 2, borderColor: "#0073FF" }}
+            />}
+            <View style={{ marginLeft: 12 }}>
+                <Text style={{ fontSize: 14, color: "#000", fontWeight: "700" }}>
+                    @{userEmail}
+                </Text>
+                <Text style={{ fontSize: 13, color: "#000" }}>
+                    {item?.comment}
+                </Text>
+            </View>
+        </View>
+    );
 }
 
 const renderCommentsHeader = (navigation) => {

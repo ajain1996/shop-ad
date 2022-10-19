@@ -33,6 +33,7 @@ export default function AddJobScreen({ navigation }) {
     const [addressError, setAddressError] = React.useState(false);
     const [maritalStatusError, setMaritalStatusError] = React.useState(false);
     const [genderError, setGenderError] = React.useState(false);
+    const [locationError, setLocationError] = React.useState(false);
 
     const [areaOfWorkError, setAreaOfWorkError] = React.useState(false);
     const [numberOfWorksError, setNumberOfWorkError] = React.useState(false);
@@ -41,7 +42,6 @@ export default function AddJobScreen({ navigation }) {
     const [workTimingError, setWorkTimingError] = React.useState(false);
     const [salaryOfferedError, setSalaryOfferedError] = React.useState(false);
     const [vehicleRequiredError, setVehicleRequiredError] = React.useState(false);
-    const [shiftError, setShiftError] = React.useState(false);
     const [facilitiesError, setFacilitiesError] = React.useState(false);
     const [incentiveError, setIncentiveError] = React.useState(false);
     const [descriptionError, setDescriptionError] = React.useState(false);
@@ -57,11 +57,13 @@ export default function AddJobScreen({ navigation }) {
     const [startDateError, setStartDateError] = React.useState(false);
 
     const [image, setImage] = React.useState("");
+    const [imageData, setImageData] = React.useState("");
     const [shopName, setShopName] = React.useState("");
     const [title, setTitle] = React.useState("");
     const [address, setAddress] = React.useState("");
     const [maritalStatus, setMaritalStatus] = React.useState("");
     const [gender, setGender] = React.useState("");
+    const [location, setLocation] = React.useState("");
 
     const [areaOfWork, setAreaOfWork] = React.useState("");
     const [numberOfWorks, setNumberOfWork] = React.useState("");
@@ -70,7 +72,6 @@ export default function AddJobScreen({ navigation }) {
     const [workTiming, setWorkTiming] = React.useState("");
     const [salaryOffered, setSalaryOffered] = React.useState("");
     const [vehicleRequired, setVehicleRequired] = React.useState("");
-    const [shift, setShift] = React.useState("");
     const [facilities, setFacilities] = React.useState("");
     const [incentive, setIncentive] = React.useState("");
     const [description, setDescription] = React.useState("");
@@ -106,6 +107,7 @@ export default function AddJobScreen({ navigation }) {
                 console.log('User tapped custom button: ', response?.customButton);
             } else {
                 setImage(response?.assets[0].uri);
+                setImageData(response);
                 // const source = { uri: 'data:image/jpeg;base64,' + response.data };
             }
         });
@@ -133,17 +135,32 @@ export default function AddJobScreen({ navigation }) {
             Auth.getAccount().then((userData) => {
                 Auth.getLocalStorageData("bearer").then((token) => {
                     addNewJobPostRequest(
+                        title,
                         description,
                         shopName,
-                        facilities,
+                        location,
+                        userData[0]?._id,
                         salaryOffered,
-                        shift,
                         contactPersonName,
-                        userData[0]._id,
-                        contactNumber,
-                        userData[0].email,
                         startDate,
                         endDate,
+                        contactNumber,
+                        userData[0]?.email,
+                        gender,
+                        areaOfWork,
+                        numberOfWorks,
+                        experience,
+                        manPower,
+                        workTiming,
+                        facilities,
+                        incentive,
+                        interviewTiming,
+                        vehicleRequired,
+                        message,
+                        cvFile,
+                        policyVerification,
+                        educationCertificate,
+                        experienceCertificate,
                         token,
                         (response) => {
                             setLoading(false);
@@ -218,7 +235,12 @@ export default function AddJobScreen({ navigation }) {
                 </View>
 
                 {showNext.next1 ? <View style={{ paddingHorizontal: 16 }}>
-                    <RenderUpload image={image} getImage={getImage} imageError={imageError} setImageError={setImageError} />
+                    <RenderImageUpload
+                        image={image} getImage={getImage}
+                        imageError={imageError}
+                        setImageError={setImageError}
+                        setImage={setImage}
+                    />
 
                     <>
                         <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Add Title</Text>
@@ -227,9 +249,9 @@ export default function AddJobScreen({ navigation }) {
                             placeholderTextColor="#999"
                             value={title}
                             onChangeText={(val) => { setTitle(val); setTitleError(false) }}
-                            style={[styles.titleInput, { borderColor: descriptionError ? "red" : "#BDBDBD" }]}
+                            style={[styles.titleInput, { borderColor: titleError ? "red" : "#BDBDBD" }]}
                         />
-                        {descriptionError
+                        {titleError
                             ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Description is mandatory</Text>
                             : <></>}
                     </>
@@ -289,14 +311,26 @@ export default function AddJobScreen({ navigation }) {
                             ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Gender is mandatory</Text>
                             : <></>}
                     </>
+
+                    <>
+                        <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Location</Text>
+                        <TextInput
+                            placeholder='Location'
+                            placeholderTextColor="#999"
+                            value={location}
+                            onChangeText={(val) => { setLocation(val); setLocationError(false) }}
+                            style={[styles.titleInput, { borderColor: locationError ? "red" : "#BDBDBD" }]}
+                        />
+                        {locationError
+                            ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Gender is mandatory</Text>
+                            : <></>}
+                    </>
                     <View style={{ marginTop: 20 }} />
 
                     <Custom_Auth_Btn
                         btnText="Next"
                         onPress={() => {
-                            if (image.length === 0) {
-                                setImageError(true);
-                            } else if (title.length === 0) {
+                            if (title.length === 0) {
                                 setTitleError(true);
                             } else if (shopName.length === 0) {
                                 setShopNameError(true);
@@ -782,6 +816,51 @@ const RenderTickComponent = ({ showNext, title }) => {
                 width: SIZES.width / 3, height: 2, backgroundColor: showNext ? "#1572B9" : "#D9D9D9",
                 position: "absolute", top: 12
             }} />
+        </View>
+    );
+}
+
+export const RenderImageUpload = ({ image, getImage, imageError, setImageError, setImage }) => {
+    return (
+        <View>
+            <View>
+                {image.length === 0
+                    ? <TouchableHighlight onPress={() => { getImage(); setImageError(false) }} style={{ paddingVertical: 16 }}>
+                        <View style={{ alignItems: "center", justifyContent: "center" }}>
+                            <Image
+                                source={require("../../assets/img/work_img.png")}
+                                resizeMode="contain"
+                                style={{ width: "100%", height: SIZES.width / 1.36, opacity: 0.8 }}
+                            />
+                            <View style={[styles.upload]}>
+                                <Image
+                                    source={require("../../assets/img/upload.png")}
+                                    resizeMode="contain"
+                                    style={{ width: 23, height: 23, tintColor: "#000" }}
+                                />
+                            </View>
+                        </View>
+                    </TouchableHighlight>
+                    : <View style={{ flex: 1, marginTop: 20 }}>
+                        <Image
+                            source={{ uri: image }}
+                            resizeMode="contain"
+                            style={{ width: "100%", height: SIZES.width / 1.4, borderRadius: 9 }}
+                        />
+                        <TouchableHighlight onPress={() => setImage("")}
+                            style={{ position: "absolute", top: 6, right: 6, borderRadius: 100 }}
+                            underlayColor="#f7f8f9"
+                        >
+                            <Image
+                                source={require("../../assets/img/cross.png")}
+                                style={{ width: 25, height: 25, tintColor: "#fff" }}
+                            />
+                        </TouchableHighlight>
+                    </View>}
+            </View>
+            {imageError
+                ? <Text style={{ ...commonStyles.fs12_400, color: "red", marginTop: -24 }}>Image is mandatory</Text>
+                : <></>}
         </View>
     );
 }

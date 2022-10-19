@@ -6,6 +6,7 @@ import { commonStyles } from '../utils/styles'
 import Custom_Auth_Btn from '../components/Custom_Auth_Btn'
 import { useDispatch } from 'react-redux'
 import { setUserType } from '../redux/reducer/userType'
+import Auth from '../services/Auth'
 
 export default function RegisterLoginScreen({ navigation }) {
     const dispatch = useDispatch();
@@ -26,13 +27,21 @@ export default function RegisterLoginScreen({ navigation }) {
 
                 <Custom_Auth_Btn
                     btnText="Register as Shop Owner"
-                    onPress={() => { navigation.navigate("RegisterScreen"); dispatch(setUserType("shop")); }}
+                    onPress={async () => {
+                        navigation.navigate("RegisterScreen");
+                        dispatch(setUserType("shop"));
+                        await Auth.setLocalStorageData("userType", "shop");
+                    }}
                 />
                 <View style={{ height: 14 }} />
 
                 <Custom_Auth_Btn
                     btnText="Register as User"
-                    onPress={() => { navigation.navigate("RegisterScreen"); dispatch(setUserType("user")); }}
+                    onPress={async () => {
+                        navigation.navigate("RegisterScreen");
+                        dispatch(setUserType("user"));
+                        await Auth.setLocalStorageData("userType", "user");
+                    }}
                 />
 
                 <View style={{ ...commonStyles.row, marginTop: 33, zIndex: 1 }}>

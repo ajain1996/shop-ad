@@ -162,7 +162,7 @@ const RenderSingleOffer = ({ item, bearerToken, navigation }) => {
             });
             return unsubscribe;
         })()
-    }, [navigation, user, item]);
+    }, [navigation]);
 
     React.useEffect(() => {
         (async () => {
@@ -194,7 +194,7 @@ const RenderSingleOffer = ({ item, bearerToken, navigation }) => {
                 }
             })
         })()
-    }, [user, item])
+    }, [])
 
     const handleLike = () => {
         if (isLike) {
@@ -224,9 +224,10 @@ const RenderSingleOffer = ({ item, bearerToken, navigation }) => {
 
     const handleComment = () => {
         navigation.navigate("CommentScreen", {
-            userData: user,
+            postUserData: user,
             bearerToken: bearerToken,
-            offerItem: item
+            offerItem: item,
+            ownerId: item?.ownerId
         })
     }
 
@@ -248,7 +249,7 @@ const RenderSingleOffer = ({ item, bearerToken, navigation }) => {
                         <TouchableHighlight underlayColor="#f7f8f9" onPress={() => {
                             navigation.navigate("UserDetailsScreen", {
                                 userName: user?.name,
-                                userImage: require("../../assets/img/user_profile.png"),
+                                userImage: user?.userProfile,
                                 userId: user?._id,
                             })
                         }}>

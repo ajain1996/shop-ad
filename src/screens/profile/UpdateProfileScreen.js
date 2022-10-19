@@ -6,37 +6,35 @@ import Custom_Auth_Btn from '../../components/Custom_Auth_Btn'
 import CustomTextInput from '../../components/CustomTextInput'
 import Toast from 'react-native-simple-toast'
 import Auth from '../../services/Auth'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import CustomLoader, { CustomPanel } from '../../components/CustomLoader'
 import { launchImageLibrary } from 'react-native-image-picker'
-import { updateUserPostRequest } from '../../utils/API'
+import { mobileLoginPostRequest, updateUserPostRequest } from '../../utils/API'
+import { setUser } from '../../redux/reducer/user'
 
 export default function UpdateProfileScreen({ navigation }) {
+    const dispatch = useDispatch();
+
     const { userData } = useSelector(state => state.User);
     const { userType } = useSelector(state => state.UserType);
 
     const [nameError, setNameError] = React.useState(false);
-    const [emailError, setEmailError] = React.useState(false);
     const [phoneError, setPhoneError] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
 
     const [name, setName] = React.useState("");
-    const [email, setEmail] = React.useState("");
     const [phone, setPhone] = React.useState("");
 
     const [imageData, setImageData] = React.useState("");
 
     React.useEffect(() => {
         setName(userData[0].name);
-        setEmail(userData[0].email)
         setPhone(userData[0].mobile)
     }, [])
 
 
     const handleUpdateUser = () => {
-        if (email.length === 0) {
-            setEmailError(true)
-        } if (name.length === 0) {
+        if (name.length === 0) {
             setNameError(true)
         } if (phone.length === 0) {
             setPhoneError(true);
@@ -45,10 +43,43 @@ export default function UpdateProfileScreen({ navigation }) {
         } else {
             setLoading(true);
             Auth.getLocalStorageData("bearer").then((token) => {
-                updateUserPostRequest(userData[0]._id, email, name, phone, userType, imageData, token, (response) => {
+                updateUserPostRequest(userData[0]?._id, userData[0]?.email, name, phone, userType, imageData, token, async (response) => {
                     setLoading(false);
                     if (response !== null) {
-                        Alert.alert("Alert", "Image is mandatory!");
+                        if (response?.message !== undefined) {
+                            if (response?.message === "User Updated") {
+                                Auth.getLocalStorageData("email_password").then((email_password) => {
+                                    if (email_password !== null) {
+                                        email_password = email_password.split(",");
+                                        mobileLoginPostRequest(email_password[0], email_password[1], userType, async (userResponse) => {
+                                            console.log("\n\n\n\n\n\n\n\n\n userResponse: ", userResponse)
+                                            if (userResponse !== null) {
+                                                if (userResponse?.message !== undefined) {
+                                                    const userData = userResponse?.user;
+                                                    dispatch(setUser(userData));
+                                                    await Auth.setAccount(userData);
+                                                    await Auth.setLocalStorageData("bearer", userResponse.token)
+                                                    const email_password = [];
+                                                    const userEmail = email_password[0];
+                                                    const userPassword = email_password[1];
+                                                    email_password.push(userEmail);
+                                                    email_password.push(userPassword);
+                                                    await Auth.setLocalStorageData("email_password", email_password?.toString())
+                                                    setName("")
+                                                    setPhone("")
+                                                    Alert.alert("Alert", "Profile updated successfully!", [{
+                                                        text: 'OK',
+                                                        onPress: async () => {
+                                                            navigation.goBack();
+                                                        },
+                                                    }], { cancelable: false },)
+                                                }
+                                            }
+                                        })
+                                    }
+                                })
+                            }
+                        }
                     }
                 })
             })
@@ -114,17 +145,6 @@ export default function UpdateProfileScreen({ navigation }) {
                         onChange={(val) => { setName(val); setNameError(false); }}
                     />
                     {nameError ? <Text style={{ ...commonStyles.fs13_400, color: "red" }}>Name is required</Text> : <></>}
-                    <View style={{ height: 14 }} />
-
-                    <CustomTextInput
-                        placeholder='shopad@gmail.com'
-                        value={email}
-                        keyboardType={'email-address'}
-                        autoCapitalize='none'
-                        icon={require("../../assets/img/email.png")}
-                        onChange={(val) => { setEmail(val); setEmailError(false); }}
-                    />
-                    {emailError ? <Text style={{ ...commonStyles.fs13_400, color: "red" }}>Email is required</Text> : <></>}
                     <View style={{ height: 14 }} />
 
                     <CustomTextInput

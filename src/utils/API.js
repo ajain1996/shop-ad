@@ -59,7 +59,7 @@ export const mobileLoginPostRequest = async (email, password, userType, successC
             body: JSON.stringify(body),
         });
         let json = await response.json();
-        console.log('\n\n mobileLoginPostRequest success');
+        console.log('\n\n mobileLoginPostRequest success: ', json);
         successCallBack(json);
     } catch (error) {
         console.log('\n\n mobileLoginPostRequest Failed');
@@ -97,25 +97,21 @@ export const updatePasswordPostRequest = async (email, resetToken, password, suc
 };
 
 export const addNewOfferPostRequest = async (desc, location, startDate, endDate, image, ownerId, shopId, bearerToken, successCallBack) => {
-    console.log('\n\n addNewOfferPostRequest Called : ', desc, location, startDate, endDate, image, ownerId, shopId);
+    console.log('\n\n addNewOfferPostRequest Called : ', desc, location, startDate, endDate, ownerId, shopId, image);
 
     let formData = new FormData();
-
-    const offerImage = {
-        name: image?.assets[0].fileName,
-        uri: image.assets[0].uri,
-        type: image.assets[0].type
-    }
 
     formData.append('description', desc);
     formData.append('location', location);
     formData.append('startDate', startDate);
     formData.append('endDate', endDate);
-    formData.append("offerImage", offerImage);
-    // formData.append("offerImage", "image.assets[0], image.assets[0].uri");
+    formData.append("offerImage", image[0]);
     formData.append('ownerId', ownerId);
     formData.append('shopId', shopId);
-
+    formData.append("offerImage1", image[1]);
+    formData.append("offerImage2", image[2]);
+    formData.append("offerImage3", image[3]);
+    formData.append("offerImage4", image[4]);
 
     console.log("\n After formdata", image)
 
@@ -183,21 +179,44 @@ export const getOffersByLocationPostRequest = async (location, bearerToken, succ
     }
 };
 
-export const addNewJobPostRequest = async (description, shopName, location, salary, shiftTime, designationName, ownerId, contactNumber, contactEmail, startDate, endDate, bearerToken, successCallBack) => {
-    console.log('\n\n addNewJobPostRequest Called : ', description, shopName, location, salary, shiftTime, designationName, ownerId, contactNumber, contactEmail);
+export const addNewJobPostRequest = async (
+    title, description, shopName, location, ownerId, salary, designationName, startDate, endDate, contactNumber, contactEmail, gender,
+    areaWork, numberWork, experienceRequired, manpowerNumber, workTiming, facilities, incentiveOffered, interviewTiming, vechileRequired,
+    message, isCv, isPolice, isCertificate, isExperience, bearerToken, successCallBack
+) => {
+    console.log(
+        '\n\n addNewJobPostRequest Called : ', title, description, shopName, location, ownerId, salary, designationName, startDate,
+        endDate, contactNumber, contactEmail, gender, areaWork, numberWork, experienceRequired, manpowerNumber, workTiming, facilities,
+        incentiveOffered, interviewTiming, vechileRequired, message, isCv, isPolice, isCertificate, isExperience, bearerToken
+    );
 
     var body = {
+        "title": title,
         "description": description,
         "shopName": shopName,
         "location": location,
         "ownerId": ownerId,
         "salary": salary,
         "designationName": designationName,
-        "shiftTime": shiftTime,
+        "startDate": startDate,
+        "endDate": endDate,
         "contactNumber": contactNumber,
         "contactEmail": contactEmail,
-        'startDate': startDate,
-        'endDate': endDate,
+        "gender": gender,
+        "areaWork": areaWork,
+        "numberWork": numberWork,
+        "experienceRequired": experienceRequired,
+        "manpowerNumber": manpowerNumber,
+        "workTiming": workTiming,
+        "facilities": facilities,
+        "incentiveOffered": incentiveOffered,
+        "interviewTiming": interviewTiming,
+        "vechileRequired": vechileRequired,
+        "message": message,
+        "isCv": true,
+        "isCertificate": true,
+        "isPolice": true,
+        "isExperience": true
     }
 
     try {
@@ -567,35 +586,34 @@ export const followingAndCount = async (userId, bearerToken, successCallBack) =>
 };
 
 export const updateUserPostRequest = async (uid, email, name, mobile, userType, image, bearerToken, successCallBack) => {
-    console.log('\n\n updateUserPostRequest Called : ', uid, email, name, mobile, userType, image, bearerToken);
-
-    let formData = new FormData();
-
     const userImage = {
         name: image?.assets[0].fileName,
         uri: image.assets[0].uri,
         type: image.assets[0].type
     }
+    console.log('\n\n updateUserPostRequest Called : ', uid, email, name, mobile, userType, image, bearerToken, userImage);
+
+    let formData = new FormData();
 
     formData.append('uid', uid);
     formData.append('email', email);
     formData.append('name', name);
     formData.append('userType', userType);
     formData.append("mobile", mobile);
-    formData.append('image', userImage);
+    formData.append('Image', userImage);
 
     try {
         let response = await fetch(BASE_URL + 'update', {
             method: "POST",
             headers: {
-                "Accept": 'application/json',
-                "Content-Type": "application/json",
+                // "Accept": 'application/json',
+                // "Content-Type": "application/json",
                 "Authorization": `Bearer ${bearerToken}`
             },
             body: formData,
         });
         let json = await response.json();
-        console.log('\n\n updateUserPostRequest success');
+        console.log('\n\n updateUserPostRequest success: ', json);
         successCallBack(json);
     } catch (error) {
         console.log('\n\n updateUserPostRequest Failed');

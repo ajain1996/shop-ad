@@ -19,8 +19,8 @@ export default function ProfileScreen({ navigation, route }) {
     const [followingCount, setFollowingCount] = React.useState(0);
 
     var userName = "";
-    if (userData[0] !== null && userData[0] !== undefined) {
-        userName = userData[0].email?.split("@")[0];
+    if (userData !== null && userData !== undefined) {
+        userName = userData[0].name;
     }
     const userImage = require("../../assets/img/auth-svg.png")
 
@@ -57,10 +57,13 @@ export default function ProfileScreen({ navigation, route }) {
             <View style={{ marginBottom: 20 }}>
                 <View style={{ paddingHorizontal: 14, paddingTop: 24, ...commonStyles.rowBetween, alignItems: 'flex-start' }}>
                     <View style={{ width: 90, alignItems: 'center' }}>
-                        <Image
+                        {userData[0]?.userProfile ? <Image
+                            source={{ uri: userData[0]?.userProfile }} resizeMode="contain"
+                            style={{ width: 85, height: 85, borderRadius: 100 }}
+                        /> : <Image
                             source={userImage} resizeMode="contain"
                             style={{ width: 85, height: 85, borderRadius: 100 }}
-                        />
+                        />}
                     </View>
 
                     <View style={{ ...commonStyles.rowEvenly, width: SIZES.width - 120, marginTop: 20 }}>

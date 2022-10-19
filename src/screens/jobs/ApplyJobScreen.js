@@ -110,10 +110,10 @@ export default function ApplyJobScreen({ navigation, route }) {
                     }
                     applyJobPostAPI(
                         jobId,
-                        userData[0]._id,
-                        userData[0].email,
-                        userData[0].name,
-                        userData[0].mobile,
+                        userData[0]?._id,
+                        userData[0]?.email,
+                        userData[0]?.name,
+                        userData[0]?.mobile,
                         cv,
                         policy,
                         experience,

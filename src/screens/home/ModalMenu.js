@@ -10,9 +10,11 @@ const ModalMenu = ({ modalVisible, callback, navigation }) => {
     const dispatch = useDispatch();
     const { userData } = useSelector(state => state.User);
 
+    console.log("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n userdataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: ", userData);
+
     var username = "";
-    if (userData !== null && userData[0] !== undefined) {
-        username = userData[0].email?.split("@")[0]
+    if (userData !== null && userData !== undefined) {
+        username = userData[0]?.email?.split("@")[0]
     }
 
     return (
