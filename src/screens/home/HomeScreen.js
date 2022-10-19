@@ -239,18 +239,35 @@ const RenderSingleOffer = ({ item, bearerToken, navigation }) => {
         <View style={{ borderBottomColor: "#D8D8D8", borderBottomWidth: 1, backgroundColor: "#fff" }}>
             <View style={{ ...commonStyles.rowBetween, height: 62, width: "100%", padding: 20 }}>
                 <View style={{ ...commonStyles.rowStart, alignItems: "center" }}>
-                    <Image
+                    <TouchableHighlight underlayColor="#f7f8f9" onPress={() => {
+                        navigation.navigate("UserDetailsScreen", {
+                            userName: user?.name,
+                            userImage: user?.userProfile,
+                            userId: item?.ownerId,
+                        })
+                    }}>
+                        {user?.userProfile !== undefined ? <Image
+                            source={{ uri: user?.userProfile }} resizeMode="contain"
+                            style={{ width: 45, height: 45, borderRadius: 100, marginTop: 6, borderWidth: 2, borderColor: "#E27127" }}
+                        /> : <View style={{ width: 45, height: 45, borderRadius: 100, marginTop: 6, borderWidth: 2, borderColor: "#E27127" }}>
+                            <Image
+                                source={require("../../assets/img/profile-tab.png")} resizeMode="contain"
+                                style={{ width: 34, height: 34, borderRadius: 100, marginHorizontal: 4, marginVertical: 3 }}
+                            />
+                        </View>}
+                    </TouchableHighlight>
+                    {/* <Image
                         source={require("../../assets/img/user_profile.png")}
                         resizeMode="contain"
                         style={{ width: 40, height: 40, borderRadius: 100 }}
-                    />
+                    /> */}
 
                     <View>
                         <TouchableHighlight underlayColor="#f7f8f9" onPress={() => {
                             navigation.navigate("UserDetailsScreen", {
                                 userName: user?.name,
                                 userImage: user?.userProfile,
-                                userId: user?._id,
+                                userId: item?.ownerId,
                             })
                         }}>
                             <Text style={{ ...commonStyles.fs16_700, marginLeft: 10 }}>{user?.name}</Text>

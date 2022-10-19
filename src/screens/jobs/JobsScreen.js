@@ -221,6 +221,7 @@ const RenderSingleJob = ({ item, bearerToken, navigation }) => {
     const handleApplyJob = () => {
         navigation.navigate("ApplyJobScreen", {
             jobId: item?._id,
+            item: item,
         });
     }
 

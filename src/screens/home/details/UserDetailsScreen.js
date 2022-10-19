@@ -21,25 +21,52 @@ export default function UserDetailsScreen({ navigation, route }) {
     const [isFollowed, setIsFollowed] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
 
-    const [user, setUser] = React.useState([]);
+    React.useEffect(() => {
+        (async () => {
+            const unsubscribe = navigation.addListener('focus', () => {
+                setLoading(true);
+                Auth.getLocalStorageData("bearer").then((token) => {
+                    followersAndCount(userData[0]?._id, token, (response) => {
+                        setLoading(false);
+                        if (response !== null) {
+                            setFollowerCount(response?.count)
+                            const data = response?.data;
+                            for (let i = 0; i < data.length; i++) {
+                                if (data[i]?.follwedId === userData[0]?._id) {
+                                    setIsFollowed(true);
+                                }
+                            }
+                        }
+                    });
+
+                    followingAndCount(userData[0]?._id, token, (response) => {
+                        if (response !== null) {
+                            setFollowingCount(response?.count)
+                        }
+                    });
+                })
+            });
+            return unsubscribe;
+        })()
+    }, [navigation]);
 
     React.useEffect(() => {
         setLoading(true);
         Auth.getLocalStorageData("bearer").then((token) => {
-            followersAndCount(userId, token, (response) => {
+            followersAndCount(userData[0]?._id, token, (response) => {
                 setLoading(false);
                 if (response !== null) {
                     setFollowerCount(response?.count)
                     const data = response?.data;
                     for (let i = 0; i < data.length; i++) {
-                        if (data[i]?.follwedId === userId) {
+                        if (data[i]?.follwedId === userData[0]?._id) {
                             setIsFollowed(true);
                         }
                     }
                 }
             });
 
-            followingAndCount(userId, token, (response) => {
+            followingAndCount(userData[0]?._id, token, (response) => {
                 if (response !== null) {
                     setFollowingCount(response?.count)
                 }
@@ -49,6 +76,9 @@ export default function UserDetailsScreen({ navigation, route }) {
 
     const handleFollow = () => {
         setIsFollowed(true);
+        if (!isFollowed) {
+            setFollowerCount(prev => prev + 1)
+        }
         Auth.getLocalStorageData("bearer").then((token) => {
             followUserPostAPI(userId, userData[0]?._id, token, (response) => {
                 if (response !== null) {
@@ -71,17 +101,17 @@ export default function UserDetailsScreen({ navigation, route }) {
 
             <View style={{ marginBottom: 20 }}>
                 <View style={{ paddingHorizontal: 24, paddingTop: 24, ...commonStyles.rowBetween, alignItems: 'flex-start' }}>
-                    <View style={{ width: 90, ...commonStyles.centerStyles, height: 90, backgroundColor: "#dcdcdc", borderRadius: 100 }}>
+                    <View style={{ width: 75, ...commonStyles.centerStyles, height: 75, backgroundColor: "#dcdcdc", borderRadius: 100 }}>
                         {userImage !== undefined ? <Image
                             source={{ uri: userImage }} resizeMode="contain"
-                            style={{ width: 85, height: 85, borderRadius: 100 }}
+                            style={{ width: 75, height: 75, borderRadius: 100 }}
                         /> : <Image
-                            source={require("../../../assets/img/auth_svg.png")} resizeMode="contain"
-                            style={{ width: 85, height: 85, borderRadius: 100 }}
+                            source={require("../../../assets/img/profile-tab.png")} resizeMode="contain"
+                            style={{ width: 60, height: 60, borderRadius: 100 }}
                         />}
                     </View>
 
-                    <View style={{ ...commonStyles.rowEvenly, width: SIZES.width - 120, marginTop: 20 }}>
+                    <View style={{ ...commonStyles.rowEvenly, width: SIZES.width - 120, marginTop: 5 }}>
                         <View style={{ alignItems: "center" }}>
                             <Text style={{ ...commonStyles.fs24_700 }}>{offerData?.length + jobsData?.length + workData?.length}</Text>
                             <Text style={{ ...commonStyles.fs14_500 }}>Post</Text>

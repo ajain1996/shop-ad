@@ -22,7 +22,7 @@ export default function ProfileScreen({ navigation, route }) {
     if (userData !== null && userData !== undefined) {
         userName = userData[0].name;
     }
-    const userImage = require("../../assets/img/auth-svg.png")
+    const userImage = require("../../assets/img/profile-tab.png")
 
     const [loading, setLoading] = React.useState(false);
 
@@ -56,17 +56,17 @@ export default function ProfileScreen({ navigation, route }) {
 
             <View style={{ marginBottom: 20 }}>
                 <View style={{ paddingHorizontal: 14, paddingTop: 24, ...commonStyles.rowBetween, alignItems: 'flex-start' }}>
-                    <View style={{ width: 90, alignItems: 'center' }}>
+                    <View style={{ width: 75, ...commonStyles.centerStyles, height: 75, backgroundColor: "#dcdcdc", borderRadius: 100 }}>
                         {userData[0]?.userProfile ? <Image
                             source={{ uri: userData[0]?.userProfile }} resizeMode="contain"
-                            style={{ width: 85, height: 85, borderRadius: 100 }}
+                            style={{ width: 75, height: 75, borderRadius: 100 }}
                         /> : <Image
                             source={userImage} resizeMode="contain"
-                            style={{ width: 85, height: 85, borderRadius: 100 }}
+                            style={{ width: 60, height: 60, borderRadius: 100 }}
                         />}
                     </View>
 
-                    <View style={{ ...commonStyles.rowEvenly, width: SIZES.width - 120, marginTop: 20 }}>
+                    <View style={{ ...commonStyles.rowEvenly, width: SIZES.width - 120, marginTop: 5 }}>
                         <View style={{ alignItems: "center" }}>
                             <Text style={{ ...commonStyles.fs24_700 }}>{offerData?.length + jobsData?.length + workData?.length}</Text>
                             <Text style={{ ...commonStyles.fs14_500 }}>Post</Text>

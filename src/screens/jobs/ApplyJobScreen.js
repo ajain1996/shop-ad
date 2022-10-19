@@ -24,7 +24,7 @@ export default function ApplyJobScreen({ navigation, route }) {
     const [experienceCertificate, setExperienceCertificate] = React.useState("");
     const [policyVerification, setPolicyVerification] = React.useState("");
 
-    const { jobId } = route.params;
+    const { jobId, item } = route.params;
 
     const selectPdfFile = async (text) => {
         try {
@@ -78,13 +78,6 @@ export default function ApplyJobScreen({ navigation, route }) {
             Auth.getAccount().then((userData) => {
                 console.log("\n\n Auth Account: ", userData[0]);
                 Auth.getLocalStorageData("bearer").then((token) => {
-                    // {
-                    //     "fileCopyUri": "file:/data/user/0/com.shopad/cache/a0d2f729-095c-4a9f-a88a-fed63acd3631/ankit.pdf",
-                    //     "name": "ankit.pdf",
-                    //     "size": 76800,
-                    //     "type": "application/pdf",
-                    //     "uri": "content://com.android.providers.media.documents/document/document%3A1000009914"
-                    // }
                     const cv = {
                         name: cvFile?.name,
                         uri: cvFile?.uri,
@@ -146,6 +139,7 @@ export default function ApplyJobScreen({ navigation, route }) {
             <CustomInputHeader navigation={navigation} title="Apply Job" />
             <View style={{ paddingHorizontal: 16, width: "100%", height: "114%", justifyContent: "space-between" }}>
                 <View>
+                    <Text style={{ ...commonStyles.fs22_600, marginTop: 18 }}>{item?.description}</Text>
                     <>
                         <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Attach CV</Text>
                         {cvFile.length === 0
