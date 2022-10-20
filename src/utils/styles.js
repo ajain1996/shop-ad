@@ -96,6 +96,11 @@ export const commonStyles = StyleSheet.create({
         fontWeight: "400",
         color: "#000"
     },
+    fs13_500: {
+        fontSize: 13,
+        fontWeight: "500",
+        color: "#000"
+    },
     fs14_300: {
         fontSize: 14,
         fontWeight: "300",

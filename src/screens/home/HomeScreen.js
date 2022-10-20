@@ -1,4 +1,4 @@
-import { View, Text, Image, StatusBar, TouchableHighlight, FlatList } from 'react-native'
+import { View, Text, Image, StatusBar, TouchableHighlight, FlatList, Share } from 'react-native'
 import React from 'react'
 import { commonStyles } from '../../utils/styles'
 import HomeHeader from './HomeHeader'
@@ -235,53 +235,60 @@ const RenderSingleOffer = ({ item, bearerToken, navigation }) => {
 
     var email = user?.email?.split("@")[0];
 
+    const handleShare = async () => {
+        try {
+            const result = await Share.share({
+                message: item?.offerImage,
+            });
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) { } else { }
+            } else if (result.action === Share.dismissedAction) { }
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
     return (
         <View style={{ borderBottomColor: "#D8D8D8", borderBottomWidth: 1, backgroundColor: "#fff" }}>
             <View style={{ ...commonStyles.rowBetween, height: 62, width: "100%", padding: 20 }}>
                 <View style={{ ...commonStyles.rowStart, alignItems: "center" }}>
                     <TouchableHighlight underlayColor="#f7f8f9" onPress={() => {
                         navigation.navigate("UserDetailsScreen", {
-                            userName: user?.name,
-                            userImage: user?.userProfile,
                             userId: item?.ownerId,
+                            user: user,
                         })
                     }}>
                         {user?.userProfile !== undefined ? <Image
                             source={{ uri: user?.userProfile }} resizeMode="contain"
-                            style={{ width: 45, height: 45, borderRadius: 100, marginTop: 6, borderWidth: 2, borderColor: "#E27127" }}
-                        /> : <View style={{ width: 45, height: 45, borderRadius: 100, marginTop: 6, borderWidth: 2, borderColor: "#E27127" }}>
+                            style={{ width: 40, height: 40, borderRadius: 100, marginTop: 6, borderWidth: 2, borderColor: "#E27127" }}
+                        /> : <View style={{ width: 40, height: 40, borderRadius: 100, marginTop: 6, borderWidth: 2, borderColor: "#E27127" }}>
                             <Image
                                 source={require("../../assets/img/profile-tab.png")} resizeMode="contain"
-                                style={{ width: 34, height: 34, borderRadius: 100, marginHorizontal: 4, marginVertical: 3 }}
+                                style={{ width: 28, height: 28, borderRadius: 100, marginHorizontal: 4, marginVertical: 3 }}
                             />
                         </View>}
                     </TouchableHighlight>
-                    {/* <Image
-                        source={require("../../assets/img/user_profile.png")}
-                        resizeMode="contain"
-                        style={{ width: 40, height: 40, borderRadius: 100 }}
-                    /> */}
 
-                    <View>
+                    <View style={{ marginLeft: 6 }}>
                         <TouchableHighlight underlayColor="#f7f8f9" onPress={() => {
                             navigation.navigate("UserDetailsScreen", {
-                                userName: user?.name,
-                                userImage: user?.userProfile,
                                 userId: item?.ownerId,
+                                user: user,
                             })
                         }}>
-                            <Text style={{ ...commonStyles.fs16_700, marginLeft: 10 }}>{user?.name}</Text>
+                            <Text style={{ ...commonStyles.fs14_700 }}>{user?.name}</Text>
                         </TouchableHighlight>
-                        <View style={{ ...commonStyles.rowStart, marginLeft: 8, alignItems: "center", marginTop: 3 }}>
+                        <View style={{ ...commonStyles.rowStart, alignItems: "center" }}>
                             <Image
                                 source={require("../../assets/img/location.png")}
-                                style={{ width: 20, height: 18 }}
+                                resizeMode="contain"
+                                style={{ width: 18, height: 16 }}
                             />
                             <TouchableHighlight
                                 onPress={() => { navigation.navigate("LocationScreen") }}
                                 underlayColor="#f7f8f9"
                             >
-                                <Text style={{ ...commonStyles.fs13_400, marginLeft: 2 }}>{item?.location}</Text>
+                                <Text style={{ ...commonStyles.fs12_400, marginLeft: 2 }}>{item?.location}</Text>
                             </TouchableHighlight>
                         </View>
                     </View>
@@ -323,18 +330,21 @@ const RenderSingleOffer = ({ item, bearerToken, navigation }) => {
                         </View>
                     </TouchableHighlight>
                 </View>
-                <TouchableHighlight onPress={() => { }} underlayColor="#fff">
+                <TouchableHighlight onPress={handleShare} underlayColor="#fff">
                     <Image
-                        source={require("../../assets/img/bookmark.png")}
-                        style={{ width: 24, height: 24, tintColor: "#000000" }}
+                        source={require("../../assets/img/share.png")}
+                        style={{ width: 22, height: 22, tintColor: "#000000" }}
                     />
                 </TouchableHighlight>
             </View>
             <View style={{ ...commonStyles.rowStart, marginLeft: 20, marginTop: -16 }}>
-                <Text style={{ ...commonStyles.fs15_600, marginBottom: 12 }}>@{email}</Text>
-                <Text style={{ ...commonStyles.fs14_400, marginLeft: 8, marginBottom: 12 }}>{item?.description}</Text>
+                <Text style={{ ...commonStyles.fs14_500, marginBottom: 12 }}>@{email}</Text>
+                <Text style={{ ...commonStyles.fs12_400, marginLeft: 8, marginBottom: 10, marginTop: 2 }}>{item?.description}</Text>
             </View>
-            <Text style={{ ...commonStyles.fs14_400, marginLeft: 8, marginBottom: 12 }}>{item?.date}</Text>
+            <View style={{ ...commonStyles.rowStart, marginLeft: 20, marginTop: -10 }}>
+                <Text style={{ ...commonStyles.fs13_500, marginBottom: 12 }}>Days left:</Text>
+                <Text style={{ ...commonStyles.fs12_400, marginLeft: 8, marginBottom: 12 }}>{item?.date}</Text>
+            </View>
 
             <HomeModal
                 modalVisible={homeModalVisible}

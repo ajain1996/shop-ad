@@ -152,6 +152,33 @@ export const getAllOffersPostRequest = async (bearerToken, successCallBack) => {
     }
 };
 
+export const getOffersByOwnerIdPostRequest = async (ownerId, bearerToken, successCallBack) => {
+    console.log('\n\n getOffersByOwnerIdPostRequest Called : ');
+
+    var body = {
+        "ownerId": ownerId,
+    }
+
+    try {
+        let response = await fetch(BASE_URL2 + 'salesoffer/ownerid', {
+            method: "POST",
+            headers: {
+                "Accept": 'application/json',
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${bearerToken}`
+            },
+            body: JSON.stringify(body),
+        });
+        let json = await response.json();
+        console.log('\n\n getOffersByOwnerIdPostRequest success');
+        successCallBack(json);
+    } catch (error) {
+        console.log('\n\n getOffersByOwnerIdPostRequest Failed');
+        console.error('error', error);
+        successCallBack(null);
+    }
+};
+
 export const getOffersByLocationPostRequest = async (location, bearerToken, successCallBack) => {
     console.log('\n\n getOffersByLocationPostRequest Called : ', location, bearerToken);
 
@@ -257,6 +284,32 @@ export const getAllJobsPostRequest = async (bearerToken, successCallBack) => {
     }
 };
 
+export const getJobsByOwnerIdPostRequest = async (id, bearerToken, successCallBack) => {
+    console.log('\n\n getJobsByOwnerIdPostRequest Called : ');
+    var body = {
+        "id": id,
+    }
+
+    try {
+        let response = await fetch(BASE_URL2 + 'job/byid', {
+            method: "POST",
+            headers: {
+                "Accept": 'application/json',
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${bearerToken}`
+            },
+            body: JSON.stringify(body),
+        });
+        let json = await response.json();
+        console.log('\n\n getJobsByOwnerIdPostRequest success');
+        successCallBack(json);
+    } catch (error) {
+        console.log('\n\n getJobsByOwnerIdPostRequest Failed');
+        console.error('error', error);
+        successCallBack(null);
+    }
+};
+
 export const getJobsByLocationPostRequest = async (location, bearerToken, successCallBack) => {
     console.log('\n\n getJobsByLocationPostRequest Called : ', location, bearerToken);
 
@@ -333,6 +386,33 @@ export const getAllWorksPostRequest = async (bearerToken, successCallBack) => {
         successCallBack(json);
     } catch (error) {
         console.log('\n\n getAllWorksPostRequest Failed');
+        console.error('error', error);
+        successCallBack(null);
+    }
+};
+
+export const getWorksByOwnerIdPostRequest = async (id, bearerToken, successCallBack) => {
+    console.log('\n\n getWorksByOwnerIdPostRequest Called : ');
+    var body = {
+        "id": id,
+    }
+
+    try {
+        let response = await fetch(BASE_URL2 + 'work/byid', {
+            method: "POST",
+            headers: {
+                "Accept": 'application/json',
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${bearerToken}`
+            },
+            body: JSON.stringify(body),
+        });
+
+        let json = await response.json();
+        console.log('\n\n getWorksByOwnerIdPostRequest success');
+        successCallBack(json);
+    } catch (error) {
+        console.log('\n\n getWorksByOwnerIdPostRequest Failed');
         console.error('error', error);
         successCallBack(null);
     }

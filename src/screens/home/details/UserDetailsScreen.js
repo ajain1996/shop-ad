@@ -4,17 +4,17 @@ import UserdetailsHeader from './UserdetailsHeader'
 import { commonStyles } from '../../../utils/styles';
 import { SIZES } from '../../../utils/theme';
 import { useSelector } from 'react-redux';
-import { followersAndCount, followingAndCount, followUserPostAPI, getUserByIDPostAPI } from '../../../utils/API';
+import { followersAndCount, followingAndCount, followUserPostAPI, getJobsByOwnerIdPostRequest, getOffersByOwnerIdPostRequest, getWorksByOwnerIdPostRequest } from '../../../utils/API';
 import Auth from '../../../services/Auth';
 import { RenderSingleWork } from '../../works/WorksScreen';
 import Toast from 'react-native-simple-toast'
 
 export default function UserDetailsScreen({ navigation, route }) {
-    const { offerData } = useSelector(state => state.Offer);
-    const { jobsData } = useSelector(state => state.Job);
-    const { workData } = useSelector(state => state.Work);
+    const [offerData, setOfferData] = React.useState([]);
+    const [jobsData, setJobsData] = React.useState([]);
+    const [workData, setWorkData] = React.useState([]);
 
-    const { userName, userImage, userId } = route.params;
+    const { userId, user } = route.params;
     const { userData } = useSelector(state => state.User);
     const [followerCount, setFollowerCount] = React.useState(0);
     const [followingCount, setFollowingCount] = React.useState(0);
@@ -53,6 +53,33 @@ export default function UserDetailsScreen({ navigation, route }) {
     React.useEffect(() => {
         setLoading(true);
         Auth.getLocalStorageData("bearer").then((token) => {
+            getOffersByOwnerIdPostRequest(userId, token, (response) => {
+                setLoading(false);
+                if (response !== null) {
+                    if (response?.message === "Data From Database") {
+                        setOfferData(response?.data);
+                    }
+                }
+            });
+
+            getJobsByOwnerIdPostRequest(userId, token, (response) => {
+                setLoading(false);
+                if (response !== null) {
+                    if (response?.message === "Item Found") {
+                        setJobsData(response?.data);
+                    }
+                }
+            })
+
+            getWorksByOwnerIdPostRequest(userId, token, (response) => {
+                setLoading(false);
+                if (response !== null) {
+                    if (response?.message === "Item Found") {
+                        setWorkData(response?.data);
+                    }
+                }
+            })
+
             followersAndCount(userData[0]?._id, token, (response) => {
                 setLoading(false);
                 if (response !== null) {
@@ -96,14 +123,14 @@ export default function UserDetailsScreen({ navigation, route }) {
         <ScrollView style={{ width: "100%", height: "100%" }}>
             <UserdetailsHeader
                 navigation={navigation}
-                title={userName}
+                title={user?.name}
             />
 
             <View style={{ marginBottom: 20 }}>
                 <View style={{ paddingHorizontal: 24, paddingTop: 24, ...commonStyles.rowBetween, alignItems: 'flex-start' }}>
                     <View style={{ width: 75, ...commonStyles.centerStyles, height: 75, backgroundColor: "#dcdcdc", borderRadius: 100 }}>
-                        {userImage !== undefined ? <Image
-                            source={{ uri: userImage }} resizeMode="contain"
+                        {user?.userProfile !== undefined ? <Image
+                            source={{ uri: user?.userProfile }} resizeMode="contain"
                             style={{ width: 75, height: 75, borderRadius: 100 }}
                         /> : <Image
                             source={require("../../../assets/img/profile-tab.png")} resizeMode="contain"
@@ -134,7 +161,7 @@ export default function UserDetailsScreen({ navigation, route }) {
                 </View>
 
                 <View style={{ paddingHorizontal: 14, alignItems: "flex-start", marginTop: 5 }}>
-                    <Text style={{ ...commonStyles.fs16_700, textAlign: 'center' }}>{userName}</Text>
+                    <Text style={{ ...commonStyles.fs16_700, textAlign: 'center' }}>{user?.name}</Text>
                     <View style={{ ...commonStyles.rowStart }}>
                         <Image
                             source={require("../../../assets/img/location.png")}
@@ -152,71 +179,79 @@ export default function UserDetailsScreen({ navigation, route }) {
 
             <View style={{ padding: 9 }}>
                 <Text style={{ ...commonStyles.fs18_500, marginBottom: 5 }}>All Offers</Text>
-                <ScrollView horizontal>
-                    {
-                        offerData.map((item, index) => {
-                            return (
-                                <View key={index} style={{ marginRight: 20 }}>
-                                    <TouchableOpacity activeOpacity={0.5} onPress={() => {
-                                        navigation.navigate("UserPostScreen", {
-                                            item: item,
-                                            userName: userName,
-                                        })
-                                    }}>
-                                        <Image
-                                            source={{ uri: item?.offerImage ? item?.offerImage : "https://plus.unsplash.com/premium_photo-1661679026942-db5aef08c093?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" }}
-                                            resizeMode="cover"
-                                            style={{ width: SIZES.width / 1.2, height: SIZES.width / 1.2, borderRadius: 12 }}
-                                        />
-                                    </TouchableOpacity>
-                                </View>
-                            );
-                        })
-                    }
-                </ScrollView>
+                {offerData.length !== 0
+                    ? <ScrollView horizontal>
+                        {
+                            offerData.map((item, index) => {
+                                return (
+                                    <View key={index} style={{ marginRight: 20 }}>
+                                        <TouchableOpacity activeOpacity={0.5} onPress={() => {
+                                            navigation.navigate("UserPostScreen", {
+                                                item: item,
+                                                userId: userId,
+                                                user: user,
+                                            })
+                                        }}>
+                                            <Image
+                                                source={{ uri: item?.offerImage ? item?.offerImage : "https://plus.unsplash.com/premium_photo-1661679026942-db5aef08c093?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" }}
+                                                resizeMode="cover"
+                                                style={{ width: SIZES.width / 1.2, height: SIZES.width / 1.2, borderRadius: 12 }}
+                                            />
+                                        </TouchableOpacity>
+                                    </View>
+                                );
+                            })
+                        }
+                    </ScrollView>
+                    : <Text style={{ ...commonStyles.fs13_500 }}>No Offer Found</Text>}
             </View>
 
             <View style={{ padding: 9 }}>
                 <Text style={{ ...commonStyles.fs18_500, marginBottom: 5, marginTop: 8 }}>All Jobs</Text>
-                <ScrollView horizontal>
-                    {
-                        jobsData.map((item, index) => {
-                            return (
-                                <View key={index} style={{ marginRight: 20 }}>
-                                    <TouchableOpacity activeOpacity={0.5} onPress={() => {
-                                        navigation.navigate("UserPostScreen", {
-                                            item: item,
-                                            userName: userName,
-                                        })
-                                    }}>
-                                        <Image
-                                            source={{ uri: item?.offerImage ? item?.offerImage : "https://plus.unsplash.com/premium_photo-1661679026942-db5aef08c093?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" }}
-                                            resizeMode="cover"
-                                            style={{ width: SIZES.width / 1.2, height: SIZES.width / 1.2, borderRadius: 12 }}
-                                        />
-                                    </TouchableOpacity>
-                                </View>
-                            );
-                        })
-                    }
-                </ScrollView>
+                {jobsData.length !== 0
+                    ? <ScrollView horizontal>
+                        {
+                            jobsData.map((item, index) => {
+                                return (
+                                    <View key={index} style={{ marginRight: 20 }}>
+                                        <TouchableOpacity activeOpacity={0.5} onPress={() => {
+                                            navigation.navigate("UserPostScreen", {
+                                                item: item,
+                                                userId: userId,
+                                                user: user,
+                                            })
+                                        }}>
+                                            <Image
+                                                source={{ uri: item?.offerImage ? item?.offerImage : "https://plus.unsplash.com/premium_photo-1661679026942-db5aef08c093?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" }}
+                                                resizeMode="cover"
+                                                style={{ width: SIZES.width / 1.2, height: SIZES.width / 1.2, borderRadius: 12 }}
+                                            />
+                                        </TouchableOpacity>
+                                    </View>
+                                );
+                            })
+                        }
+                    </ScrollView>
+                    : <Text style={{ ...commonStyles.fs13_500 }}>No Jobs Found</Text>}
             </View>
 
             <View style={{ paddingVertical: 9 }}>
                 <Text style={{ ...commonStyles.fs18_500, marginLeft: 10 }}>All Works</Text>
-                <ScrollView horizontal>
-                    {
-                        workData.map((item, index) => {
-                            return (
-                                <View key={index} style={{ marginTop: -4 }}>
-                                    <RenderSingleWork
-                                        item={item}
-                                    />
-                                </View>
-                            );
-                        })
-                    }
-                </ScrollView>
+                {workData.length !== 0
+                    ? <ScrollView horizontal>
+                        {
+                            workData.map((item, index) => {
+                                return (
+                                    <View key={index} style={{ marginTop: -4 }}>
+                                        <RenderSingleWork
+                                            item={item}
+                                        />
+                                    </View>
+                                );
+                            })
+                        }
+                    </ScrollView>
+                    : <Text style={{ ...commonStyles.fs13_500, marginLeft: 10, marginTop: 4 }}>No Works Found</Text>}
             </View>
 
             <View>
