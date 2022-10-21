@@ -162,14 +162,16 @@ export default function UserDetailsScreen({ navigation, route }) {
 
                 <View style={{ paddingHorizontal: 14, alignItems: "flex-start", marginTop: 5 }}>
                     <Text style={{ ...commonStyles.fs16_700, textAlign: 'center' }}>{user?.name}</Text>
-                    <View style={{ ...commonStyles.rowStart }}>
-                        <Image
-                            source={require("../../../assets/img/location.png")}
-                            resizeMode="contain"
-                            style={{ width: 22, height: 28, tintColor: "#0073FF" }}
-                        />
-                        <Text style={{ ...commonStyles.fs16_500, color: '#0073FF' }}>Gumasta Nagar, Indore</Text>
-                    </View>
+                    <TouchableHighlight underlayColor="#dcdcdc" onPress={() => { navigation.navigate("LocationScreen") }}>
+                        <View style={{ ...commonStyles.rowStart }}>
+                            <Image
+                                source={require("../../../assets/img/location.png")}
+                                resizeMode="contain"
+                                style={{ width: 22, height: 28, tintColor: "#0073FF" }}
+                            />
+                            <Text style={{ ...commonStyles.fs16_500, color: '#0073FF' }}>Gumasta Nagar, Indore</Text>
+                        </View>
+                    </TouchableHighlight>
 
                     <TouchableHighlight style={{ width: 80, height: 35, borderRadius: 9, borderWidth: 1, borderColor: "#999", ...commonStyles.centerStyles, marginTop: 12 }} underlayColor="#eee" onPress={handleFollow}>
                         <Text style={{ ...commonStyles.fs13_400 }}>{isFollowed ? "Following" : "Follow"}</Text>

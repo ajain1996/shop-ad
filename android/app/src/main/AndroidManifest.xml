@@ -11,8 +11,8 @@
       android:allowBackup="false"
       android:theme="@style/AppTheme">
       <meta-data
-        android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyDk7cSQO8JE0YgoEyo50Py8ozZTuBCHtIg"/> <!-- Your key goes here. -->
+        android:name="com.google.android.maps.v2.API_KEY"
+        android:value="AIzaSyAPOdyees3JKBv9EL4o7Za1jyrZofFr8Mg"/> <!-- Your key goes here. -->
  
         <!-- You will also only need to add this uses-library tag -->
         <uses-library android:name="org.apache.http.legacy" android:required="false"/>
