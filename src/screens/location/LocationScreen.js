@@ -16,54 +16,21 @@ export default function LocationScreen() {
         longitudeDelta: 0.01,
     });
 
-    const tokyoRegion = {
-        latitude: 35.6762,
-        longitude: 139.6503,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-    };
-
-    const goToTokyo = () => {
-        //complete this animation in 3 seconds
-        mapRef.current.animateToRegion(tokyoRegion, 3 * 1000);
-    };
-
     return (
-        // <View style={styles.container}>
-        //     <MapView
-        //         provider={PROVIDER_GOOGLE}
-        //         style={styles.map}
-        //         initialRegion={{
-        //             latitude: 37.78825,
-        //             longitude: -122.4324,
-        //             latitudeDelta: 0.015,
-        //             longitudeDelta: 0.0121,
-        //         }}
-        //         showUserLocation={true}
-        //     >
-        //         <Marker coordinate={{
-        //             latitude: 37.78825,
-        //             longitude: -122.4324,
-        //         }} />
-        //     </MapView>
-
-        //     <Button onPress={() => goToTokyo()} title="Go to Tokyo" />
-        //     <Text style={styles.text}>Current latitude{region.latitude}</Text>
-        //     <Text style={styles.text}>Current longitude{region.longitude}</Text>
-        // </View>
         <View style={styles.container}>
             <MapView
                 ref={mapRef}
                 style={styles.map}
                 initialRegion={{
-                    latitude: 24.8607,
-                    longitude: 67.0011,
-                    latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421,
+                    latitude: 3.78825,
+                    longitude: -12.4324,
+                    latitudeDelta: 10.015,
+                    longitudeDelta: 10.0121,
                 }}
+                zoomEnabled={true}
+                showsUserLocation={true}
                 onRegionChangeComplete={(region) => setRegion(region)}
             />
-            <Button onPress={() => goToTokyo()} title="Go to Tokyo" />
             <Text style={styles.text}>Current latitude{region.latitude}</Text>
             <Text style={styles.text}>Current longitude{region.longitude}</Text>
         </View>
@@ -75,10 +42,22 @@ const styles = StyleSheet.create({
         width: "100%",
         justifyContent: 'center',
         alignItems: 'center',
+        // position: 'absolute',
+        // top: 0,
+        // left: 0,
+        // right: 0,
+        // bottom: 0,
+        // justifyContent: 'flex-end',
+        // alignItems: 'center',
     },
     map: {
         ...StyleSheet.absoluteFillObject,
         height: Dimensions.get("window").height,
+        // position: 'absolute',
+        // top: 0,
+        // left: 0,
+        // right: 0,
+        // bottom: 0,
     },
     // container: {
     //     ...StyleSheet.absoluteFillObject,
