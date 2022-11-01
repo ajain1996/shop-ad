@@ -49,7 +49,7 @@ export default function LoginScreen({ navigation }) {
                             email_password.push(userEmail);
                             email_password.push(userPassword);
                             await Auth.setLocalStorageData("email_password", email_password?.toString())
-                            Toast.show('Register Successfully!');
+                            Toast.show('Login Successfully!');
                             setEmail("")
                             setPassword("")
                             // navigation.navigate("Root")

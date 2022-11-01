@@ -611,6 +611,33 @@ export const addCommentPostAPI = async (itemId, ownerId, commentBody, bearerToke
     }
 };
 
+export const deleteCommentPostAPI = async (itemId, bearerToken, successCallBack) => {
+    console.log('\n\n deleteCommentPostAPI Called : ', itemId, bearerToken);
+
+    var body = {
+        "itemId": itemId,
+    }
+
+    try {
+        let response = await fetch(BASE_URL2 + 'comment/delete', {
+            method: 'POST',
+            headers: {
+                "Accept": 'application/json',
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${bearerToken}`
+            },
+            body: JSON.stringify(body),
+        });
+        let json = await response.json();
+        console.log('\n\n deleteCommentPostAPI success');
+        successCallBack(json);
+    } catch (error) {
+        console.log('\n\n deleteCommentPostAPI Failed');
+        console.error('error', error);
+        successCallBack(null);
+    }
+};
+
 export const followersAndCount = async (userId, bearerToken, successCallBack) => {
     console.log('\n\n followersAndCount Called : ', userId);
 

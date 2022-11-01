@@ -1,4 +1,4 @@
-import { View, Text, Image, StatusBar, TouchableHighlight, FlatList, Share } from 'react-native'
+import { View, Text, Image, StatusBar, TouchableHighlight, ScrollView, Share, FlatList } from 'react-native'
 import React from 'react'
 import { commonStyles } from '../../utils/styles'
 import HomeHeader from './HomeHeader'
@@ -82,25 +82,39 @@ export default function HomeScreen({ navigation }) {
 
     return (
         <>
-            <PTRView onRefresh={_refresh}>
-                <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-                <HomeHeader navigation={navigation} onPress={() => { navigation.navigate("AddSaleOfferScreen") }} />
-
-                <HomeSearch onChange={(val) => {
-                    setLoading(true);
-                    Auth.getLocalStorageData("bearer").then((token) => {
-                        setLoading(false);
-                        setBearerToken(token);
-                        getOffersByLocationPostRequest(val, token, (response) => {
-                            if (response !== null) {
-                                dispatch(setOffer(response?.data));
-                            }
-                        })
+            <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+            <HomeHeader navigation={navigation} onPress={() => { navigation.navigate("AddSaleOfferScreen") }} />
+            <HomeSearch onChange={(val) => {
+                setLoading(true);
+                Auth.getLocalStorageData("bearer").then((token) => {
+                    setLoading(false);
+                    setBearerToken(token);
+                    getOffersByLocationPostRequest(val, token, (response) => {
+                        if (response !== null) {
+                            dispatch(setOffer(response?.data));
+                        }
                     })
-                }} />
-
-                <FlatList
+                })
+            }} />
+            <PTRView onRefresh={_refresh}>
+                <ScrollView>
+                    {
+                        offerData.map((item, index) => {
+                            return (
+                                <View key={index}>
+                                    <RenderSingleOffer
+                                        item={item}
+                                        bearerToken={bearerToken}
+                                        navigation={navigation}
+                                    />
+                                </View>
+                            );
+                        })
+                    }
+                </ScrollView>
+                {/* <FlatList
                     data={offerData}
+                    stickyHeaderIndices={[0]}
                     renderItem={({ item }) => {
                         return (
                             <RenderSingleOffer
@@ -110,7 +124,25 @@ export default function HomeScreen({ navigation }) {
                             />
                         );
                     }}
-                />
+                    ListHeaderComponent={
+                        <View>
+                            <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+                            <HomeHeader navigation={navigation} onPress={() => { navigation.navigate("AddSaleOfferScreen") }} />
+                            <HomeSearch onChange={(val) => {
+                                setLoading(true);
+                                Auth.getLocalStorageData("bearer").then((token) => {
+                                    setLoading(false);
+                                    setBearerToken(token);
+                                    getOffersByLocationPostRequest(val, token, (response) => {
+                                        if (response !== null) {
+                                            dispatch(setOffer(response?.data));
+                                        }
+                                    })
+                                })
+                            }} />
+                        </View>
+                    }
+                /> */}
 
                 <View style={{ height: 64 }} />
 

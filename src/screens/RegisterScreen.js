@@ -152,14 +152,14 @@ export default function RegisterScreen({ navigation }) {
                     <View style={{ height: 14 }} />
 
                     <CustomTextInput
-                        placeholder='Phone'
+                        placeholder='Mobile'
                         value={phone}
                         keyboardType={"number-pad"}
                         icon={require("../assets/img/phone.png")}
                         onChange={(val) => { setPhone(val); setPhoneError(false); }}
                     />
                     {phoneError ? <Text style={{ ...commonStyles.fs13_400, color: "red", zIndex: 1 }}>
-                        Phone is required
+                        Mobile number is required
                     </Text> : <></>}
                     <View style={{ height: 14 }} />
 

@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, TextInput, Image, StatusBar, TouchableHig
 import React, { useState } from 'react';
 import { commonStyles } from '../../../utils/styles';
 import { SIZES } from '../../../utils/theme';
-import { addCommentPostAPI, getCommentsCountByIDPostAPI, getUserByIDPostAPI } from '../../../utils/API';
+import { addCommentPostAPI, deleteCommentPostAPI, getCommentsCountByIDPostAPI, getUserByIDPostAPI } from '../../../utils/API';
 import Toast from 'react-native-simple-toast'
 import Auth from '../../../services/Auth';
 import { useSelector } from 'react-redux';
@@ -61,6 +61,7 @@ export default function CommentScreen({ navigation, route }) {
                                 <RenderSingleComment
                                     item={item}
                                     navigation={navigation}
+                                    bearerToken={bearerToken}
                                 />
                             </View>
                         );
@@ -105,7 +106,7 @@ export default function CommentScreen({ navigation, route }) {
     )
 }
 
-const RenderSingleComment = ({ item, navigation }) => {
+const RenderSingleComment = ({ item, navigation, bearerToken }) => {
     const [user, setUser] = React.useState([]);
 
     React.useEffect(() => {
@@ -137,27 +138,58 @@ const RenderSingleComment = ({ item, navigation }) => {
 
     const userEmail = user?.email?.split("@")[0];
 
-    console.log("\n\n \n\n item: ", userEmail)
+    const deleteComment = () => {
+        deleteCommentPostAPI(item?._id, bearerToken, (response) => {
+            if (response !== null) {
+                if (response?.message === "Uncomment Sucessfully") {
+                    Toast.show('Comment deleted successfully!');
+                }
+            }
+        })
+    }
 
     return (
 
-        <View style={{ paddingHorizontal: 12, paddingTop: 14, ...commonStyles.rowStart }}>
-            {user?.userProfile !== undefined ? <Image
-                source={{ uri: user?.userProfile }}
-                resizeMode="contain"
-                style={{ width: 46, height: 46, borderRadius: 100, borderWidth: 2, borderColor: "#0073FF" }}
-            /> : <Image
-                source={require("../../../assets/img/profile-tab.png")}
-                style={{ width: 46, height: 46, borderRadius: 100, borderWidth: 2, borderColor: "#0073FF" }}
-            />}
-            <View style={{ marginLeft: 12 }}>
-                <Text style={{ fontSize: 14, color: "#000", fontWeight: "700" }}>
-                    @{userEmail}
-                </Text>
-                <Text style={{ fontSize: 13, color: "#000" }}>
-                    {item?.comment}
-                </Text>
+        <View style={{ paddingHorizontal: 12, paddingTop: 14, ...commonStyles.rowBetween, width: SIZES.width, alignItems: "center" }}>
+            <View style={{ ...commonStyles.rowStart, alignItems: "center" }}>
+                <TouchableHighlight underlayColor="#f7f8f9" onPress={() => {
+                    navigation.navigate("UserDetailsScreen", {
+                        userId: user?._id,
+                        user: user,
+                    })
+                }}>
+                    {user?.userProfile !== undefined ? <Image
+                        source={{ uri: user?.userProfile }}
+                        resizeMode="contain"
+                        style={{ width: 46, height: 46, borderRadius: 100, borderWidth: 2, borderColor: "#0073FF" }}
+                    /> : <Image
+                        source={require("../../../assets/img/profile-tab.png")}
+                        style={{ width: 46, height: 46, borderRadius: 100, borderWidth: 2, borderColor: "#0073FF" }}
+                    />}
+                </TouchableHighlight>
+                <View style={{ marginLeft: 12 }}>
+                    <TouchableHighlight underlayColor="#f7f8f9" onPress={() => {
+                        navigation.navigate("UserDetailsScreen", {
+                            userId: user?._id,
+                            user: user,
+                        })
+                    }}>
+                        <Text style={{ fontSize: 14, color: "#000", fontWeight: "700" }}>
+                            @{userEmail}
+                        </Text>
+                    </TouchableHighlight>
+                    <Text style={{ fontSize: 13, color: "#000" }}>
+                        {item?.comment}
+                    </Text>
+                </View>
             </View>
+
+            <TouchableHighlight onPress={deleteComment} underlayColor="#eee">
+                <Image
+                    source={require("../../../assets/img/delete.png")}
+                    style={{ width: 25, height: 25, borderRadius: 100 }}
+                />
+            </TouchableHighlight>
         </View>
     );
 }

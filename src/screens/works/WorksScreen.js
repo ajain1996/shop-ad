@@ -1,4 +1,4 @@
-import { View, Text, Image, FlatList, TouchableHighlight } from 'react-native'
+import { View, Text, Image, FlatList, TouchableHighlight, ScrollView } from 'react-native'
 import React from 'react'
 import HomeHeader from '../home/HomeHeader'
 import HomeSearch from '../home/HomeSearch'
@@ -65,21 +65,35 @@ export default function WorksScreen({ navigation }) {
 
     return (
         <View style={{ backgroundColor: "#f7f8f9" }}>
-            <PTRView onRefresh={_refresh}>
-                <HomeHeader navigation={navigation} onPress={() => { navigation.navigate("AddWorksScreen") }} />
-                <HomeSearch onChange={(val) => {
-                    setLoading(true);
-                    Auth.getLocalStorageData("bearer").then((token) => {
-                        setLoading(false);
-                        getWorksByLocationPostAPI(val, token, (response) => {
-                            if (response !== null) {
-                                dispatch(setWork(response?.data));
-                            }
-                        })
+            <HomeHeader navigation={navigation} onPress={() => { navigation.navigate("AddWorksScreen") }} />
+            <HomeSearch onChange={(val) => {
+                setLoading(true);
+                Auth.getLocalStorageData("bearer").then((token) => {
+                    setLoading(false);
+                    getWorksByLocationPostAPI(val, token, (response) => {
+                        if (response !== null) {
+                            dispatch(setWork(response?.data));
+                        }
                     })
-                }} />
+                })
+            }} />
+            <PTRView onRefresh={_refresh}>
+                <ScrollView>
+                    {
+                        workData.map((item, index) => {
+                            return (
+                                <View key={index}>
+                                    <RenderSingleWork
+                                        item={item}
+                                    />
+                                </View>
+                            );
+                        })
+                    }
+                </ScrollView>
+                <View style={{ height: 200 }} />
 
-                <FlatList
+                {/* <FlatList
                     data={workData}
                     renderItem={({ item }) => {
                         return (
@@ -91,7 +105,7 @@ export default function WorksScreen({ navigation }) {
                     ListFooterComponent={
                         <View style={{ height: 200 }} />
                     }
-                />
+                /> */}
 
                 <CustomPanel loading={loading} />
                 <CustomLoader loading={loading} />

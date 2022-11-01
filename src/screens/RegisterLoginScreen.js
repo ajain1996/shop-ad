@@ -44,12 +44,12 @@ export default function RegisterLoginScreen({ navigation }) {
                     }}
                 />
 
-                <View style={{ ...commonStyles.row, marginTop: 33, zIndex: 1 }}>
+                {/* <View style={{ ...commonStyles.row, marginTop: 33, zIndex: 1 }}>
                     <Text style={{ ...commonStyles.fs18_500, color: "#fff" }}>Already have an account? </Text>
                     <TouchableHighlight onPress={() => { navigation.navigate("LoginScreen") }} underlayColor="#1572B9">
                         <Text style={{ ...commonStyles.fs18_500, color: "#EDAA26" }}>Login</Text>
                     </TouchableHighlight>
-                </View>
+                </View> */}
             </View>
         </Auth_BG_Component>
     )

@@ -56,7 +56,7 @@ const BottomTabs = () => {
                         return (
                             <BuildTabComponent
                                 image={require("../assets/img/job-tab.png")}
-                                text="Job"
+                                text="Works"
                                 focused={focused}
                             />
                         );
@@ -72,7 +72,7 @@ const BottomTabs = () => {
                         return (
                             <BuildTabComponent
                                 image={require("../assets/img/work-tab.png")}
-                                text={`Works`}
+                                text={`Job`}
                                 focused={focused}
                             />
                         );

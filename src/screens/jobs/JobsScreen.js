@@ -1,4 +1,4 @@
-import { View, Text, Image, StatusBar, TouchableHighlight, FlatList, Share } from 'react-native'
+import { View, Text, Image, StatusBar, TouchableHighlight, FlatList, Share, ScrollView } from 'react-native'
 import React from 'react'
 import { commonStyles } from '../../utils/styles'
 import { SIZES } from '../../utils/theme'
@@ -66,23 +66,38 @@ export default function JobsScreen({ navigation }) {
 
     return (
         <>
-            <PTRView onRefresh={_refresh}>
-                <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-                <HomeHeader navigation={navigation} onPress={() => navigation.navigate("AddJobScreen")} />
+            <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+            <HomeHeader navigation={navigation} onPress={() => navigation.navigate("AddJobScreen")} />
 
-                <HomeSearch onChange={(val) => {
-                    setLoading(true);
-                    Auth.getLocalStorageData("bearer").then((token) => {
-                        setLoading(false);
-                        getJobsByLocationPostRequest(val, token, (response) => {
-                            if (response !== null) {
-                                dispatch(setJob(response?.data));
-                            }
-                        })
+            <HomeSearch onChange={(val) => {
+                setLoading(true);
+                Auth.getLocalStorageData("bearer").then((token) => {
+                    setLoading(false);
+                    getJobsByLocationPostRequest(val, token, (response) => {
+                        if (response !== null) {
+                            dispatch(setJob(response?.data));
+                        }
                     })
-                }} />
+                })
+            }} />
+            <PTRView onRefresh={_refresh}>
+                <ScrollView>
+                    {
+                        jobsData.map((item, index) => {
+                            return (
+                                <View key={index}>
+                                    <RenderSingleJob
+                                        item={item}
+                                        bearerToken={bearerToken}
+                                        navigation={navigation}
+                                    />
+                                </View>
+                            );
+                        })
+                    }
+                </ScrollView>
 
-                <FlatList
+                {/* <FlatList
                     data={jobsData}
                     renderItem={({ item }) => {
                         return (
@@ -93,7 +108,7 @@ export default function JobsScreen({ navigation }) {
                             />
                         );
                     }}
-                />
+                /> */}
 
                 <View style={{ height: 64 }} />
 
