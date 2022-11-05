@@ -8,7 +8,7 @@ export const offerSlice = createSlice({
     },
     reducers: {
         setOffer(state, action) {
-            const offerd = action.payload;
+            const offerd = action?.payload;
             return { ...state, offerData: offerd, login: true }
         },
         removeOffer(state, action) {

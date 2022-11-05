@@ -2,9 +2,9 @@ import { View, Text, Image, TextInput } from 'react-native'
 import React from 'react'
 import { commonStyles } from '../../utils/styles'
 
-export default function HomeSearch({ onChange }) {
+export default function HomeSearch({ width, onChange }) {
     return (
-        <View style={{ width: "100%", height: 58, ...commonStyles.rowStart, padding: 16, backgroundColor: "#EFEFEF", alignItems: 'center', padding: 20, elevation: 8, shadowColor: "#999" }}>
+        <View style={{ width: width ? width : "100%", height: 58, ...commonStyles.rowStart, padding: 16, backgroundColor: "#EFEFEF", alignItems: 'center', padding: 20, elevation: 8, shadowColor: "#999" }}>
             <Image
                 source={require('../../assets/img/location.png')}
                 resizeMode="contain"

@@ -62,6 +62,7 @@ export default function CommentScreen({ navigation, route }) {
                                     item={item}
                                     navigation={navigation}
                                     bearerToken={bearerToken}
+                                    userData={userData}
                                 />
                             </View>
                         );
@@ -106,7 +107,7 @@ export default function CommentScreen({ navigation, route }) {
     )
 }
 
-const RenderSingleComment = ({ item, navigation, bearerToken }) => {
+const RenderSingleComment = ({ item, navigation, bearerToken, userData }) => {
     const [user, setUser] = React.useState([]);
 
     React.useEffect(() => {
@@ -184,12 +185,14 @@ const RenderSingleComment = ({ item, navigation, bearerToken }) => {
                 </View>
             </View>
 
-            <TouchableHighlight onPress={deleteComment} underlayColor="#eee">
-                <Image
-                    source={require("../../../assets/img/delete.png")}
-                    style={{ width: 25, height: 25, borderRadius: 100 }}
-                />
-            </TouchableHighlight>
+            {item?.commentBy === userData[0]?._id
+                ? <TouchableHighlight onPress={deleteComment} underlayColor="#eee">
+                    <Image
+                        source={require("../../../assets/img/delete.png")}
+                        style={{ width: 25, height: 25, borderRadius: 100 }}
+                    />
+                </TouchableHighlight>
+                : <></>}
         </View>
     );
 }

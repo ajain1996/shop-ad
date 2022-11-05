@@ -19,17 +19,13 @@ const ModalMenu = ({ modalVisible, callback, navigation }) => {
 
     const [userTypeModalVisible, setUserTypeModalVisible] = React.useState(false);
 
-    console.log("\n\n userData: ", userData)
-
     return (
         <View style={{ alignItems: "flex-start" }} >
             <Modal
                 animationType="fade"
                 transparent={true}
                 visible={modalVisible}
-                onRequestClose={() => {
-                    callback();
-                }}
+                onRequestClose={callback}
             >
                 <TouchableHighlight style={styles.centeredView} onPress={() => { callback() }} underlayColor="transparent">
                     <View style={styles.modalView}>
@@ -89,7 +85,7 @@ const ModalMenu = ({ modalVisible, callback, navigation }) => {
                             <Text style={styles.textStyle}>Logout</Text>
                         </TouchableHighlight>
 
-                        {userData?.qrImage !== null && userData?.qrImage !== undefined ? <Image
+                        {userData?.qrImage !== null || userData?.qrImage !== undefined ? <Image
                             source={{ uri: "https://res.cloudinary.com/strix-digital/image/upload/v1667034879/xgidqgtnys3ighei4tgy.png" }}
                             resizeMode="contain"
                             style={{ width: SIZES.width / 1.3, height: SIZES.width / 1.3, marginTop: 20 }}

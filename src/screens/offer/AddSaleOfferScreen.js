@@ -1,4 +1,4 @@
-import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableHighlight, View } from 'react-native'
+import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableHighlight, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import CustomInputHeader from '../../components/CustomInputHeader'
 import { SIZES } from '../../utils/theme'
@@ -11,6 +11,7 @@ import { addNewOfferPostRequest } from '../../utils/API'
 import Auth from '../../services/Auth'
 import CustomLoader, { CustomPanel } from '../../components/CustomLoader'
 import PersonalLeaveDatePicker from '../../components/CustomDatePicker'
+import AllCategoryModal from './AllCategoriesModal'
 
 export default function AddSaleOfferScreen({ navigation }) {
 
@@ -44,8 +45,10 @@ export default function AddSaleOfferScreen({ navigation }) {
                     }
                     tempArray.push(image)
                 })
-                if (tempArray.length < 5) {
-                    Alert.alert("Alert", "Please select atleast 5 images");
+                if (tempArray.length < 1) {
+                    Alert.alert("Alert", "Please select atleast an images");
+                } else if (tempArray.length > 5) {
+                    Alert.alert("Alert", "Selected images cannot be greater then 5");
                 } else {
                     setImageData(tempArray);
                 }
@@ -79,6 +82,7 @@ export default function AddSaleOfferScreen({ navigation }) {
                         imageData,
                         userData._id,
                         null,
+                        category,
                         token,
                         (response) => {
                             setLoading(false);
@@ -101,6 +105,9 @@ export default function AddSaleOfferScreen({ navigation }) {
             })
         }
     }
+
+    const [showCategoryModal, setShowCategoryModal] = React.useState(false);
+    const [category, setCategory] = React.useState("");
 
     return (
         <>
@@ -191,12 +198,43 @@ export default function AddSaleOfferScreen({ navigation }) {
                         </View>
                     </View>
 
+                    <>
+                        <Text style={{ ...commonStyles.fs16_500, marginTop: -20 }}>Add Category</Text>
+                        <TouchableOpacity onPress={() => setShowCategoryModal(true)}>
+                            <View style={[styles.locationInput, { borderColor: locationError ? "red" : "#BDBDBD" }]}>
+                                <Text style={{ ...commonStyles.fs14_400 }}>Category</Text>
+                            </View>
+                            <Image
+                                source={require("../../assets/img/location-track.png")}
+                                style={{ width: 24, height: 24, position: "absolute", right: 16, top: 22 }}
+                            />
+                        </TouchableOpacity>
+                        {locationError
+                            ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Location is mandatory</Text>
+                            : <></>}
+                    </>
+                    <Text />
+
                     <Custom_Auth_Btn
                         btnText="Upload"
                         onPress={handleSubmit}
                     />
+                    <Text />
                 </View>
             </ScrollView>
+
+            <AllCategoryModal
+                modalVisible={showCategoryModal}
+                callback={(res) => {
+                    console.log("\n\n Category id: ", res)
+                    setShowCategoryModal(!showCategoryModal)
+                    if (res !== 0) {
+                        setCategory(res)
+                        return true;
+                    }
+                }}
+                navigation={navigation}
+            />
 
             <CustomPanel loading={loading} />
             <CustomLoader loading={loading} />
