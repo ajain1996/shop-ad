@@ -14,7 +14,7 @@ export default function AddWorksScreen({ navigation }) {
     const [descError, setDescError] = React.useState(false);
     const [locationError, setLocationError] = React.useState(false);
     const [salaryError, setSalaryError] = React.useState(false);
-    const [shiftError, setShiftError] = React.useState(false);
+    const [shiftError, setShiftError] = React.useState("");
     const [designationError, setDesignationError] = React.useState(false);
     const [contactError, setContactError] = React.useState(false);
 
@@ -37,7 +37,7 @@ export default function AddWorksScreen({ navigation }) {
         } else if (salary.length === 0) {
             setSalaryError(true);
         } else if (shift.length === 0) {
-            setShiftError(true);
+            setShiftError("Shift Time is mandatory");
         } else if (designation.length === 0) {
             setDesignationError(true);
         } else if (contact.length === 0) {
@@ -66,8 +66,9 @@ export default function AddWorksScreen({ navigation }) {
                                     },
                                 }], { cancelable: false },)
                             }
-                            if (response.errors) {
-                                Alert.alert("Alert", response.errors.offerImage.message)
+                            if (response?.message?.includes("Work validation failed")) {
+                                console.log("\n\n response?.message: ", response?.message)
+                                Alert.alert("Alert", response?.message)
                             }
                         }
                     }
@@ -111,16 +112,16 @@ export default function AddWorksScreen({ navigation }) {
                         </>
 
                         <>
-                            <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Designation</Text>
+                            <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Relationship</Text>
                             <TextInput
-                                placeholder='Designation'
+                                placeholder='Relationship'
                                 placeholderTextColor="#999"
                                 value={designation}
                                 onChangeText={(val) => { setDesignation(val); setDesignationError(false) }}
                                 style={[styles.descriptionInput, { borderColor: designationError ? "red" : "#BDBDBD" }]}
                             />
                             {designationError
-                                ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Designation is mandatory</Text>
+                                ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Relationship is mandatory</Text>
                                 : <></>}
                         </>
 
@@ -158,11 +159,21 @@ export default function AddWorksScreen({ navigation }) {
                                 placeholder='Shift Time'
                                 placeholderTextColor="#999"
                                 value={shift}
-                                onChangeText={(val) => { setShift(val); setShiftError(false) }}
+                                autoCapitalize={false}
+                                keyboardType="email-address"
+                                onChangeText={(val) => {
+                                    setShift(val.toLocaleLowerCase());
+                                    console.log("\n\n val", val)
+                                    if (val !== "day" && val !== "night") {
+                                        setShiftError('Shift can only be "day" or "night"')
+                                    } else {
+                                        setShiftError("")
+                                    }
+                                }}
                                 style={[styles.descriptionInput, { borderColor: shiftError ? "red" : "#BDBDBD" }]}
                             />
-                            {shiftError
-                                ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Shift Time is mandatory</Text>
+                            {shiftError.length !== 0
+                                ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>{shiftError}</Text>
                                 : <></>}
                         </>
 

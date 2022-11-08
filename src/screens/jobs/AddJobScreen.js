@@ -2,7 +2,6 @@ import { Alert, FlatList, Image, Platform, ScrollView, StyleSheet, Text, TextInp
 import React from 'react'
 import CustomInputHeader from '../../components/CustomInputHeader'
 import { SIZES } from '../../utils/theme'
-import { launchImageLibrary } from 'react-native-image-picker'
 import { commonStyles } from '../../utils/styles'
 import moment from 'moment'
 import Custom_Auth_Btn from '../../components/Custom_Auth_Btn'
@@ -11,8 +10,8 @@ import DocumentPicker from 'react-native-document-picker'
 import { addNewJobPostRequest } from '../../utils/API'
 import Auth from '../../services/Auth'
 import PersonalLeaveDatePicker from '../../components/CustomDatePicker'
-import { RenderUpload } from '../offer/AddSaleOfferScreen'
 import CustomLoader, { CustomPanel } from '../../components/CustomLoader'
+import { useSelector } from 'react-redux'
 
 export default function AddJobScreen({ navigation }) {
     const [showTick, setShowTick] = React.useState({
@@ -27,7 +26,6 @@ export default function AddJobScreen({ navigation }) {
         next3: false,
     });
 
-    const [imageError, setImageError] = React.useState(false);
     const [shopNameError, setShopNameError] = React.useState(false);
     const [titleError, setTitleError] = React.useState(false);
     const [addressError, setAddressError] = React.useState(false);
@@ -56,8 +54,6 @@ export default function AddJobScreen({ navigation }) {
     const [messageError, setMessageError] = React.useState(false);
     const [startDateError, setStartDateError] = React.useState(false);
 
-    const [image, setImage] = React.useState("");
-    const [imageData, setImageData] = React.useState("");
     const [shopName, setShopName] = React.useState("");
     const [title, setTitle] = React.useState("");
     const [address, setAddress] = React.useState("");
@@ -85,33 +81,9 @@ export default function AddJobScreen({ navigation }) {
     const [contactPersonName, setContactPersonName] = React.useState("");
     const [message, setMessage] = React.useState("");
 
-
     const [loading, setLoading] = React.useState(false);
     const [startDate, setStartDate] = React.useState("");
     const [endDate, setEndDate] = React.useState("");
-
-    let options = {
-        storageOptions: {
-            skipBackup: true,
-            path: 'images',
-        },
-    };
-
-    const getImage = () => {
-        launchImageLibrary(options, (response) => {
-            if (response?.didCancel) {
-                console.log('User cancelled image picker');
-            } else if (response?.error) {
-                console.log('ImagePicker Error: ', response?.error);
-            } else if (response?.customButton) {
-                console.log('User tapped custom button: ', response?.customButton);
-            } else {
-                setImage(response?.assets[0].uri);
-                setImageData(response);
-                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-            }
-        });
-    }
 
     const handleSubmit = () => {
         if (cvFile.length === 0) {
@@ -192,7 +164,7 @@ export default function AddJobScreen({ navigation }) {
                 copyTo: 'cachesDirectory',
             });
 
-            var realPath;
+            var realPath = "";
             if (Platform.OS === 'ios') {
                 var RNFS = require('react-native-fs');
                 let url = res.uri;
@@ -222,6 +194,7 @@ export default function AddJobScreen({ navigation }) {
         }
     };
 
+    const { userType } = useSelector(state => state.UserType);
 
     return (
         <>
@@ -235,13 +208,6 @@ export default function AddJobScreen({ navigation }) {
                 </View>
 
                 {showNext.next1 ? <View style={{ paddingHorizontal: 16 }}>
-                    <RenderImageUpload
-                        image={image} getImage={getImage}
-                        imageError={imageError}
-                        setImageError={setImageError}
-                        setImage={setImage}
-                    />
-
                     <>
                         <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Add Title</Text>
                         <TextInput
@@ -286,13 +252,31 @@ export default function AddJobScreen({ navigation }) {
 
                     <>
                         <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Marital Status</Text>
-                        <TextInput
+                        {
+                            ["Married", "Not-Married"].map((item) => {
+                                return (
+                                    <TouchableOpacity
+                                        style={[styles.checkboxWrapper]}
+                                        onPress={() => { setMaritalStatus(item.toLocaleLowerCase()); setMaritalStatusError(false) }}
+                                    >
+                                        <View style={[styles.checkbox]}>
+                                            <View style={{
+                                                width: 13, height: 13, borderRadius: 100,
+                                                backgroundColor: maritalStatus === item.toLocaleLowerCase() ? "#000" : "#fff"
+                                            }} />
+                                        </View>
+                                        <Text style={{ ...commonStyles.fs14_400, marginLeft: 10 }}>{item}</Text>
+                                    </TouchableOpacity>
+                                );
+                            })
+                        }
+                        {/* <TextInput
                             placeholder='Marital Status'
                             placeholderTextColor="#999"
                             value={maritalStatus}
                             onChangeText={(val) => { setMaritalStatus(val); setMaritalStatusError(false) }}
                             style={[styles.titleInput, { borderColor: maritalStatusError ? "red" : "#BDBDBD" }]}
-                        />
+                        /> */}
                         {maritalStatusError
                             ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Marital status is mandatory</Text>
                             : <></>}
@@ -300,13 +284,31 @@ export default function AddJobScreen({ navigation }) {
 
                     <>
                         <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Gender</Text>
-                        <TextInput
+                        {
+                            ["Men", "Women", "Others"].map((item) => {
+                                return (
+                                    <TouchableOpacity
+                                        style={[styles.checkboxWrapper]}
+                                        onPress={() => { setGender(item.toLocaleLowerCase()); setGenderError(false); }}
+                                    >
+                                        <View style={[styles.checkbox]}>
+                                            <View style={{
+                                                width: 13, height: 13, borderRadius: 100,
+                                                backgroundColor: gender === item.toLocaleLowerCase() ? "#000" : "#fff"
+                                            }} />
+                                        </View>
+                                        <Text style={{ ...commonStyles.fs14_400, marginLeft: 10 }}>{item}</Text>
+                                    </TouchableOpacity>
+                                );
+                            })
+                        }
+                        {/* <TextInput
                             placeholder='Gender'
                             placeholderTextColor="#999"
                             value={gender}
                             onChangeText={(val) => { setGender(val); setGenderError(false) }}
                             style={[styles.titleInput, { borderColor: genderError ? "red" : "#BDBDBD" }]}
-                        />
+                        /> */}
                         {genderError
                             ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Gender is mandatory</Text>
                             : <></>}
@@ -373,16 +375,16 @@ export default function AddJobScreen({ navigation }) {
                     </>
 
                     <>
-                        <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Number of Works</Text>
+                        <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Number of Workers</Text>
                         <TextInput
-                            placeholder='Number of Works'
+                            placeholder='Number of Workers'
                             placeholderTextColor="#999"
                             value={numberOfWorks}
                             onChangeText={(val) => { setNumberOfWork(val); setNumberOfWorkError(false) }}
                             style={[styles.titleInput, { borderColor: numberOfWorksError ? "red" : "#BDBDBD" }]}
                         />
                         {numberOfWorksError
-                            ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Number of Works is mandatory</Text>
+                            ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Number of Workers is mandatory</Text>
                             : <></>}
                     </>
 
@@ -428,7 +430,7 @@ export default function AddJobScreen({ navigation }) {
                             : <></>}
                     </>
 
-                    <>
+                    {/* <>
                         <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Salary Offered</Text>
                         <TextInput
                             placeholder='Salary Offered'
@@ -440,7 +442,7 @@ export default function AddJobScreen({ navigation }) {
                         {salaryOfferedError
                             ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Salary Offered is mandatory</Text>
                             : <></>}
-                    </>
+                    </> */}
 
                     <>
                         <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Vehicle Required</Text>
@@ -458,8 +460,8 @@ export default function AddJobScreen({ navigation }) {
 
                     <>
                         {/* <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Shift</Text> */}
-                        <View style={{ ...commonStyles.rowBetween }}>
-                            {/* {
+                        {/* <View style={{ ...commonStyles.rowBetween }}> */}
+                        {/* {
                                 ["Day", "Night"].map((item) => {
                                     return (
                                         <TouchableOpacity
@@ -477,7 +479,7 @@ export default function AddJobScreen({ navigation }) {
                                     );
                                 })
                             } */}
-                            <PersonalLeaveDatePicker
+                        {/* <PersonalLeaveDatePicker
                                 heading="Shift"
                                 placeholderText="Start Date"
                                 minimumDate={''}
@@ -489,9 +491,9 @@ export default function AddJobScreen({ navigation }) {
                                     setStartDate(moment(selectedStartDate).format('DD-MMM-YYYY'));
                                     setStartDateError(false);
                                 }}
-                            />
+                            /> */}
 
-                            <PersonalLeaveDatePicker
+                        {/* <PersonalLeaveDatePicker
                                 // heading="End Date"
                                 placeholderText="End Date"
                                 minimumDate={''}
@@ -500,8 +502,8 @@ export default function AddJobScreen({ navigation }) {
                                 onDateSelected={function (selectedStartDate) {
                                     setEndDate(moment(selectedStartDate).format('DD-MMM-YYYY'));
                                 }}
-                            />
-                        </View>
+                            /> */}
+                        {/* </View> */}
                     </>
 
                     <>
@@ -607,113 +609,117 @@ export default function AddJobScreen({ navigation }) {
 
                 {showNext.next3
                     ? <View style={{ paddingHorizontal: 16 }}>
-                        <>
-                            <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Attach CV</Text>
-                            {cvFile.length === 0
-                                ? <TouchableHighlight
-                                    style={[styles.attachCV]}
-                                    onPress={() => { selectPdfFile("cv"); setCvFileError(false); }}
-                                    underlayColor="#f7f8f9"
-                                >
-                                    <Image
-                                        source={require("../../assets/img/attach.png")}
-                                        style={{ width: 24, height: 24, tintColor: "#BDBDBD" }}
-                                    />
-                                </TouchableHighlight>
-                                : <View style={[styles.attachCV, commonStyles.rowBetween]}>
-                                    <Text style={{ ...commonStyles.fs14_500 }}>{cvFile.name}</Text>
-                                    <TouchableHighlight onPress={() => setCvFile("")} underlayColor="#f7f8f9">
+                        {userType === "user"
+                            ? <>
+                                <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Attach CV</Text>
+                                {cvFile.length === 0
+                                    ? <TouchableHighlight
+                                        style={[styles.attachCV]}
+                                        onPress={() => { selectPdfFile("cv"); setCvFileError(false); }}
+                                        underlayColor="#f7f8f9"
+                                    >
                                         <Image
-                                            source={require("../../assets/img/cross.png")}
-                                            style={{ width: 20, height: 20, tintColor: "#BDBDBD" }}
+                                            source={require("../../assets/img/attach.png")}
+                                            style={{ width: 24, height: 24, tintColor: "#BDBDBD" }}
                                         />
                                     </TouchableHighlight>
-                                </View>}
-                            {cvFileError
-                                ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>CV is mandatory</Text>
-                                : <></>}
-                        </>
+                                    : <View style={[styles.attachCV, commonStyles.rowBetween]}>
+                                        <Text style={{ ...commonStyles.fs14_500 }}>{cvFile.name}</Text>
+                                        <TouchableHighlight onPress={() => setCvFile("")} underlayColor="#f7f8f9">
+                                            <Image
+                                                source={require("../../assets/img/cross.png")}
+                                                style={{ width: 20, height: 20, tintColor: "#BDBDBD" }}
+                                            />
+                                        </TouchableHighlight>
+                                    </View>}
+                                {cvFileError
+                                    ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>CV is mandatory</Text>
+                                    : <></>}
+                            </> : <></>}
 
-                        <>
-                            <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Education Certificate</Text>
-                            {educationCertificate.length === 0
-                                ? <TouchableHighlight
-                                    style={[styles.attachCV]}
-                                    onPress={() => { selectPdfFile("educationCertificate"); setEducationCertificateError(false) }}
-                                    underlayColor="#f7f8f9"
-                                >
-                                    <Image
-                                        source={require("../../assets/img/upload.png")}
-                                        style={{ width: 24, height: 24, tintColor: "#BDBDBD" }}
-                                    />
-                                </TouchableHighlight>
-                                : <View style={[styles.attachCV, commonStyles.rowBetween]}>
-                                    <Text style={{ ...commonStyles.fs14_500 }}>{educationCertificate.name}</Text>
-                                    <TouchableHighlight onPress={() => setCvFile("")} underlayColor="#f7f8f9">
+                        {userType === "user"
+                            ? <>
+                                <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Education Certificate</Text>
+                                {educationCertificate.length === 0
+                                    ? <TouchableHighlight
+                                        style={[styles.attachCV]}
+                                        onPress={() => { selectPdfFile("educationCertificate"); setEducationCertificateError(false) }}
+                                        underlayColor="#f7f8f9"
+                                    >
                                         <Image
-                                            source={require("../../assets/img/cross.png")}
-                                            style={{ width: 20, height: 20, tintColor: "#BDBDBD" }}
+                                            source={require("../../assets/img/upload.png")}
+                                            style={{ width: 24, height: 24, tintColor: "#BDBDBD" }}
                                         />
                                     </TouchableHighlight>
-                                </View>}
-                            {educationCertificateError
-                                ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Education certificate is mandatory</Text>
-                                : <></>}
-                        </>
+                                    : <View style={[styles.attachCV, commonStyles.rowBetween]}>
+                                        <Text style={{ ...commonStyles.fs14_500 }}>{educationCertificate.name}</Text>
+                                        <TouchableHighlight onPress={() => setCvFile("")} underlayColor="#f7f8f9">
+                                            <Image
+                                                source={require("../../assets/img/cross.png")}
+                                                style={{ width: 20, height: 20, tintColor: "#BDBDBD" }}
+                                            />
+                                        </TouchableHighlight>
+                                    </View>}
+                                {educationCertificateError
+                                    ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Education certificate is mandatory</Text>
+                                    : <></>}
+                            </> : <></>}
 
-                        <>
-                            <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Experience Certificate</Text>
-                            {experienceCertificate.length === 0
-                                ? <TouchableHighlight
-                                    style={[styles.attachCV]}
-                                    onPress={() => { selectPdfFile("experienceCertificate"); setExperienceCertificateError(false); }}
-                                    underlayColor="#f7f8f9"
-                                >
-                                    <Image
-                                        source={require("../../assets/img/upload.png")}
-                                        style={{ width: 24, height: 24, tintColor: "#BDBDBD" }}
-                                    />
-                                </TouchableHighlight>
-                                : <View style={[styles.attachCV, commonStyles.rowBetween]}>
-                                    <Text style={{ ...commonStyles.fs14_500 }}>{experienceCertificate.name}</Text>
-                                    <TouchableHighlight onPress={() => setCvFile("")} underlayColor="#f7f8f9">
+                        {userType === "user"
+                            ? <>
+                                <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Experience Certificate</Text>
+                                {experienceCertificate.length === 0
+                                    ? <TouchableHighlight
+                                        style={[styles.attachCV]}
+                                        onPress={() => { selectPdfFile("experienceCertificate"); setExperienceCertificateError(false); }}
+                                        underlayColor="#f7f8f9"
+                                    >
                                         <Image
-                                            source={require("../../assets/img/cross.png")}
-                                            style={{ width: 20, height: 20, tintColor: "#BDBDBD" }}
+                                            source={require("../../assets/img/upload.png")}
+                                            style={{ width: 24, height: 24, tintColor: "#BDBDBD" }}
                                         />
                                     </TouchableHighlight>
-                                </View>}
-                            {experienceCertificateError
-                                ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Experience certificate is mandatory</Text>
-                                : <></>}
-                        </>
+                                    : <View style={[styles.attachCV, commonStyles.rowBetween]}>
+                                        <Text style={{ ...commonStyles.fs14_500 }}>{experienceCertificate.name}</Text>
+                                        <TouchableHighlight onPress={() => setCvFile("")} underlayColor="#f7f8f9">
+                                            <Image
+                                                source={require("../../assets/img/cross.png")}
+                                                style={{ width: 20, height: 20, tintColor: "#BDBDBD" }}
+                                            />
+                                        </TouchableHighlight>
+                                    </View>}
+                                {experienceCertificateError
+                                    ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Experience certificate is mandatory</Text>
+                                    : <></>}
+                            </> : <></>}
 
-                        <>
-                            <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Police Verification</Text>
-                            {policyVerification.length === 0
-                                ? <TouchableHighlight
-                                    style={[styles.attachCV]}
-                                    onPress={() => { selectPdfFile("policyVerification"); setPolicyVerificationError(false) }}
-                                    underlayColor="#f7f8f9"
-                                >
-                                    <Image
-                                        source={require("../../assets/img/upload.png")}
-                                        style={{ width: 24, height: 24, tintColor: "#BDBDBD" }}
-                                    />
-                                </TouchableHighlight>
-                                : <View style={[styles.attachCV, commonStyles.rowBetween]}>
-                                    <Text style={{ ...commonStyles.fs14_500 }}>{policyVerification.name}</Text>
-                                    <TouchableHighlight onPress={() => setCvFile("")} underlayColor="#f7f8f9">
+                        {userType === "user"
+                            ? <>
+                                <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Police Verification</Text>
+                                {policyVerification.length === 0
+                                    ? <TouchableHighlight
+                                        style={[styles.attachCV]}
+                                        onPress={() => { selectPdfFile("policyVerification"); setPolicyVerificationError(false) }}
+                                        underlayColor="#f7f8f9"
+                                    >
                                         <Image
-                                            source={require("../../assets/img/cross.png")}
-                                            style={{ width: 20, height: 20, tintColor: "#BDBDBD" }}
+                                            source={require("../../assets/img/upload.png")}
+                                            style={{ width: 24, height: 24, tintColor: "#BDBDBD" }}
                                         />
                                     </TouchableHighlight>
-                                </View>}
-                            {policyVerificationError
-                                ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Policy verification is mandatory</Text>
-                                : <></>}
-                        </>
+                                    : <View style={[styles.attachCV, commonStyles.rowBetween]}>
+                                        <Text style={{ ...commonStyles.fs14_500 }}>{policyVerification.name}</Text>
+                                        <TouchableHighlight onPress={() => setCvFile("")} underlayColor="#f7f8f9">
+                                            <Image
+                                                source={require("../../assets/img/cross.png")}
+                                                style={{ width: 20, height: 20, tintColor: "#BDBDBD" }}
+                                            />
+                                        </TouchableHighlight>
+                                    </View>}
+                                {policyVerificationError
+                                    ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Policy verification is mandatory</Text>
+                                    : <></>}
+                            </> : <></>}
 
                         <>
                             <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Interview Timing</Text>
@@ -816,51 +822,6 @@ const RenderTickComponent = ({ showNext, title }) => {
                 width: SIZES.width / 3, height: 2, backgroundColor: showNext ? "#1572B9" : "#D9D9D9",
                 position: "absolute", top: 12
             }} />
-        </View>
-    );
-}
-
-export const RenderImageUpload = ({ image, getImage, imageError, setImageError, setImage }) => {
-    return (
-        <View>
-            <View>
-                {image.length === 0
-                    ? <TouchableHighlight onPress={() => { getImage(); setImageError(false) }} style={{ paddingVertical: 16 }}>
-                        <View style={{ alignItems: "center", justifyContent: "center" }}>
-                            <Image
-                                source={require("../../assets/img/work_img.png")}
-                                resizeMode="contain"
-                                style={{ width: "100%", height: SIZES.width / 1.36, opacity: 0.8 }}
-                            />
-                            <View style={[styles.upload]}>
-                                <Image
-                                    source={require("../../assets/img/upload.png")}
-                                    resizeMode="contain"
-                                    style={{ width: 23, height: 23, tintColor: "#000" }}
-                                />
-                            </View>
-                        </View>
-                    </TouchableHighlight>
-                    : <View style={{ flex: 1, marginTop: 20 }}>
-                        <Image
-                            source={{ uri: image }}
-                            resizeMode="contain"
-                            style={{ width: "100%", height: SIZES.width / 1.4, borderRadius: 9 }}
-                        />
-                        <TouchableHighlight onPress={() => setImage("")}
-                            style={{ position: "absolute", top: 6, right: 6, borderRadius: 100 }}
-                            underlayColor="#f7f8f9"
-                        >
-                            <Image
-                                source={require("../../assets/img/cross.png")}
-                                style={{ width: 25, height: 25, tintColor: "#fff" }}
-                            />
-                        </TouchableHighlight>
-                    </View>}
-            </View>
-            {imageError
-                ? <Text style={{ ...commonStyles.fs12_400, color: "red", marginTop: -24 }}>Image is mandatory</Text>
-                : <></>}
         </View>
     );
 }

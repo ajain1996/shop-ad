@@ -59,6 +59,12 @@ export default function AddSaleOfferScreen({ navigation }) {
         console.log("\n\n imageData: ", i, imageData[i])
     }
 
+    const [showCategoryModal, setShowCategoryModal] = React.useState(false);
+    const [category, setCategory] = React.useState({
+        name: "",
+        id: "",
+    });
+
     const handleSubmit = () => {
         if (description.length === 0) {
             setDescriptionError(true);
@@ -82,7 +88,7 @@ export default function AddSaleOfferScreen({ navigation }) {
                         imageData,
                         userData._id,
                         null,
-                        category,
+                        category?.id,
                         token,
                         (response) => {
                             setLoading(false);
@@ -105,9 +111,6 @@ export default function AddSaleOfferScreen({ navigation }) {
             })
         }
     }
-
-    const [showCategoryModal, setShowCategoryModal] = React.useState(false);
-    const [category, setCategory] = React.useState("");
 
     return (
         <>
@@ -202,7 +205,9 @@ export default function AddSaleOfferScreen({ navigation }) {
                         <Text style={{ ...commonStyles.fs16_500, marginTop: -20 }}>Add Category</Text>
                         <TouchableOpacity onPress={() => setShowCategoryModal(true)}>
                             <View style={[styles.locationInput, { borderColor: locationError ? "red" : "#BDBDBD" }]}>
-                                <Text style={{ ...commonStyles.fs14_400 }}>Category</Text>
+                                {category?.name?.length === 0
+                                    ? <Text style={{ ...commonStyles.fs14_400, color: "#999" }}>Category</Text>
+                                    : <Text style={{ ...commonStyles.fs14_400, color: "#000" }}>{category.name}</Text>}
                             </View>
                             <Image
                                 source={require("../../assets/img/location-track.png")}
@@ -210,7 +215,7 @@ export default function AddSaleOfferScreen({ navigation }) {
                             />
                         </TouchableOpacity>
                         {locationError
-                            ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Location is mandatory</Text>
+                            ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Category is mandatory</Text>
                             : <></>}
                     </>
                     <Text />
@@ -225,11 +230,15 @@ export default function AddSaleOfferScreen({ navigation }) {
 
             <AllCategoryModal
                 modalVisible={showCategoryModal}
-                callback={(res) => {
+                callback={(res, res2) => {
                     console.log("\n\n Category id: ", res)
                     setShowCategoryModal(!showCategoryModal)
                     if (res !== 0) {
-                        setCategory(res)
+                        setCategory({
+                            ...category,
+                            name: res2,
+                            id: res
+                        })
                         return true;
                     }
                 }}

@@ -1,10 +1,10 @@
-import { View, Text, Image, StatusBar, TouchableHighlight, ScrollView, Share, FlatList, ActivityIndicator } from 'react-native'
+import { View, Text, Image, StatusBar, TouchableHighlight, ScrollView, Share, ActivityIndicator } from 'react-native'
 import React from 'react'
 import { commonStyles } from '../../utils/styles'
 import HomeHeader from './HomeHeader'
 import HomeSearch from './HomeSearch'
 import { SIZES } from '../../utils/theme'
-import { addLikesByIDPostAPI, getAllJobsPostRequest, getAllOffersPostRequest, getAllWorksPostRequest, getCommentsCountByIDPostAPI, getLikesCountByIDPostAPI, getOffersByCategoryAPI, getOffersByLocationPostRequest, getUserByIDPostAPI, unLikesByIDPostAPI } from '../../utils/API'
+import { addLikesByIDPostAPI, getAllJobsPostRequest, getAllOffersPostRequest, getAllWorksPostRequest, getCommentsCountByIDPostAPI, getLikesCountByIDPostAPI, getOffersByLocationPostRequest, getUserByIDPostAPI, unLikesByIDPostAPI } from '../../utils/API'
 import { useState } from 'react'
 import Auth from '../../services/Auth'
 import CustomLoader, { CustomPanel } from '../../components/CustomLoader'
@@ -68,7 +68,6 @@ export default function HomeScreen({ navigation }) {
     }, [])
 
     function _refresh() {
-        // return new Promise((resolve) => {
         setLoading(true);
         Auth.getLocalStorageData("bearer").then((token) => {
             setLoading(false);
@@ -79,20 +78,19 @@ export default function HomeScreen({ navigation }) {
                 }
             })
         })
-        // });
     }
 
     const [showSuggestion, setShowSuggestion] = useState(false);
     const [suggestionTitleData, setSuggestionTitleData] = useState([]);
-
     const [showCategoryModal, setShowCategoryModal] = useState(false);
+    const [locationTitle, setLocationTitle] = useState("");
 
     return (
         <>
             <StatusBar barStyle="dark-content" backgroundColor="#fff" />
             <HomeHeader navigation={navigation} onPress={() => { navigation.navigate("AddSaleOfferScreen") }} />
             <View style={{ ...commonStyles.rowBetween }}>
-                <HomeSearch width={"86%"} onChange={(val) => {
+                <HomeSearch width={"86%"} defaultValue={locationTitle} onChange={(val) => {
                     setLoading(true);
                     Auth.getLocalStorageData("bearer").then((token) => {
                         setLoading(false);
@@ -102,16 +100,12 @@ export default function HomeScreen({ navigation }) {
                             if (response !== null) {
                                 dispatch(setOffer(response?.data));
                                 setSuggestionTitleData(response?.data);
-                                console.log("\n\n suggestionTitleData: ", response?.data)
                             }
                         })
                     })
                 }} />
                 <TouchableHighlight style={{ alignItems: 'center', justifyContent: 'center', width: "16%", height: 58 }}
-                    onPress={() => {
-                        setShowCategoryModal(true);
-                    }}
-                    underlayColor="#f7f8f9"
+                    underlayColor="#f7f8f9" onPress={() => { setShowCategoryModal(true) }}
                 >
                     <Image
                         source={require("../../assets/img/filter2.png")}
@@ -119,57 +113,61 @@ export default function HomeScreen({ navigation }) {
                     />
                 </TouchableHighlight>
                 <CategoryModal
-                    modalVisible={showCategoryModal}
+                    modalVisible={showCategoryModal} navigation={navigation}
                     callback={() => { setShowCategoryModal(!showCategoryModal) }}
-                    navigation={navigation}
                 />
             </View>
+
             {showSuggestion
                 ? <ScrollView style={{ width: SIZES.width, backgroundColor: "#fff", height: suggestionTitleData?.length > 0 ? 360 : 110 }}>
-                    {
-                        loading
-                            ? <View style={{ width: "100%", height: 180, ...commonStyles.centerStyles }}>
-                                <ActivityIndicator size={40} />
-                            </View>
-                            : <View>
-                                {
-                                    suggestionTitleData?.map((suggTitles, index) => {
-                                        return (
-                                            <TouchableHighlight
-                                                style={{ padding: 12, width: "100%" }}
-                                                onPress={() => { }}
-                                                underlayColor="#ccc"
-                                                key={index}
-                                            >
-                                                <Text style={{ ...commonStyles.fs12_400, color: "#000" }}>{suggTitles?.location}</Text>
-                                            </TouchableHighlight>
-                                        );
-                                    })
-                                }
-                                {suggestionTitleData?.length === 0
-                                    ? <View style={{ backgroundColor: "#fff", height: 90, ...commonStyles.centerStyles }}>
-                                        <Text style={{ ...commonStyles.fs14_400, color: "#000" }}>No Data</Text>
-                                    </View>
-                                    : <></>}
-                            </View>
-                    }
+                    {loading
+                        ? <View style={{ width: "100%", height: 180, ...commonStyles.centerStyles }}>
+                            <ActivityIndicator size={40} />
+                        </View>
+                        : <View>
+                            {suggestionTitleData?.map((suggTitles, index) => {
+                                return (
+                                    <TouchableHighlight
+                                        style={{ padding: 12, width: "100%" }} underlayColor="#ccc" key={index}
+                                        onPress={() => {
+                                            Auth.getLocalStorageData("bearer").then((token) => {
+                                                getOffersByLocationPostRequest(suggTitles?.location, token, (response) => {
+                                                    if (response !== null) {
+                                                        dispatch(setOffer(response?.data));
+                                                        setSuggestionTitleData(response?.data);
+                                                        setShowSuggestion(false);
+                                                        setLocationTitle(suggTitles?.location)
+                                                    }
+                                                })
+                                            })
+                                        }}
+                                    >
+                                        <Text style={{ ...commonStyles.fs12_400, color: "#000" }}>{suggTitles?.location}</Text>
+                                    </TouchableHighlight>
+                                );
+                            })}
+                            {suggestionTitleData?.length === 0
+                                ? <View style={{ backgroundColor: "#fff", height: 90, ...commonStyles.centerStyles }}>
+                                    <Text style={{ ...commonStyles.fs14_400, color: "#000" }}>No Data</Text>
+                                </View>
+                                : <></>}
+                        </View>}
+                </ScrollView>
+                : <></>}
 
-                </ScrollView> : <></>}
             <PTRView onRefresh={_refresh}>
                 <ScrollView>
-                    {
-                        offerData?.map((item, index) => {
-                            return (
-                                <View key={index}>
-                                    <RenderSingleOffer
-                                        item={item}
-                                        bearerToken={bearerToken}
-                                        navigation={navigation}
-                                    />
-                                </View>
-                            );
-                        })
-                    }
+                    {offerData?.map((item, index) => {
+                        return (
+                            <View key={index}>
+                                <RenderSingleOffer
+                                    item={item}
+                                    bearerToken={bearerToken}
+                                    navigation={navigation}
+                                />
+                            </View>
+                        );
+                    })}
 
                     {offerData?.length === 0
                         ? <View style={{ backgroundColor: "#fff", height: SIZES.height, ...commonStyles.centerStyles }}>
@@ -177,38 +175,6 @@ export default function HomeScreen({ navigation }) {
                         </View>
                         : <></>}
                 </ScrollView>
-                {/* <FlatList
-                    data={offerData}
-                    stickyHeaderIndices={[0]}
-                    renderItem={({ item }) => {
-                        return (
-                            <RenderSingleOffer
-                                item={item}
-                                bearerToken={bearerToken}
-                                navigation={navigation}
-                            />
-                        );
-                    }}
-                    ListHeaderComponent={
-                        <View>
-                            <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-                            <HomeHeader navigation={navigation} onPress={() => { navigation.navigate("AddSaleOfferScreen") }} />
-                            <HomeSearch onChange={(val) => {
-                                setLoading(true);
-                                Auth.getLocalStorageData("bearer").then((token) => {
-                                    setLoading(false);
-                                    setBearerToken(token);
-                                    getOffersByLocationPostRequest(val, token, (response) => {
-                                        if (response !== null) {
-                                            dispatch(setOffer(response?.data));
-                                        }
-                                    })
-                                })
-                            }} />
-                        </View>
-                    }
-                /> */}
-
                 <View style={{ height: 64 }} />
 
                 <CustomPanel loading={loading} />
@@ -335,7 +301,8 @@ const RenderSingleOffer = ({ item, bearerToken, navigation }) => {
     const handleShare = async () => {
         try {
             const result = await Share.share({
-                message: item?.offerImage,
+                message: `${item?.description}\n${item?.offerImage}`,
+                url: "https://play.google.com/store/apps"
             });
             if (result.action === Share.sharedAction) {
                 if (result.activityType) { } else { }
@@ -348,17 +315,12 @@ const RenderSingleOffer = ({ item, bearerToken, navigation }) => {
     function dayDiff(startDate, endDate) {
         const diffInMs = moment(endDate) - moment(startDate)
         const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-
-        // setDuration(diffInDays + 1);
-
         return diffInDays + 1;
     }
 
     var startDate = moment(item?.startDate).format("DD/MM/YYYY");
     var endDate = moment(item?.endDate).format("DD/MM/YYYY");
-
     var diffDays = dayDiff(startDate, endDate);
-    // console.log("\n\n \n\n \n\n \n\n \n\n \n\n \n\n item: ", endDate, startDate, diffDays)
 
     return (
         <View style={{ borderBottomColor: "#D8D8D8", borderBottomWidth: 1, backgroundColor: "#fff" }}>

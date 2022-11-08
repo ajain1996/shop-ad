@@ -1,14 +1,11 @@
 import React from "react";
 import { Modal, StyleSheet, Text, View, TouchableHighlight, ScrollView } from "react-native";
-import { useDispatch } from "react-redux";
-import { setOffer } from "../../redux/reducer/offer";
 import Auth from "../../services/Auth";
-import { getAllCategoriesAPI, getOffersByCategoryAPI } from "../../utils/API";
+import { getAllCategoriesAPI } from "../../utils/API";
 import { commonStyles } from "../../utils/styles";
 import { SIZES } from "../../utils/theme";
 
-const AllCategoryModal = ({ modalVisible, callback, navigation }) => {
-    const dispatch = useDispatch();
+const AllCategoryModal = ({ modalVisible, callback }) => {
     const [categories, setCategories] = React.useState([]);
 
     React.useEffect(() => {
@@ -31,10 +28,10 @@ const AllCategoryModal = ({ modalVisible, callback, navigation }) => {
                 transparent={true}
                 visible={modalVisible}
                 onRequestClose={() => {
-                    callback(0);
+                    callback(0, 0);
                 }}
             >
-                <TouchableHighlight style={styles.centeredView} onPress={() => { callback(0) }} underlayColor="transparent">
+                <TouchableHighlight style={styles.centeredView} onPress={() => { callback(0, 0) }} underlayColor="transparent">
                     <View style={styles.modalView}>
                         <ScrollView>
                             {categories.map((item, index) => {
@@ -44,7 +41,7 @@ const AllCategoryModal = ({ modalVisible, callback, navigation }) => {
                                         style={[styles.button]}
                                         underlayColor="#dcdcdc"
                                         onPress={() => {
-                                            callback(item?._id);
+                                            callback(item?._id, item?.categoryName);
                                         }}
                                     >
                                         <Text style={styles.textStyle}>{item?.categoryName}</Text>
