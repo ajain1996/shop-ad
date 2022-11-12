@@ -86,73 +86,143 @@ export default function AddJobScreen({ navigation }) {
     const [endDate, setEndDate] = React.useState("");
 
     const handleSubmit = () => {
-        if (cvFile.length === 0) {
-            setCvFileError(true);
-        } else if (educationCertificate.length === 0) {
-            setEducationCertificateError(true);
-        } else if (experienceCertificate.length === 0) {
-            setExperienceCertificateError(true);
-        } else if (policyVerification.length === 0) {
-            setPolicyVerificationError(true);
-        } else if (interviewTiming.length === 0) {
-            setInterviewTimingError(true);
-        } else if (contactNumber.length === 0) {
-            setContactNumberError(true);
-        } else if (contactPersonName.length === 0) {
-            setContactPersonNameError(true);
-        } else if (message.length === 0) {
-            setMessageError(true);
-        } else {
-            setLoading(true);
-            Auth.getAccount().then((userData) => {
-                Auth.getLocalStorageData("bearer").then((token) => {
-                    addNewJobPostRequest(
-                        title,
-                        description,
-                        shopName,
-                        location,
-                        userData[0]?._id,
-                        salaryOffered,
-                        contactPersonName,
-                        startDate,
-                        endDate,
-                        contactNumber,
-                        userData[0]?.email,
-                        gender,
-                        areaOfWork,
-                        numberOfWorks,
-                        experience,
-                        manPower,
-                        workTiming,
-                        facilities,
-                        incentive,
-                        interviewTiming,
-                        vehicleRequired,
-                        message,
-                        cvFile,
-                        policyVerification,
-                        educationCertificate,
-                        experienceCertificate,
-                        token,
-                        (response) => {
-                            setLoading(false);
-                            if (response !== null) {
-                                if (response?.message) {
-                                    Alert.alert("Alert", response.message, [{
-                                        text: 'OK',
-                                        onPress: async () => {
-                                            navigation.goBack();
-                                        },
-                                    }], { cancelable: false },)
-                                }
-                                if (response.errors) {
-                                    Alert.alert("Alert", response.errors.offerImage.message)
+        if (userType === "shop") {
+            if (interviewTiming.length === 0) {
+                setInterviewTimingError(true);
+            } else if (contactNumber.length === 0) {
+                setContactNumberError(true);
+            } else if (contactPersonName.length === 0) {
+                setContactPersonNameError(true);
+            } else if (message.length === 0) {
+                setMessageError(true);
+            } else {
+                setLoading(true);
+                Auth.getAccount().then((userData) => {
+                    Auth.getLocalStorageData("bearer").then((token) => {
+                        addNewJobPostRequest(
+                            title,
+                            description,
+                            shopName,
+                            location,
+                            userData[0]?._id,
+                            "salaryOffered",
+                            contactPersonName,
+                            "startDate",
+                            "endDate",
+                            contactNumber,
+                            userData[0]?.email,
+                            gender,
+                            areaOfWork,
+                            numberOfWorks,
+                            experience,
+                            manPower,
+                            workTiming,
+                            facilities,
+                            incentive,
+                            interviewTiming,
+                            vehicleRequired,
+                            message,
+                            cvFile,
+                            policyVerification,
+                            educationCertificate,
+                            experienceCertificate,
+                            token,
+                            (response) => {
+                                setLoading(false);
+                                console.log("\n\n addNewJobPostRequest: ", response?.message === "job is created successfully.");
+                                if (response !== null) {
+                                    if (response?.message?.includes("Path `salary` is required")) {
+                                        Alert.alert("Alert", "Oops! Something went wrong, please try again")
+                                        return true;
+                                    }
+                                    else if (response?.message === "job is created successfully.") {
+                                        Alert.alert("Alert", response.message, [{
+                                            text: 'OK',
+                                            onPress: async () => {
+                                                navigation.goBack();
+                                            },
+                                        }], { cancelable: false },)
+                                        return true;
+                                    }
+                                    if (response.errors) {
+                                        Alert.alert("Alert", response.errors.offerImage.message)
+                                        return true;
+                                    }
                                 }
                             }
-                        }
-                    );
+                        );
+                    });
                 });
-            });
+            }
+        } else {
+            if (cvFile.length === 0) {
+                setCvFileError(true);
+            } else if (educationCertificate.length === 0) {
+                setEducationCertificateError(true);
+            } else if (experienceCertificate.length === 0) {
+                setExperienceCertificateError(true);
+            } else if (policyVerification.length === 0) {
+                setPolicyVerificationError(true);
+            } else if (interviewTiming.length === 0) {
+                setInterviewTimingError(true);
+            } else if (contactNumber.length === 0) {
+                setContactNumberError(true);
+            } else if (contactPersonName.length === 0) {
+                setContactPersonNameError(true);
+            } else if (message.length === 0) {
+                setMessageError(true);
+            } else {
+                setLoading(true);
+                Auth.getAccount().then((userData) => {
+                    Auth.getLocalStorageData("bearer").then((token) => {
+                        addNewJobPostRequest(
+                            title,
+                            description,
+                            shopName,
+                            location,
+                            userData[0]?._id,
+                            "salaryOffered",
+                            contactPersonName,
+                            startDate,
+                            endDate,
+                            contactNumber,
+                            userData[0]?.email,
+                            gender,
+                            areaOfWork,
+                            numberOfWorks,
+                            experience,
+                            manPower,
+                            workTiming,
+                            facilities,
+                            incentive,
+                            interviewTiming,
+                            vehicleRequired,
+                            message,
+                            cvFile,
+                            policyVerification,
+                            educationCertificate,
+                            experienceCertificate,
+                            token,
+                            (response) => {
+                                setLoading(false);
+                                if (response !== null) {
+                                    if (response?.message) {
+                                        Alert.alert("Alert", response.message, [{
+                                            text: 'OK',
+                                            onPress: async () => {
+                                                navigation.goBack();
+                                            },
+                                        }], { cancelable: false },)
+                                    }
+                                    if (response.errors) {
+                                        Alert.alert("Alert", response.errors.offerImage.message)
+                                    }
+                                }
+                            }
+                        );
+                    });
+                });
+            }
         }
     }
 
@@ -380,6 +450,7 @@ export default function AddJobScreen({ navigation }) {
                             placeholder='Number of Workers'
                             placeholderTextColor="#999"
                             value={numberOfWorks}
+                            keyboardType="number-pad"
                             onChangeText={(val) => { setNumberOfWork(val); setNumberOfWorkError(false) }}
                             style={[styles.titleInput, { borderColor: numberOfWorksError ? "red" : "#BDBDBD" }]}
                         />
@@ -407,6 +478,7 @@ export default function AddJobScreen({ navigation }) {
                         <TextInput
                             placeholder='Number of Manpower Required'
                             placeholderTextColor="#999"
+                            keyboardType="number-pad"
                             value={manPower}
                             onChangeText={(val) => { setManPower(val); setManPowerError(false) }}
                             style={[styles.titleInput, { borderColor: manPowerError ? "red" : "#BDBDBD" }]}
@@ -507,7 +579,7 @@ export default function AddJobScreen({ navigation }) {
                     </>
 
                     <>
-                        <Text style={{ ...commonStyles.fs16_500, marginBottom: 10 }}>Facilities</Text>
+                        <Text style={{ ...commonStyles.fs16_500, marginBottom: 10, marginTop: 10 }}>Facilities</Text>
                         <FlatList
                             data={["Indore, India", "Bhopal, India", "Nagpur, India", "Jabalpur, India", "Kashmir, India", "Goa, India"]}
                             numColumns={2}
@@ -515,7 +587,14 @@ export default function AddJobScreen({ navigation }) {
                                 return (
                                     <TouchableOpacity
                                         style={[styles.checkboxWrapper]}
-                                        onPress={() => { setFacilities(item); setFacilitiesError(false) }}
+                                        onPress={() => {
+                                            if (facilities?.length === 0) {
+                                                setFacilities(item);
+                                            } else {
+                                                setFacilities("");
+                                            }
+                                            setFacilitiesError(false)
+                                        }}
                                     >
                                         <View style={[styles.checkbox]}>
                                             <View style={{
@@ -538,6 +617,7 @@ export default function AddJobScreen({ navigation }) {
                         <TextInput
                             placeholder='Incentive Offered'
                             placeholderTextColor="#999"
+                            keyboardType="number-pad"
                             value={incentive}
                             onChangeText={(val) => { setIncentive(val); setIncentiveError(false); }}
                             style={[styles.titleInput, { borderColor: incentiveError ? "red" : "#BDBDBD" }]}
@@ -569,26 +649,31 @@ export default function AddJobScreen({ navigation }) {
                         btnText="Next"
                         onPress={() => {
                             if (areaOfWork.length === 0) {
+                                console.log("\n\n 1111: ")
                                 setAreaOfWorkError(true);
                             } else if (numberOfWorks.length === 0) {
+                                console.log("\n\n 2222: ")
                                 setNumberOfWorkError(true);
                             } else if (experience.length === 0) {
+                                console.log("\n\n 3333: ")
                                 setExperienceError(true);
                             } else if (manPower.length === 0) {
+                                console.log("\n\n 4444: ")
                                 setManPowerError(true);
                             } else if (workTiming.length === 0) {
+                                console.log("\n\n 5555: ")
                                 setWorkTimingError(true);
-                            } else if (salaryOffered.length === 0) {
-                                setSalaryOfferedError(true);
                             } else if (vehicleRequired.length === 0) {
+                                console.log("\n\n 7777: ")
                                 setVehicleRequiredError(true);
-                            } else if (startDate.length === 0) {
-                                setStartDateError(true);
                             } else if (facilities.length === 0) {
+                                console.log("\n\n 9999: ")
                                 setFacilitiesError(true);
                             } else if (incentive.length === 0) {
+                                console.log("\n\n 101010: ")
                                 setIncentiveError(true);
                             } else if (description.length === 0) {
+                                console.log("\n\n 111111: ")
                                 setDescriptionError(true);
                             } else {
                                 setShowNext({

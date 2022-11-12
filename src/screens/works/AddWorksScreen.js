@@ -13,8 +13,8 @@ export default function AddWorksScreen({ navigation }) {
     const [nameError, setNameError] = React.useState(false);
     const [descError, setDescError] = React.useState(false);
     const [locationError, setLocationError] = React.useState(false);
-    const [salaryError, setSalaryError] = React.useState(false);
-    const [shiftError, setShiftError] = React.useState("");
+    // const [salaryError, setSalaryError] = React.useState(false);
+    // const [shiftError, setShiftError] = React.useState("");
     const [designationError, setDesignationError] = React.useState(false);
     const [contactError, setContactError] = React.useState(false);
 
@@ -34,10 +34,6 @@ export default function AddWorksScreen({ navigation }) {
             setNameError(true);
         } else if (location.length === 0) {
             setLocationError(true);
-        } else if (salary.length === 0) {
-            setSalaryError(true);
-        } else if (shift.length === 0) {
-            setShiftError("Shift Time is mandatory");
         } else if (designation.length === 0) {
             setDesignationError(true);
         } else if (contact.length === 0) {
@@ -139,7 +135,7 @@ export default function AddWorksScreen({ navigation }) {
                                 : <></>}
                         </>
 
-                        <>
+                        {/* <>
                             <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Salary</Text>
                             <TextInput
                                 placeholder='Salary'
@@ -151,9 +147,9 @@ export default function AddWorksScreen({ navigation }) {
                             {salaryError
                                 ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Salary is mandatory</Text>
                                 : <></>}
-                        </>
+                        </> */}
 
-                        <>
+                        {/* <>
                             <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Shift Time</Text>
                             <TextInput
                                 placeholder='Shift Time'
@@ -175,7 +171,7 @@ export default function AddWorksScreen({ navigation }) {
                             {shiftError.length !== 0
                                 ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>{shiftError}</Text>
                                 : <></>}
-                        </>
+                        </> */}
 
                         <>
                             <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Contact</Text>

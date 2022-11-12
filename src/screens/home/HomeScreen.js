@@ -17,6 +17,7 @@ import { setJob } from '../../redux/reducer/jobs'
 import { setWork } from '../../redux/reducer/work'
 import moment from 'moment'
 import CategoryModal from './CategoryModal'
+import HomeSearchData from './HomeSearchData'
 
 export default function HomeScreen({ navigation }) {
     const dispatch = useDispatch();
@@ -29,9 +30,9 @@ export default function HomeScreen({ navigation }) {
         (async () => {
             const unsubscribe = navigation.addListener('focus', () => {
                 Auth.getLocalStorageData("bearer").then((token) => {
-                    setLoading(false);
                     setBearerToken(token);
                     getAllOffersPostRequest(token, (response) => {
+                        setLoading(false);
                         if (response !== null) {
                             dispatch(setOffer(response?.data));
                         }
@@ -45,9 +46,9 @@ export default function HomeScreen({ navigation }) {
     React.useEffect(() => {
         setLoading(true);
         Auth.getLocalStorageData("bearer").then((token) => {
-            setLoading(false);
             setBearerToken(token);
             getAllOffersPostRequest(token, (response) => {
+                setLoading(false);
                 if (response !== null) {
                     dispatch(setOffer(response?.data));
                 }
@@ -85,21 +86,30 @@ export default function HomeScreen({ navigation }) {
     const [showCategoryModal, setShowCategoryModal] = useState(false);
     const [locationTitle, setLocationTitle] = useState("");
 
+    const [loading2, setLoading2] = useState(false);
+
     return (
         <>
             <StatusBar barStyle="dark-content" backgroundColor="#fff" />
             <HomeHeader navigation={navigation} onPress={() => { navigation.navigate("AddSaleOfferScreen") }} />
             <View style={{ ...commonStyles.rowBetween }}>
                 <HomeSearch width={"86%"} defaultValue={locationTitle} onChange={(val) => {
-                    setLoading(true);
+                    setLoading2(true);
                     Auth.getLocalStorageData("bearer").then((token) => {
-                        setLoading(false);
+                        setLoading2(false);
                         setShowSuggestion(true)
                         setBearerToken(token);
+                        if (val?.length === 0) {
+                            setSuggestionTitleData([]);
+                            dispatch(setOffer(offerData));
+                            return true;
+                        }
                         getOffersByLocationPostRequest(val, token, (response) => {
                             if (response !== null) {
                                 dispatch(setOffer(response?.data));
                                 setSuggestionTitleData(response?.data);
+                                console.log("\n\n Search result: ", response?.data)
+                                return true;
                             }
                         })
                     })
@@ -118,42 +128,14 @@ export default function HomeScreen({ navigation }) {
                 />
             </View>
 
-            {showSuggestion
-                ? <ScrollView style={{ width: SIZES.width, backgroundColor: "#fff", height: suggestionTitleData?.length > 0 ? 360 : 110 }}>
-                    {loading
-                        ? <View style={{ width: "100%", height: 180, ...commonStyles.centerStyles }}>
-                            <ActivityIndicator size={40} />
-                        </View>
-                        : <View>
-                            {suggestionTitleData?.map((suggTitles, index) => {
-                                return (
-                                    <TouchableHighlight
-                                        style={{ padding: 12, width: "100%" }} underlayColor="#ccc" key={index}
-                                        onPress={() => {
-                                            Auth.getLocalStorageData("bearer").then((token) => {
-                                                getOffersByLocationPostRequest(suggTitles?.location, token, (response) => {
-                                                    if (response !== null) {
-                                                        dispatch(setOffer(response?.data));
-                                                        setSuggestionTitleData(response?.data);
-                                                        setShowSuggestion(false);
-                                                        setLocationTitle(suggTitles?.location)
-                                                    }
-                                                })
-                                            })
-                                        }}
-                                    >
-                                        <Text style={{ ...commonStyles.fs12_400, color: "#000" }}>{suggTitles?.location}</Text>
-                                    </TouchableHighlight>
-                                );
-                            })}
-                            {suggestionTitleData?.length === 0
-                                ? <View style={{ backgroundColor: "#fff", height: 90, ...commonStyles.centerStyles }}>
-                                    <Text style={{ ...commonStyles.fs14_400, color: "#000" }}>No Data</Text>
-                                </View>
-                                : <></>}
-                        </View>}
-                </ScrollView>
-                : <></>}
+            <HomeSearchData
+                showSuggestion={showSuggestion}
+                loading={loading2}
+                suggestionTitleData={suggestionTitleData}
+                setSuggestionTitleData={setSuggestionTitleData}
+                setShowSuggestion={setShowSuggestion}
+                setLocationTitle={setLocationTitle}
+            />
 
             <PTRView onRefresh={_refresh}>
                 <ScrollView>
@@ -177,9 +159,9 @@ export default function HomeScreen({ navigation }) {
                 </ScrollView>
                 <View style={{ height: 64 }} />
 
-                <CustomPanel loading={loading} />
-                <CustomLoader loading={loading} />
             </PTRView>
+            <CustomPanel loading={loading} />
+            <CustomLoader loading={loading} />
         </>
     )
 }
@@ -413,7 +395,9 @@ const RenderSingleOffer = ({ item, bearerToken, navigation }) => {
             </View>
             <View style={{ ...commonStyles.rowStart, marginLeft: 20, marginTop: -16 }}>
                 <Text style={{ ...commonStyles.fs14_500, marginBottom: 12 }}>@{email}</Text>
-                <Text style={{ ...commonStyles.fs12_400, marginLeft: 8, marginBottom: 10, marginTop: 2 }}>{item?.description}</Text>
+                <Text style={{ ...commonStyles.fs12_400, marginLeft: 8, marginBottom: 10, marginTop: 2, color: "#E27127" }}>
+                    {item?.description}
+                </Text>
             </View>
             <View style={{ ...commonStyles.rowStart, marginLeft: 20, marginTop: -10 }}>
                 <Text style={{ ...commonStyles.fs13_500, marginBottom: 12 }}>Days left:</Text>
