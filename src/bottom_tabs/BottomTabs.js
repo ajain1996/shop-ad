@@ -47,22 +47,6 @@ const BottomTabs = () => {
                 }}
             />
             <Tab.Screen
-                name="WorksTab"
-                component={WorksScreen}
-                options={{
-                    headerShown: false,
-                    tabBarIcon: ({ focused }) => {
-                        return (
-                            <BuildTabComponent
-                                image={require("../assets/img/job-tab.png")}
-                                text="Works"
-                                focused={focused}
-                            />
-                        );
-                    }
-                }}
-            />
-            <Tab.Screen
                 name="JobsTab"
                 component={JobsScreen}
                 options={{
@@ -70,8 +54,24 @@ const BottomTabs = () => {
                     tabBarIcon: ({ focused }) => {
                         return (
                             <BuildTabComponent
+                                image={require("../assets/img/job-tab.png")}
+                                text="Job"
+                                focused={focused}
+                            />
+                        );
+                    }
+                }}
+            />
+            <Tab.Screen
+                name="WorksTab"
+                component={WorksScreen}
+                options={{
+                    headerShown: false,
+                    tabBarIcon: ({ focused }) => {
+                        return (
+                            <BuildTabComponent
                                 image={require("../assets/img/work-tab.png")}
-                                text={`Job`}
+                                text="Works"
                                 focused={focused}
                             />
                         );

@@ -26,7 +26,6 @@ export default function SplashScreen({ navigation }) {
             if (email_password !== null) {
                 email_password = email_password.split(",");
                 mobileLoginPostRequest(email_password[0], email_password[1], userType, async (response) => {
-                    // console.log("\n\n SplashScreen response: ", response)
                     if (response !== null) {
                         if (response?.message !== undefined) {
                             await Auth.setLocalStorageData("bearer", response?.token)

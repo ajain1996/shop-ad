@@ -70,33 +70,6 @@ export default function RegisterScreen({ navigation }) {
         }
     }
 
-    // let options = {
-    //     storageOptions: {
-    //         skipBackup: true,
-    //         path: 'images',
-    //     },
-    // };
-
-    // const [image, setImage] = React.useState("");
-
-    // const getImage = () => {
-    //     launchImageLibrary(options, (response) => {
-    //         if (response?.didCancel) {
-    //             console.log('User cancelled image picker');
-    //         } else if (response?.error) {
-    //             console.log('ImagePicker Error: ', response?.error);
-    //         } else if (response?.customButton) {
-    //             console.log('User tapped custom button: ', response?.customButton);
-    //         } else {
-    //             setImage(response?.assets[0].uri);
-    //             setImageData(response);
-    //             // setImageData(response);
-    //             console.log("\n\n Image Picked: ", response)
-    //             // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-    //         }
-    //     });
-    // }
-
     var btnText = "";
     if (userType === "user") {
         btnText = "User"
@@ -114,21 +87,6 @@ export default function RegisterScreen({ navigation }) {
                     <Text style={{ ...commonStyles.fs18_400, color: "#fff", marginTop: 8, marginBottom: 20 }}>
                         Register Now to access all the features of ShopAd!
                     </Text>
-
-                    {/* <TouchableHighlight
-                        style={{ alignItems: "center", marginBottom: 30, marginTop: 10 }}
-                        onPress={getImage} underlayColor="transparent"
-                    >
-                        {image.length === 0 ? <View style={{ width: 120, height: 120, borderRadius: 100, backgroundColor: "#f7f8f9", ...commonStyles.centerStyles }}>
-                            <Image
-                                source={require("../assets/img/camera.png")}
-                                style={{ width: "75%", height: "75%", tintColor: "#999" }}
-                            />
-                        </View> : <Image
-                            source={{ uri: image }}
-                            style={{ width: 120, height: 120, borderRadius: 100 }}
-                        />}
-                    </TouchableHighlight> */}
 
                     <CustomTextInput
                         placeholder='Name'

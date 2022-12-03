@@ -63,7 +63,6 @@ export default function AddWorksScreen({ navigation }) {
                                 }], { cancelable: false },)
                             }
                             if (response?.message?.includes("Work validation failed")) {
-                                console.log("\n\n response?.message: ", response?.message)
                                 Alert.alert("Alert", response?.message)
                             }
                         }
@@ -76,7 +75,7 @@ export default function AddWorksScreen({ navigation }) {
     return (
         <>
             <CustomInputHeader navigation={navigation} title="Add Work" />
-            <ScrollView>
+            <ScrollView style={{ width: "100%", height: "100%", backgroundColor: "#fff" }}>
                 <View style={{ paddingHorizontal: 16, height: "90%", justifyContent: 'space-between' }}>
                     <View>
                         <>
@@ -134,44 +133,6 @@ export default function AddWorksScreen({ navigation }) {
                                 ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Location is mandatory</Text>
                                 : <></>}
                         </>
-
-                        {/* <>
-                            <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Salary</Text>
-                            <TextInput
-                                placeholder='Salary'
-                                placeholderTextColor="#999"
-                                value={salary}
-                                onChangeText={(val) => { setSalary(val); setSalaryError(false) }}
-                                style={[styles.descriptionInput, { borderColor: salaryError ? "red" : "#BDBDBD" }]}
-                            />
-                            {salaryError
-                                ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>Salary is mandatory</Text>
-                                : <></>}
-                        </> */}
-
-                        {/* <>
-                            <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Shift Time</Text>
-                            <TextInput
-                                placeholder='Shift Time'
-                                placeholderTextColor="#999"
-                                value={shift}
-                                autoCapitalize={false}
-                                keyboardType="email-address"
-                                onChangeText={(val) => {
-                                    setShift(val.toLocaleLowerCase());
-                                    console.log("\n\n val", val)
-                                    if (val !== "day" && val !== "night") {
-                                        setShiftError('Shift can only be "day" or "night"')
-                                    } else {
-                                        setShiftError("")
-                                    }
-                                }}
-                                style={[styles.descriptionInput, { borderColor: shiftError ? "red" : "#BDBDBD" }]}
-                            />
-                            {shiftError.length !== 0
-                                ? <Text style={{ ...commonStyles.fs12_400, color: "red" }}>{shiftError}</Text>
-                                : <></>}
-                        </> */}
 
                         <>
                             <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>Contact</Text>

@@ -42,8 +42,6 @@ export default function CommentScreen({ navigation, route }) {
         })
     }
 
-    console.log("\n\n\n\n\n user: ", user)
-
     return (
         <>
             <StatusBar barStyle="dark-content" backgroundColor="#fff" />

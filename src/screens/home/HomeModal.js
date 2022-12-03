@@ -9,7 +9,7 @@ import { commonStyles } from "../../utils/styles";
 import { SIZES } from "../../utils/theme";
 import Toast from 'react-native-simple-toast'
 
-const HomeModal = ({ modalVisible, feedbackFor, feedbackNumber, callback, setModalVisible }) => {
+const HomeModal = ({ modalVisible, feedbackFor, feedbackNumber, callback, setModalVisible, savedCallback }) => {
     const { userData } = useSelector(state => state.User);
 
     const [showCheck, setShowCheck] = useState(false);
@@ -53,6 +53,8 @@ const HomeModal = ({ modalVisible, feedbackFor, feedbackNumber, callback, setMod
         }
     }
 
+    const [isSaved, setIsSaved] = useState(false);
+
     return (
         <View style={{ alignItems: "flex-start" }}>
             <Modal
@@ -71,6 +73,19 @@ const HomeModal = ({ modalVisible, feedbackFor, feedbackNumber, callback, setMod
                             onPress={() => { setShowCheck(true) }}
                         >
                             <Text style={styles.textStyle}>Report</Text>
+                        </TouchableHighlight>
+                        <View style={{ width: SIZES.width / 1.6, height: 1, backgroundColor: "#dcdcdc" }} />
+                        <TouchableHighlight
+                            style={[styles.button]}
+                            underlayColor="#dcdcdc"
+                            onPress={() => {
+                                setIsSaved(!isSaved)
+                                savedCallback();
+                            }}
+                        >
+                            {isSaved
+                                ? <Text style={styles.textStyle}>Saved</Text>
+                                : <Text style={styles.textStyle}>Save</Text>}
                         </TouchableHighlight>
 
                         {showCheck ? <View style={{ marginVertical: 10 }}>
@@ -156,7 +171,7 @@ const styles = StyleSheet.create({
     button: {
         padding: 20,
         width: SIZES.width / 1.6,
-        backgroundColor: "#eee",
+        backgroundColor: "#f7f8f9",
         alignItems: "center"
     },
     buttonOpen: {

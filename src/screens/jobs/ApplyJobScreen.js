@@ -56,9 +56,7 @@ export default function ApplyJobScreen({ navigation, route }) {
             }
         } catch (err) {
             if (DocumentPicker.isCancel(err)) {
-                console.log('Canceled from single doc picker');
             } else {
-                console.log('Unknown Error: ' + JSON.stringify(err));
                 throw err;
             }
         }
@@ -76,7 +74,6 @@ export default function ApplyJobScreen({ navigation, route }) {
         } else {
             setLoading(true);
             Auth.getAccount().then((userData) => {
-                console.log("\n\n Auth Account: ", userData[0]);
                 Auth.getLocalStorageData("bearer").then((token) => {
                     const cv = {
                         name: cvFile?.name,

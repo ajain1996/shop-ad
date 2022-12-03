@@ -17,7 +17,6 @@ const CategoryModal = ({ modalVisible, callback, navigation }) => {
                 if (response !== null) {
                     if (response?.data !== null || response?.data !== undefined) {
                         setCategories(response?.data);
-                        console.log("\n\n getAllCategoriesAPI response: ", response?.data);
                     }
                 }
             })
@@ -44,13 +43,11 @@ const CategoryModal = ({ modalVisible, callback, navigation }) => {
                                         style={[styles.button]}
                                         underlayColor="#dcdcdc"
                                         onPress={() => {
-                                            console.log("\n\n Category item id: ", item?._id)
                                             Auth.getLocalStorageData("bearer").then((token) => {
                                                 getOffersByCategoryAPI(item?._id, token, (response) => {
                                                     if (response !== null) {
                                                         dispatch(setOffer(response?.data));
                                                         callback();
-                                                        console.log("\n\n getOffersByCategoryAPI response: ", response?.data)
                                                     }
                                                 })
                                             })

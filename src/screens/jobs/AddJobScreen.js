@@ -129,7 +129,6 @@ export default function AddJobScreen({ navigation }) {
                             token,
                             (response) => {
                                 setLoading(false);
-                                console.log("\n\n addNewJobPostRequest: ", response?.message === "job is created successfully.");
                                 if (response !== null) {
                                     if (response?.message?.includes("Path `salary` is required")) {
                                         Alert.alert("Alert", "Oops! Something went wrong, please try again")
@@ -256,9 +255,7 @@ export default function AddJobScreen({ navigation }) {
             }
         } catch (err) {
             if (DocumentPicker.isCancel(err)) {
-                console.log('Canceled from single doc picker');
             } else {
-                console.log('Unknown Error: ' + JSON.stringify(err));
                 throw err;
             }
         }
@@ -649,31 +646,22 @@ export default function AddJobScreen({ navigation }) {
                         btnText="Next"
                         onPress={() => {
                             if (areaOfWork.length === 0) {
-                                console.log("\n\n 1111: ")
                                 setAreaOfWorkError(true);
                             } else if (numberOfWorks.length === 0) {
-                                console.log("\n\n 2222: ")
                                 setNumberOfWorkError(true);
                             } else if (experience.length === 0) {
-                                console.log("\n\n 3333: ")
                                 setExperienceError(true);
                             } else if (manPower.length === 0) {
-                                console.log("\n\n 4444: ")
                                 setManPowerError(true);
                             } else if (workTiming.length === 0) {
-                                console.log("\n\n 5555: ")
                                 setWorkTimingError(true);
                             } else if (vehicleRequired.length === 0) {
-                                console.log("\n\n 7777: ")
                                 setVehicleRequiredError(true);
                             } else if (facilities.length === 0) {
-                                console.log("\n\n 9999: ")
                                 setFacilitiesError(true);
                             } else if (incentive.length === 0) {
-                                console.log("\n\n 101010: ")
                                 setIncentiveError(true);
                             } else if (description.length === 0) {
-                                console.log("\n\n 111111: ")
                                 setDescriptionError(true);
                             } else {
                                 setShowNext({

@@ -13,7 +13,7 @@ var tempToday1 = new Date();
 var tempToday2 = new Date();
 var forSecondStart = 0;
 var dateSliced = today.getFullYear() + "- 0" + parseInt(today.getMonth() + 1) + "- 0" + today.getDate();
-console.log(dateSliced);
+// console.log(dateSliced);
 
 export default class PersonalLeaveDatePicker extends Component {
     constructor(props) {
@@ -31,56 +31,56 @@ export default class PersonalLeaveDatePicker extends Component {
     initialDate = '';
 
     showDateTimePicker = () => {
-        console.log('showing PersonalDatePicker now:');
-        console.log('Today is set to: ', today);
-        console.log('forsecondstart is:', forSecondStart);
-        console.log('minDate is:', this.props.minimumDate);
-        console.log('minDate type is:', typeof this.props.minimumDate);
-        console.log('maxDate type is:', typeof this.props.maximumDate);
-        console.log('minDate is empty:', this.props.minimumDate.length);
-        console.log('maxDate is empty:', this.props.maximumDate.length);
+        // console.log('showing PersonalDatePicker now:');
+        // console.log('Today is set to: ', today);
+        // console.log('forsecondstart is:', forSecondStart);
+        // console.log('minDate is:', this.props.minimumDate);
+        // console.log('minDate type is:', typeof this.props.minimumDate);
+        // console.log('maxDate type is:', typeof this.props.maximumDate);
+        // console.log('minDate is empty:', this.props.minimumDate.length);
+        // console.log('maxDate is empty:', this.props.maximumDate.length);
         this.setState({ isDateTimePickerVisible: true });
 
         //Setting up minDateObj
-        console.log('\n\n moment date:', moment(this.props.minimumDate, 'DD-MMM-YYYY').toDate())
+        // console.log('\n\n moment date:', moment(this.props.minimumDate, 'DD-MMM-YYYY').toDate())
         var selectedMinDate = this.props.minimumDate.length == 0 ? moment('31-DEC-2010', 'DD-MMM-YYYY').toDate() : moment(this.props.minimumDate, 'DD-MMM-YYYY').toDate()
-        console.log('selected min Date:', selectedMinDate);
+        // console.log('selected min Date:', selectedMinDate);
         var startDateObj = new Date();
-        console.log('type of:', typeof selectedMinDate)
-        console.log('selectedMinDate is:', selectedMinDate)
-        console.log('selectedDate.getDate():', selectedMinDate.getDate());
+        // console.log('type of:', typeof selectedMinDate)
+        // console.log('selectedMinDate is:', selectedMinDate)
+        // console.log('selectedDate.getDate():', selectedMinDate.getDate());
         startDateObj.setFullYear(selectedMinDate.getFullYear());
         startDateObj.setMonth(selectedMinDate.getMonth());
         startDateObj.setDate(selectedMinDate.getDate());
-        console.log('Start Date Obj is: ', startDateObj);
+        // console.log('Start Date Obj is: ', startDateObj);
         this.setState({ minDateObj: startDateObj });
 
         //Setting up maxDateObj
-        console.log('\n\n moment date:', moment(this.props.maximumDate, 'DD-MMM-YYYY').toDate())
+        // console.log('\n\n moment date:', moment(this.props.maximumDate, 'DD-MMM-YYYY').toDate())
         var selectedMaxDate = this.props.maximumDate.length == 0 ? moment('31-DEC-2030', 'DD-MMM-YYYY').toDate() : moment(this.props.maximumDate, 'DD-MMM-YYYY').toDate()
-        console.log('selected max Date:', selectedMaxDate);
+        // console.log('selected max Date:', selectedMaxDate);
         var endDateObj = new Date();
-        console.log('type of:', typeof selectedMaxDate)
-        console.log('selectedMaxDate is:', selectedMaxDate)
-        console.log('selectedDate.getDate():', selectedMaxDate.getDate());
+        // console.log('type of:', typeof selectedMaxDate)
+        // console.log('selectedMaxDate is:', selectedMaxDate)
+        // console.log('selectedDate.getDate():', selectedMaxDate.getDate());
         endDateObj.setFullYear(selectedMaxDate.getFullYear());
         endDateObj.setMonth(selectedMaxDate.getMonth());
         endDateObj.setDate(selectedMaxDate.getDate());
-        console.log('End Date Obj is: ', endDateObj);
+        // console.log('End Date Obj is: ', endDateObj);
         this.setState({ maxDateObj: endDateObj });
 
         //Setting up initialDateObj
-        console.log('\n\n moment date:', moment(this.props.initialDate, 'DD-MMM-YYYY').toDate())
+        // console.log('\n\n moment date:', moment(this.props.initialDate, 'DD-MMM-YYYY').toDate())
         var selectedInitialDate = this.props.initialDate.length == 0 ? moment().toDate() : moment(this.props.initialDate, 'DD-MMM-YYYY').toDate()
-        console.log('selected initial Date:', selectedInitialDate);
+        // console.log('selected initial Date:', selectedInitialDate);
         var initialDateObj = new Date();
-        console.log('type of:', typeof selectedInitialDate)
-        console.log('selectedInitialDate is:', selectedInitialDate)
-        console.log('selectedDate.getDate():', selectedInitialDate.getDate());
+        // console.log('type of:', typeof selectedInitialDate)
+        // console.log('selectedInitialDate is:', selectedInitialDate)
+        // console.log('selectedDate.getDate():', selectedInitialDate.getDate());
         initialDateObj.setFullYear(selectedInitialDate.getFullYear());
         initialDateObj.setMonth(selectedInitialDate.getMonth());
         initialDateObj.setDate(selectedInitialDate.getDate());
-        console.log('Initial Date Obj is: ', initialDateObj);
+        // console.log('Initial Date Obj is: ', initialDateObj);
         this.setState({ iniDateObj: initialDateObj });
     };
 
@@ -89,7 +89,7 @@ export default class PersonalLeaveDatePicker extends Component {
     };
 
     handleDatePicked = date => {
-        console.log("A date has been picked: ", date);
+        // console.log("A date has been picked: ", date);
         this.initialDate = '' + date;
         this.initialDate = this.initialDate.slice(4, 16)
         this.props.isStart != 'yes' ? forSecondStart++ : forSecondStart = 0;

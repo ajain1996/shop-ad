@@ -55,10 +55,6 @@ export default function AddSaleOfferScreen({ navigation }) {
             })
     }
 
-    for (let i = 0; i < imageData.length; i++) {
-        console.log("\n\n imageData: ", i, imageData[i])
-    }
-
     const [showCategoryModal, setShowCategoryModal] = React.useState(false);
     const [category, setCategory] = React.useState({
         name: "",
@@ -231,7 +227,6 @@ export default function AddSaleOfferScreen({ navigation }) {
             <AllCategoryModal
                 modalVisible={showCategoryModal}
                 callback={(res, res2) => {
-                    console.log("\n\n Category id: ", res)
                     setShowCategoryModal(!showCategoryModal)
                     if (res !== 0) {
                         setCategory({
@@ -276,7 +271,6 @@ export const RenderUpload = ({ image, getImage, imageError, setImageError, setIm
                         <ScrollView horizontal={true} contentContainerStyle={{ flexGrow: 1 }}>
                             {
                                 image.map((res) => {
-                                    console.log("\n\n \n\n image.map: ", res);
                                     return (
                                         <Image
                                             source={{ uri: res?.uri }}

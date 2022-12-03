@@ -28,7 +28,6 @@
                 })
             });
             const myJson = await response.json();
-            console.log("data fetched: ", myJson, '\n response.status: ', response.status);
             if (response.status === 400) {
                 alert("Failed Attempt")
             } else if (response.status === 200) {

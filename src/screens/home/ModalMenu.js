@@ -6,6 +6,7 @@ import { setUserType } from "../../redux/reducer/userType";
 import Auth from "../../services/Auth";
 import { commonStyles } from "../../utils/styles";
 import { SIZES } from "../../utils/theme";
+import Toast from 'react-native-simple-toast';
 
 const ModalMenu = ({ modalVisible, callback, navigation }) => {
     const dispatch = useDispatch();
@@ -77,6 +78,16 @@ const ModalMenu = ({ modalVisible, callback, navigation }) => {
                             style={[styles.button]}
                             underlayColor="#dcdcdc"
                             onPress={() => {
+                                navigation.navigate("SavedScreen")
+                            }}
+                        >
+                            <Text style={styles.textStyle}>Saved</Text>
+                        </TouchableHighlight>
+
+                        <TouchableHighlight
+                            style={[styles.button]}
+                            underlayColor="#dcdcdc"
+                            onPress={() => {
                                 Auth.logout().then(() => {
                                     dispatch(removeUser([]));
                                 })
@@ -101,11 +112,13 @@ const ModalMenu = ({ modalVisible, callback, navigation }) => {
                         dispatch(setUserType("user"));
                         Auth.setLocalStorageData("userType", "user").then(() => {
                             setUserTypeModalVisible(!userTypeModalVisible)
+                            Toast.show("User successfully changed")
                         });
                     } else if (userType === "user") {
                         dispatch(setUserType("shop"));
                         Auth.setLocalStorageData("userType", "shop").then(() => {
                             setUserTypeModalVisible(!userTypeModalVisible)
+                            Toast.show("User successfully changed to Shop owner")
                         });
                     }
                 }}

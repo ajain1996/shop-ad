@@ -17,6 +17,7 @@ import ProfileScreen from "../screens/profile/ProfileScreen";
 import UpdateProfileScreen from "../screens/profile/UpdateProfileScreen";
 import LocationScreen from "../screens/location/LocationScreen";
 import ApplyJobScreen from "../screens/jobs/ApplyJobScreen";
+import SavedScreen from "../screens/saved/SavedScreen";
 
 export default function AppStack() {
     const Stack = createStackNavigator();
@@ -46,6 +47,7 @@ export default function AppStack() {
                 <Stack.Screen name="UpdateProfileScreen" component={UpdateProfileScreen} />
                 <Stack.Screen name="LocationScreen" component={LocationScreen} />
                 <Stack.Screen name="ApplyJobScreen" component={ApplyJobScreen} />
+                <Stack.Screen name="SavedScreen" component={SavedScreen} />
             </Stack.Navigator>
         </>
     );
