@@ -28,11 +28,13 @@ export default function ProfileScreen({navigation, route}) {
   const [workData, setWorkData] = React.useState([]);
 
   const {userData} = useSelector(state => state.User);
+  const {userType} = useSelector(state => state.UserType);
+
   const [followerCount, setFollowerCount] = React.useState(0);
   const [followingCount, setFollowingCount] = React.useState(0);
 
   var userName = '';
-  console.log('\n\n this is user data \n\n\n', userData);
+  console.log('\n\n this is user data \n\n\n', jobsData);
   if (userData !== null && userData !== undefined) {
     userName = userData[0].name;
   }
@@ -123,41 +125,80 @@ export default function ProfileScreen({navigation, route}) {
               )}
             </View>
 
-            <View
-              style={{
-                ...commonStyles.rowEvenly,
-                width: SIZES.width - 120,
-                marginTop: 5,
-              }}>
-              <View style={{alignItems: 'center'}}>
-                <Text style={{...commonStyles.fs24_700}}>
-                  {offerData?.length + jobsData?.length + workData?.length}
-                </Text>
-                <Text style={{...commonStyles.fs14_500}}>Post</Text>
-              </View>
-
-              <View style={{alignItems: 'center'}}>
-                {loading ? (
-                  <ActivityIndicator color="#000" size={34} />
-                ) : (
+            {userType == 'shop' && (
+              <View
+                style={{
+                  ...commonStyles.rowEvenly,
+                  width: SIZES.width - 120,
+                  marginTop: 5,
+                }}>
+                <View style={{alignItems: 'center'}}>
                   <Text style={{...commonStyles.fs24_700}}>
-                    {followerCount}
+                    {offerData?.length + jobsData?.length + workData?.length}
                   </Text>
-                )}
-                <Text style={{...commonStyles.fs14_500}}>Followers</Text>
-              </View>
+                  <Text style={{...commonStyles.fs14_500}}>Post</Text>
+                </View>
 
-              <View style={{alignItems: 'center'}}>
-                {loading ? (
-                  <ActivityIndicator color="#000" size={34} />
-                ) : (
-                  <Text style={{...commonStyles.fs24_700}}>
-                    {followingCount}
-                  </Text>
-                )}
-                <Text style={{...commonStyles.fs14_500}}>Followings</Text>
+                <View style={{alignItems: 'center'}}>
+                  {loading ? (
+                    <ActivityIndicator color="#000" size={34} />
+                  ) : (
+                    <Text style={{...commonStyles.fs24_700}}>
+                      {followerCount}
+                    </Text>
+                  )}
+                  <Text style={{...commonStyles.fs14_500}}>Followers</Text>
+                </View>
+
+                <View style={{alignItems: 'center'}}>
+                  {loading ? (
+                    <ActivityIndicator color="#000" size={34} />
+                  ) : (
+                    <Text style={{...commonStyles.fs24_700}}>
+                      {followingCount}
+                    </Text>
+                  )}
+                  <Text style={{...commonStyles.fs14_500}}>Followings</Text>
+                </View>
               </View>
-            </View>
+            )}
+            {userType == 'user' && (
+              <View
+                style={{
+                  ...commonStyles.rowEvenly,
+                  width: SIZES.width - 120,
+                  marginTop: 5,
+                }}>
+                <View style={{alignItems: 'center'}}>
+                  <Text style={{...commonStyles.fs24_700}}>
+                    {offerData?.length + jobsData?.length + workData?.length}
+                  </Text>
+                  <Text style={{...commonStyles.fs14_500}}>Liked</Text>
+                </View>
+
+                <View style={{alignItems: 'center'}}>
+                  {loading ? (
+                    <ActivityIndicator color="#000" size={34} />
+                  ) : (
+                    <Text style={{...commonStyles.fs24_700}}>
+                      {followerCount}
+                    </Text>
+                  )}
+                  <Text style={{...commonStyles.fs14_500}}>Saved</Text>
+                </View>
+
+                <View style={{alignItems: 'center'}}>
+                  {loading ? (
+                    <ActivityIndicator color="#000" size={34} />
+                  ) : (
+                    <Text style={{...commonStyles.fs24_700}}>
+                      {followingCount}
+                    </Text>
+                  )}
+                  <Text style={{...commonStyles.fs14_500}}>Shared</Text>
+                </View>
+              </View>
+            )}
           </View>
 
           <View

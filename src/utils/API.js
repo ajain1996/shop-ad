@@ -123,7 +123,7 @@ export const addNewOfferPostRequest = async (
   successCallBack,
 ) => {
   let formData = new FormData();
-
+  console.log('callign apis');
   formData.append('description', desc);
   formData.append('location', location);
   formData.append('startDate', startDate);
@@ -147,6 +147,7 @@ export const addNewOfferPostRequest = async (
       body: formData,
     });
     let json = await response.json();
+    console.log(json);
     successCallBack(json);
   } catch (error) {
     console.error('error', error);
@@ -1040,3 +1041,19 @@ export const applyJobPostAPI = async (
     successCallBack(null);
   }
 };
+
+export const monthsArray = [
+  '',
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'June',
+  'July',
+  'Aug',
+  'Sept',
+  'Oct',
+  'Nov',
+  'Dec',
+];

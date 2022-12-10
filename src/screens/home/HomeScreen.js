@@ -76,6 +76,7 @@ export default function HomeScreen({navigation}) {
           console.log('\n\n\n\n\noffers', response.data, '\n\n\n\n offers');
           dispatch(setOffer(response?.data));
           setFilteredOffer(response.data);
+          console.log([...response.data].reverse()[0]);
         }
       });
 
@@ -192,7 +193,7 @@ export default function HomeScreen({navigation}) {
       <PTRView onRefresh={_refresh}>
         <ScrollView>
           <HomeCarousel />
-          {offerData?.map((item, index) => {
+          {[...offerData].reverse()?.map((item, index) => {
             return (
               <View key={index}>
                 <RenderSingleOffer
@@ -374,6 +375,7 @@ const RenderSingleOffer = ({
   function dayDiff(startDate, endDate) {
     const diffInMs = moment(endDate) - moment(startDate);
     const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+    // console.log('\n\n\n', diffInMs, diffInDays, '\n\n\n\n');
     return diffInDays + 1;
   }
 
