@@ -18,6 +18,7 @@ import UpdateProfileScreen from "../screens/profile/UpdateProfileScreen";
 import LocationScreen from "../screens/location/LocationScreen";
 import ApplyJobScreen from "../screens/jobs/ApplyJobScreen";
 import SavedScreen from "../screens/saved/SavedScreen";
+import GetAllCandidatesScreen from "../screens/profile/GetAllCandidateScreen";
 
 export default function AppStack() {
     const Stack = createStackNavigator();
@@ -29,9 +30,10 @@ export default function AppStack() {
     return (
         <>
             <StatusBar barStyle="light-content" backgroundColor="#1572B9" />
-            <Stack.Navigator initialRouteName="Root"
+            <Stack.Navigator initialRouteName="GetAllCandidatesScreen"
                 screenOptions={screenOptions}
             >
+                <Stack.Screen name="GetAllCandidatesScreen" component={GetAllCandidatesScreen} />
                 <Stack.Screen name="Root" component={BottomTabs} />
                 <Stack.Screen name="HomeScreen" component={HomeScreen} />
                 <Stack.Screen name="WorksScreen" component={WorksScreen} />
