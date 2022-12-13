@@ -14,9 +14,10 @@ import {getAllCategoriesAPI, getOffersByCategoryAPI} from '../../utils/API';
 import {commonStyles} from '../../utils/styles';
 import {SIZES} from '../../utils/theme';
 
-const CategoryModal = ({
+const HomeFilterCategory = ({
   modalVisible,
   callback,
+  setCategoryId,
   navigation,
   selectedCategory = () => {},
 }) => {
@@ -163,4 +164,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CategoryModal;
+export default HomeFilterCategory;

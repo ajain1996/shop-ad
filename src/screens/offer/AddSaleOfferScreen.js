@@ -109,14 +109,17 @@ export default function AddSaleOfferScreen({navigation}) {
       //   return null;
       setLoading(true);
       Auth.getLocalStorageData('bearer').then(token => {
+        console.log(token, '<<<<< \n\n\n\n this is token');
         Auth.getAccount().then(userData => {
+          console.log(userData, '<<< userdata');
+          // return null;
           addNewOfferPostRequest(
             description,
             location,
-            finalStartDate,
-            finalEndDate,
+            startDate,
+            endDate,
             imageData,
-            userData._id,
+            userData[0]._id,
             null,
             category?.id,
             token,

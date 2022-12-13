@@ -22,6 +22,7 @@ import {
   getLikesCountByIDPostAPI,
   getOffersByLocationPostRequest,
   getUserByIDPostAPI,
+  monthsArray,
   unLikesByIDPostAPI,
 } from '../../utils/API';
 import {useState} from 'react';
@@ -35,19 +36,24 @@ import {setOffer} from '../../redux/reducer/offer';
 import {setJob} from '../../redux/reducer/jobs';
 import {setWork} from '../../redux/reducer/work';
 import moment from 'moment';
-import CategoryModal from './CategoryModal';
+import HomeFilterCategory from './HomeFilterCategory';
 import HomeSearchData from './HomeSearchData';
 import HomeCarousel from './HomeCarousel';
 import {useIsFocused} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeScreen({navigation}) {
   const dispatch = useDispatch();
   const {offerData} = useSelector(state => state.Offer);
   const [filteredOffer, setFilteredOffer] = useState([]);
-
+  const [categoryId, setCategoryId] = useState('');
   const [bearerToken, setBearerToken] = useState('');
   const [loading, setLoading] = React.useState(false);
   const onFocus = useIsFocused();
+  const {userData} = useSelector(state => state.User);
+  console.log(userData, '<<<< this is user Data \n\n\n\n');
+
+  // console.log(userData, '<<<<\n\n\n this is filer data');
 
   //   React.useEffect(() => {
   //     (async () => {
@@ -73,10 +79,10 @@ export default function HomeScreen({navigation}) {
       getAllOffersPostRequest(token, response => {
         setLoading(false);
         if (response !== null) {
-          console.log('\n\n\n\n\noffers', response.data, '\n\n\n\n offers');
+          // console.log('\n\n\n\n\noffers', response.data, '\n\n\n\n offers');
           dispatch(setOffer(response?.data));
           setFilteredOffer(response.data);
-          console.log([...response.data].reverse()[0]);
+          console.log(response.data);
         }
       });
 
@@ -172,9 +178,10 @@ export default function HomeScreen({navigation}) {
             style={{width: 36, height: 36}}
           />
         </TouchableHighlight>
-        <CategoryModal
+        <HomeFilterCategory
           modalVisible={showCategoryModal}
           navigation={navigation}
+          setCategoryId={setCategoryId}
           callback={() => {
             setShowCategoryModal(!showCategoryModal);
           }}
@@ -194,6 +201,7 @@ export default function HomeScreen({navigation}) {
         <ScrollView>
           <HomeCarousel />
           {[...offerData].reverse()?.map((item, index) => {
+            // console.log(item, '<<<this is item');
             return (
               <View key={index}>
                 <RenderSingleOffer
@@ -358,7 +366,7 @@ const RenderSingleOffer = ({
   const handleShare = async () => {
     try {
       const result = await Share.share({
-        message: `${item?.description}\n${item?.offerImage}`,
+        message: `Offer Details\nLocation: ${item.location}\n Description${item?.description}\n${item?.offerImage}`,
         url: 'https://play.google.com/store/apps',
       });
       if (result.action === Share.sharedAction) {
@@ -372,16 +380,52 @@ const RenderSingleOffer = ({
     }
   };
 
-  function dayDiff(startDate, endDate) {
-    const diffInMs = moment(endDate) - moment(startDate);
+  function dayDiff(startDate, endDate, des, id) {
+    const convertArr = d => {
+      const a = d.replace('/', '-');
+      const b = a.replace('/', '-');
+      return b.split('-');
+    };
+
+    // const diffInMs = moment(`12-Dec-2022`) - moment(`10-Dec-2022`);
+    const diffInMs =
+      moment(
+        `${parseInt(convertArr(endDate)[0])}-${
+          monthsArray[parseInt(convertArr(endDate)[1])]
+        }-${parseInt(convertArr(endDate)[2])}`,
+      ) -
+      moment(
+        `${parseInt(convertArr(startDate)[0])}-${
+          monthsArray[parseInt(convertArr(startDate)[1])]
+        }-${parseInt(convertArr(startDate)[2])}`,
+      );
+
     const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-    // console.log('\n\n\n', diffInMs, diffInDays, '\n\n\n\n');
+    // console.log(
+    //   '\n\n\n',
+    //   parseInt(convertArr(startDate)[0]),
+    //   parseInt(convertArr(endDate)[0]),
+    //   'ppp',
+    //   startDate,
+    //   endDate,
+    //   'aaa',
+    //   des,
+    //   '--',
+    //   id,
+    //   diffInDays,
+    //   convertArr(startDate),
+    //   convertArr(endDate),
+    //   // monthsArray[convertArr('12-12-2022')[1]],
+    //   // monthsArray[convertArr(endDate)[1]]
+    //   '----------',
+    //   '\n\n\n\n',
+    // );
     return diffInDays + 1;
   }
 
   var startDate = moment(item?.startDate).format('DD/MM/YYYY');
   var endDate = moment(item?.endDate).format('DD/MM/YYYY');
-  var diffDays = dayDiff(startDate, endDate);
+  var diffDays = dayDiff(startDate, endDate, item.description, item._id);
 
   return (
     <View
@@ -559,7 +603,7 @@ const RenderSingleOffer = ({
         {diffDays.toString().toLocaleLowerCase() !== 'nan' ? (
           <Text
             style={{...commonStyles.fs12_400, marginLeft: 8, marginBottom: 12}}>
-            {diffDays}
+            {diffDays} Day(s)
           </Text>
         ) : (
           <></>
@@ -573,11 +617,18 @@ const RenderSingleOffer = ({
         feedbackNumber={item?.ownerId}
         callback={() => setHomeModalVisible(!homeModalVisible)}
         savedCallback={async () => {
-          setSavedItems(oldArray => [...oldArray, item]);
-          await Auth.setLocalStorageData(
-            'Saved_Item',
-            JSON.stringify(savedItems),
-          );
+          // setSavedItems(oldArray => [...oldArray, item]);
+          const oldData = await AsyncStorage.getItem('SAVED_OFFER');
+          // console.log(parseIT, '<<<this is od');
+          if (oldData == null) {
+            await AsyncStorage.setItem('SAVED_OFFER', JSON.stringify([item]));
+          } else {
+            const parseIT = JSON.parse(oldData);
+            await AsyncStorage.setItem(
+              'Saved_Item',
+              JSON.stringify([...parseIT, item]),
+            );
+          }
         }}
       />
     </View>

@@ -22,6 +22,7 @@ import {
   getJobsByLocationPostRequest,
   getLikesCountByIDPostAPI,
   getUserByIDPostAPI,
+  monthsArray,
   unLikesByIDPostAPI,
 } from '../../utils/API';
 
@@ -35,6 +36,7 @@ import Toast from 'react-native-simple-toast';
 import HomeModal from '../home/HomeModal';
 import LinearGradient from 'react-native-linear-gradient';
 import {JobsDetails} from './JobsDetails';
+import moment from 'moment';
 
 export default function JobsScreen({navigation}) {
   const dispatch = useDispatch();
@@ -175,32 +177,35 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
 
   useEffect(() => {
     (async () => {
-      getUserByIDPostAPI(item?.ownerId, bearerToken, response => {
-        if (response !== null) {
-          setUser(response?.data[0]);
-        }
-      });
+      Auth.getLocalStorageData('bearer').then(token => {
+        getUserByIDPostAPI(item?.ownerId, token, response => {
+          if (response !== null) {
+            console.log(response, '<< thisisuseratjobscreen');
+            // setUser(response?.data[0]);
+          }
+        });
 
-      getLikesCountByIDPostAPI(item?._id, bearerToken, response => {
-        if (response !== null) {
-          if (response.data) {
-            setLikesCount(response?.count);
-            const data = response?.data;
-            for (let i = 0; i < data.length; i++) {
-              if (data[i].likedBy === userData[0]?._id) {
-                setIsLike(true);
+        getLikesCountByIDPostAPI(item?._id, token, response => {
+          if (response !== null) {
+            if (response.data) {
+              setLikesCount(response?.count);
+              const data = response?.data;
+              for (let i = 0; i < data.length; i++) {
+                if (data[i].likedBy === userData[0]?._id) {
+                  setIsLike(true);
+                }
               }
             }
           }
-        }
-      });
+        });
 
-      getCommentsCountByIDPostAPI(item?._id, bearerToken, response => {
-        if (response !== null) {
-          if (response.data) {
-            setCommentsCount(response?.count);
+        getCommentsCountByIDPostAPI(item?._id, token, response => {
+          if (response !== null) {
+            if (response.data) {
+              setCommentsCount(response?.count);
+            }
           }
-        }
+        });
       });
     })();
   }, [item]);
@@ -258,8 +263,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
   const handleShare = async () => {
     try {
       const result = await Share.share({
-        message:
-          'https://plus.unsplash.com/premium_photo-1661679026942-db5aef08c093?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+        message: `Job Details \n\nOwner: ${user.name}\nLocation:${item.location}\nDescription:${item.description}\nDesignation:${item.designationName}\nEmail: ${item.email}\nTitle:${item.title}\nShop Name: ${item.shopName}\n Contact Number: ${item.contactNumber}\n Start Date: ${item.startDate}\nEnd Date: ${item.endDate}`,
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
@@ -271,6 +275,44 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
       alert(error.message);
     }
   };
+  function dayDiff(startDate, endDate, des, id) {
+    const convertArr = d => {
+      const a = d.replace('/', '-');
+      const b = a.replace('/', '-');
+      return b.split('-');
+    };
+    const today = new Date();
+    const inlocal = today.toLocaleDateString();
+    var currDate = moment(inlocal).format('DD/MM/YYYY');
+
+    // const diffInMs = moment(`12-Dec-2022`) - moment(`10-Dec-2022`);
+    // console.log(
+    //   startDate,
+    //   inlocal,
+    //   moment(startDate).format('DD/MM/YYYY'),
+    //   moment('10/1/22').format('DD/MM/YYYY'),
+    //   '<<<< this is inlocal',
+    // );
+    const diffInMs =
+      moment(
+        `${parseInt(convertArr(endDate)[0])}-${
+          monthsArray[parseInt(convertArr(endDate)[1])]
+        }-${parseInt(convertArr(endDate)[2])}`,
+      ) -
+      moment(
+        `${parseInt(convertArr(currDate)[0])}-${
+          monthsArray[parseInt(convertArr(currDate)[1])]
+        }-${parseInt(convertArr(currDate)[2])}`,
+      );
+
+    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+    return diffInDays + 1;
+  }
+
+  var startDate = moment(item?.startDate).format('DD/MM/YYYY');
+  var endDate = moment(item?.endDate).format('DD/MM/YYYY');
+  var diffDays = dayDiff(startDate, endDate, item.description, item._id);
 
   return (
     <View
@@ -498,7 +540,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
       </View>
       <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -10}}>
         <Text style={{...commonStyles.fs13_500, marginBottom: 12}}>
-          Days left:
+          Days left: {diffDays} Day(s)
         </Text>
         <Text
           style={{...commonStyles.fs12_400, marginLeft: 8, marginBottom: 12}}>
@@ -511,7 +553,18 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         setModalVisible={setHomeModalVisible}
         feedbackFor="job"
         feedbackNumber={item?.ownerId}
-        callback={() => setHomeModalVisible(!homeModalVisible)}
+        savedCallback={async () => {
+          const oldData = await AsyncStorage.getItem('SAVED_JOBS');
+          if (oldData == null) {
+            await AsyncStorage.setItem('SAVED_JOBS', JSON.stringify([item]));
+          } else {
+            const parseIT = JSON.parse(oldData);
+            await AsyncStorage.setItem(
+              'Saved_Item',
+              JSON.stringify([...parseIT, item]),
+            );
+          }
+        }}
       />
     </View>
   );

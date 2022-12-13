@@ -14,26 +14,36 @@ import {getAllCategoriesAPI, getOffersByCategoryAPI} from '../../utils/API';
 import {commonStyles} from '../../utils/styles';
 import {SIZES} from '../../utils/theme';
 
-const CategoryModal = ({
+const DayNightModal = ({
   modalVisible,
   callback,
+  setCategoryId,
   navigation,
   selectedCategory = () => {},
 }) => {
   const dispatch = useDispatch();
-  const [categories, setCategories] = React.useState([]);
+  const [categories, setCategories] = React.useState([
+    {
+      name: 'Day',
+      value: 'day',
+    },
+    {
+      name: 'Night',
+      value: 'night',
+    },
+  ]);
 
-  React.useEffect(() => {
-    Auth.getLocalStorageData('bearer').then(token => {
-      getAllCategoriesAPI(token, response => {
-        if (response !== null) {
-          if (response?.data !== null || response?.data !== undefined) {
-            setCategories(response?.data);
-          }
-        }
-      });
-    });
-  }, []);
+  //   React.useEffect(() => {
+  //     Auth.getLocalStorageData('bearer').then(token => {
+  //       getAllCategoriesAPI(token, response => {
+  //         if (response !== null) {
+  //           if (response?.data !== null || response?.data !== undefined) {
+  //             setCategories(response?.data);
+  //           }
+  //         }
+  //       });
+  //     });
+  //   }, []);
 
   return (
     <View style={{alignItems: 'flex-start'}}>
@@ -59,16 +69,10 @@ const CategoryModal = ({
                     style={[styles.button]}
                     underlayColor="#dcdcdc"
                     onPress={() => {
-                      Auth.getLocalStorageData('bearer').then(token => {
-                        getOffersByCategoryAPI(item?._id, token, response => {
-                          if (response !== null) {
-                            dispatch(setOffer(response?.data));
-                            callback();
-                          }
-                        });
-                      });
+                      setCategoryId(item.value);
+                      callback();
                     }}>
-                    <Text style={styles.textStyle}>{item?.categoryName}</Text>
+                    <Text style={styles.textStyle}>{item?.name}</Text>
                   </TouchableHighlight>
                 );
               })}
@@ -163,4 +167,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CategoryModal;
+export default DayNightModal;

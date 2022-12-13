@@ -1,3 +1,4 @@
+import {Alert} from 'react-native';
 import Auth from '../services/Auth';
 
 // const BASE_URL = 'https://shop-ad-strix.herokuapp.com/user/';
@@ -335,7 +336,7 @@ export const addNewJobPostRequest = async (
     isPolice: true,
     isExperience: true,
   };
-
+  console.log(body, '<<<< \n\n\n\n body data');
   try {
     let response = await fetch(BASE_URL2 + 'job', {
       method: 'POST',
@@ -347,6 +348,7 @@ export const addNewJobPostRequest = async (
       body: JSON.stringify(body),
     });
     let json = await response.json();
+    console.log(json, '<<<<< this is job created');
     successCallBack(json);
   } catch (error) {
     console.error('error', error);
@@ -843,6 +845,7 @@ export const updateUserPostRequest1 = async (
     successCallBack(null);
   }
 };
+
 export const updateUserPostRequest = async (
   uid,
   email,
@@ -851,6 +854,9 @@ export const updateUserPostRequest = async (
   userType,
   image,
   bearerToken,
+  imageChanged,
+  formData,
+  isCertificateUploaded,
   successCallBack,
 ) => {
   console.log(
@@ -874,12 +880,33 @@ export const updateUserPostRequest = async (
   myHeaders.append('Authorization', 'Bearer ' + bearerToken);
 
   var formdata = new FormData();
-  formdata.append('uid', '638c4deb0a101475c9cd2ae9');
-  formdata.append('email', 'test@gmail.com');
-  formdata.append('name', 'Ra');
-  formdata.append('userType', 'user');
-  formdata.append('mobile', '111111111111');
-  formdata.append('Image', image, image.filename);
+  formdata.append('uid', uid);
+  formdata.append('email', email);
+  formdata.append('name', name);
+  formdata.append('userType', userType);
+  formdata.append('mobile', mobile);
+  if (imageChanged) {
+    formdata.append('Image', image, image.name);
+  }
+
+  formdata.append('eduction', formdata.education);
+  // formdata.append("experineceCertificate", formdata?.ex);
+  formdata.append('martialStatus', formData?.martialStatus);
+  // formdata.append("physicalDisablity", "cwsfe c");
+  formdata.append('religion', formData?.religion);
+  formdata.append('experienceYears', formData?.experienceYears);
+  formdata.append('certifiedCourse', formData?.certifiedCourse);
+  formdata.append('pAddress', formData?.pAddress);
+  formdata.append('rAddress', formData?.rAddress);
+  formdata.append('fathername', formdata?.fathername);
+  formdata.append('mothername', formData?.mothername);
+  if (isCertificateUploaded) {
+    formdata.append(
+      'certificate',
+      formData.certificate,
+      formData.certificate.name,
+    );
+  }
 
   var requestOptions = {
     method: 'POST',
@@ -893,7 +920,10 @@ export const updateUserPostRequest = async (
     requestOptions,
   )
     .then(response => response.text())
-    .then(result => console.log(result, '<<<update image api'))
+    .then(result => {
+      console.log(result, '<<<update image api');
+      successCallBack(JSON.parse(result));
+    })
     .catch(error => console.log('error', error));
 };
 
@@ -1005,13 +1035,24 @@ export const applyJobPostAPI = async (
   bearerToken,
   successCallBack,
 ) => {
-  //     '\n\n applyJobPostAPI Called: ', jobId, applicantId, applicantEmail, applicantName, applicantContact, bearerToken,
-  //     '\n resumeLink: ', resumeLink,
-  //     '\n policeLink: ', policeLink,
-  //     '\n experienceLink: ', experienceLink,
-  //     '\n certificateLink: ', certificateLink,
-  // );
-
+  console.log(
+    '\n\n applyJobPostAPI Called: ',
+    jobId,
+    applicantId,
+    applicantEmail,
+    applicantName,
+    applicantContact,
+    bearerToken,
+    '\n resumeLink: ',
+    resumeLink,
+    '\n policeLink: ',
+    policeLink,
+    '\n experienceLink: ',
+    experienceLink,
+    '\n certificateLink: ',
+    certificateLink,
+  );
+  // return null;
   let formData = new FormData();
 
   formData.append('jobId', jobId);
@@ -1035,6 +1076,7 @@ export const applyJobPostAPI = async (
       body: formData,
     });
     let json = await response.json();
+    console.log(json, '<<<< \n\n\n json');
     successCallBack(json);
   } catch (error) {
     console.error('error', error);
