@@ -17,15 +17,23 @@ import {SIZES} from '../../utils/theme';
 import {commonStyles} from '../../utils/styles';
 import moment from 'moment';
 import Custom_Auth_Btn from '../../components/Custom_Auth_Btn';
+import Toast from 'react-native-simple-toast';
 import LinearGradient from 'react-native-linear-gradient';
 import DocumentPicker from 'react-native-document-picker';
-import {addNewJobPostRequest} from '../../utils/API';
+import {
+  addNewJobPostRequest,
+  getJobsByOwnerIdPostRequest,
+} from '../../utils/API';
 import Auth from '../../services/Auth';
 import PersonalLeaveDatePicker from '../../components/CustomDatePicker';
 import CustomLoader, {CustomPanel} from '../../components/CustomLoader';
 import {useSelector} from 'react-redux';
+import {useEffect} from 'react';
+import {useState} from 'react';
 
 export default function AddJobScreen({navigation}) {
+  const {userData} = useSelector(state => state.User);
+
   const [showTick, setShowTick] = React.useState({
     tick1: true,
     tick2: false,
@@ -100,8 +108,29 @@ export default function AddJobScreen({navigation}) {
   const [loading, setLoading] = React.useState(false);
   const [startDate, setStartDate] = React.useState('');
   const [endDate, setEndDate] = React.useState('');
+  const [canAppy, setCanAppy] = useState(true);
+
+  useEffect(() => {
+    Alert.alert('hello');
+    Auth.getLocalStorageData('bearer').then(token => {
+      getJobsByOwnerIdPostRequest(userData[0]?._id, token, response => {
+        setLoading(false);
+        if (response !== null) {
+          if (response.data.length > 0) {
+            console.log(response, '<<<<this is response of get all job--- ');
+            Alert.alert('having job');
+            setCanAppy(false);
+          }
+        }
+      });
+    });
+  }, []);
 
   const handleSubmit = () => {
+    if (!canAppy) {
+      Toast.show('Please by membership to create more jobs!!');
+      return null;
+    }
     if (userType === 'shop') {
       if (interviewTiming.length === 0) {
         setInterviewTimingError(true);
@@ -209,7 +238,7 @@ export default function AddJobScreen({navigation}) {
               shopName,
               location,
               userData[0]?._id,
-              'salaryOffered',
+              salaryOffered,
               contactPersonName,
               startDate,
               endDate,
@@ -853,6 +882,32 @@ export default function AddJobScreen({navigation}) {
               ) : (
                 <></>
               )}
+            </>
+            <>
+              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+                Salary Offered
+              </Text>
+              <TextInput
+                placeholder="Salary Offered"
+                placeholderTextColor="#999"
+                keyboardType="number-pad"
+                value={salaryOffered}
+                onChangeText={val => {
+                  setSalaryOffered(val);
+                  // setIncentiveError(false);
+                }}
+                style={[
+                  styles.titleInput,
+                  {borderColor: incentiveError ? 'red' : '#BDBDBD'},
+                ]}
+              />
+              {/* { ? (
+                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+                  Incentive is mandatory
+                </Text>
+              ) : (
+                <></>
+              )} */}
             </>
 
             <>

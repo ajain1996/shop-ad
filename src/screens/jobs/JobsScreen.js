@@ -436,7 +436,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         <JobsDetails text="Incentive Offered:" item={item?.incentiveOffered} />
         <JobsDetails text="Interview Timing:" item={item?.interviewTiming} />
         <JobsDetails text="Area of work:" item={item?.areaWork} />
-        <JobsDetails text="Facilities:" item={item?.facilities} />
+        {/* <JobsDetails text="Facilities:" item={item?.facilities} /> */}
         <JobsDetails text="Gender:" item={item?.gender} />
         <JobsDetails text="Man power Number:" item={item?.manpowerNumber} />
         <JobsDetails text="Number of work:" item={item?.numberWork} />

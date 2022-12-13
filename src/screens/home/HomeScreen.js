@@ -79,7 +79,7 @@ export default function HomeScreen({navigation}) {
       getAllOffersPostRequest(token, response => {
         setLoading(false);
         if (response !== null) {
-          // console.log('\n\n\n\n\noffers', response.data, '\n\n\n\n offers');
+          console.log('offers', response.data, '\n\n\n\n offers');
           dispatch(setOffer(response?.data));
           setFilteredOffer(response.data);
           console.log(response.data);
@@ -88,13 +88,13 @@ export default function HomeScreen({navigation}) {
 
       getAllJobsPostRequest(token, response => {
         if (response !== null) {
-          dispatch(setJob(response?.data));
+          dispatch(setJob([...response?.data].reverse()));
         }
       });
 
       getAllWorksPostRequest(token, response => {
         if (response !== null) {
-          dispatch(setWork(response?.data));
+          dispatch(setWork([...response?.data].reverse()));
         }
       });
     });

@@ -278,7 +278,7 @@ export const addNewJobPostRequest = async (
   description,
   shopName,
   location,
-  ownerId,
+  ownerId,  
   salary,
   designationName,
   startDate,

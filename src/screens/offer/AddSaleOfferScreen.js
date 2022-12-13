@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import CustomInputHeader from '../../components/CustomInputHeader';
 import {SIZES} from '../../utils/theme';
 import {launchImageLibrary, openPicker} from 'react-native-image-picker';
@@ -17,13 +17,20 @@ import {commonStyles} from '../../utils/styles';
 import ImagePicker from 'react-native-image-crop-picker';
 import moment from 'moment';
 import Custom_Auth_Btn from '../../components/Custom_Auth_Btn';
-import {addNewOfferPostRequest, monthsArray} from '../../utils/API';
+import {
+  addNewOfferPostRequest,
+  getOffersByOwnerIdPostRequest,
+  monthsArray,
+} from '../../utils/API';
 import Auth from '../../services/Auth';
 import CustomLoader, {CustomPanel} from '../../components/CustomLoader';
 import PersonalLeaveDatePicker from '../../components/CustomDatePicker';
 import AllCategoryModal from './AllCategoriesModal';
+import {useSelector} from 'react-redux';
+import {useState} from 'react';
 
 export default function AddSaleOfferScreen({navigation}) {
+  const {userData} = useSelector(state => state.User);
   const [imageError, setImageError] = React.useState(false);
   const [descriptionError, setDescriptionError] = React.useState(false);
   const [locationError, setLocationError] = React.useState(false);
@@ -37,7 +44,7 @@ export default function AddSaleOfferScreen({navigation}) {
   const [endDate, setEndDate] = React.useState('');
 
   const [loading, setLoading] = React.useState(false);
-
+  const [canApply, setCanApply] = useState(true);
   const getImage = () => {
     ImagePicker.openPicker({
       width: 200,
@@ -73,7 +80,31 @@ export default function AddSaleOfferScreen({navigation}) {
     id: '',
   });
 
+  useEffect(() => {
+    Auth.getLocalStorageData('bearer').then(token => {
+      getOffersByOwnerIdPostRequest(userData[0]?._id, token, response => {
+        setLoading(false);
+        if (response !== null) {
+          if (response?.message === 'Data From Database') {
+            // setOfferData(response?.data);
+            console.log(response, '<<<< this is sales offer screen');
+            setCanApply(false);
+            // console.log(
+            //   '\n\n\n\n\n\n\n\n\n\n\n',
+            //   response.data,
+            //   '\n\n\n\n\n\n\n\n\n\n offer data',
+            // );
+          }
+        }
+      });
+    });
+  }, []);
+
   const handleSubmit = () => {
+    if (!canApply) {
+      Toast.show('Please by membership to create more Offers!!');
+      return null;
+    }
     if (description.length === 0) {
       setDescriptionError(true);
     } else if (location.length === 0) {

@@ -13,17 +13,24 @@ import CustomInputHeader from '../../components/CustomInputHeader';
 import {SIZES} from '../../utils/theme';
 import {commonStyles} from '../../utils/styles';
 import Custom_Auth_Btn from '../../components/Custom_Auth_Btn';
-import {addNewWorkPostRequest} from '../../utils/API';
+import {
+  addNewWorkPostRequest,
+  getWorksByOwnerIdPostRequest,
+} from '../../utils/API';
 import Auth from '../../services/Auth';
 import CustomLoader, {CustomPanel} from '../../components/CustomLoader';
 import {useState} from 'react';
 import DayNightModal from '../home/DayNightModal';
+import {useEffect} from 'react';
+import Toast from 'react-native-simple-toast';
+import {useSelector} from 'react-redux';
 
 export default function AddWorksScreen({navigation}) {
   const [nameError, setNameError] = React.useState(false);
   const [descError, setDescError] = React.useState(false);
   const [locationError, setLocationError] = React.useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const {userData} = useSelector(state => state.User);
 
   const [shiftError, setShiftError] = useState(false);
   // const [salaryError, setSalaryError] = React.useState(false);
@@ -41,8 +48,31 @@ export default function AddWorksScreen({navigation}) {
   const [designation, setDesignation] = React.useState('');
   const [contact, setContact] = React.useState('');
   const [loading, setLoading] = React.useState(false);
+  const [canApply, setCanApply] = useState(true);
+
+  useEffect(() => {
+    Auth.getLocalStorageData('bearer').then(token => {
+      getWorksByOwnerIdPostRequest(userData[0]?._id, token, response => {
+        setLoading(false);
+        if (response !== null) {
+          if (response?.message === 'Item Found') {
+            // setWorkData(response?.data);
+            console.log('this is work data', response);
+            if (response.data.length > 0) {
+              setCanApply(false);
+            }
+          }
+        }
+      });
+    });
+  }, []);
 
   const handleSubmit = () => {
+    if (!canApply) {
+      Toast.show('Please by membership to Add more Work!!');
+      return null;
+    }
+
     if (desc.length === 0) {
       setDescError(true);
     } else if (name.length === 0) {
