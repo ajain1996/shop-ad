@@ -32,10 +32,6 @@ export default function AppStack() {
       <StatusBar barStyle="light-content" backgroundColor="#1572B9" />
       <Stack.Navigator initialRouteName="Root" screenOptions={screenOptions}>
         <Stack.Screen name="Root" component={BottomTabs} />
-        <Stack.Screen
-          name="GetAllCandidatesScreen"
-          component={GetAllCandidatesScreen}
-        />
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen name="WorksScreen" component={WorksScreen} />
         <Stack.Screen
@@ -60,6 +56,10 @@ export default function AppStack() {
         <Stack.Screen name="LocationScreen" component={LocationScreen} />
         <Stack.Screen name="ApplyJobScreen" component={ApplyJobScreen} />
         <Stack.Screen name="SavedScreen" component={SavedScreen} />
+        <Stack.Screen
+          name="GetAllCandidatesScreen"
+          component={GetAllCandidatesScreen}
+        />
       </Stack.Navigator>
     </>
   );
