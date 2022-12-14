@@ -68,7 +68,7 @@ export default function ProfileScreen({navigation, route}) {
     setLoading(true);
     getToken();
     if (userType == 'shop') {
-      Alert.alert('shop');
+      // Alert.alert('shop');
       Auth.getLocalStorageData('bearer').then(token => {
         getOffersByOwnerIdPostRequest(userData[0]?._id, token, response => {
           setLoading(false);
@@ -150,7 +150,7 @@ export default function ProfileScreen({navigation, route}) {
   React.useEffect(() => {
     (async () => {
       const data = await AsyncStorage.getItem('Saved_Item');
-      Alert.alert(data);
+      // Alert.alert(data);
       // console.log(
       //   '\n\n\n\n\n',
       //   setSavedOffers(JSON.parse(data)),
