@@ -41,6 +41,7 @@ import HomeSearchData from './HomeSearchData';
 import HomeCarousel from './HomeCarousel';
 import {useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import HomeFilterCategory2 from './FilterCategoryHome2';
 
 export default function HomeScreen({navigation}) {
   const dispatch = useDispatch();
@@ -178,7 +179,7 @@ export default function HomeScreen({navigation}) {
             style={{width: 36, height: 36}}
           />
         </TouchableHighlight>
-        <HomeFilterCategory
+        <HomeFilterCategory2
           modalVisible={showCategoryModal}
           navigation={navigation}
           setCategoryId={setCategoryId}
@@ -186,6 +187,14 @@ export default function HomeScreen({navigation}) {
             setShowCategoryModal(!showCategoryModal);
           }}
         />
+        {/* <HomeFilterCategory
+          modalVisible={showCategoryModal}
+          navigation={navigation}
+          setCategoryId={setCategoryId}
+          callback={() => {
+            setShowCategoryModal(!showCategoryModal);
+          }}
+        /> */}
       </View>
 
       <HomeSearchData

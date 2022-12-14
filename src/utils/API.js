@@ -278,7 +278,7 @@ export const addNewJobPostRequest = async (
   description,
   shopName,
   location,
-  ownerId,  
+  ownerId,
   salary,
   designationName,
   startDate,
@@ -368,6 +368,34 @@ export const getAllJobsPostRequest = async (bearerToken, successCallBack) => {
     console.error('error', error);
     successCallBack(null);
   }
+};
+
+export const getAppliedCandidate = async (token, jobId, successCallBack) => {
+  var myHeaders = new Headers();
+  myHeaders.append('Authorization', 'Bearer ' + token);
+  myHeaders.append('Content-Type', 'application/json');
+
+  var raw = JSON.stringify({
+    id: jobId,
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow',
+  };
+
+  fetch(
+    'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/jobapply/jobId',
+    requestOptions,
+  )
+    .then(response => response.text())
+    .then(result => {
+      console.log(JSON.parse(result));
+      successCallBack(JSON.parse(result));
+    })
+    .catch(error => console.log('error', error));
 };
 
 export const getJobsByOwnerIdPostRequest = async (
