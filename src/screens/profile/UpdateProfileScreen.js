@@ -65,7 +65,11 @@ export default function UpdateProfileScreen({navigation}) {
     setPhone(userData[0].mobile);
     setImageData({uri: userData[0].userProfile});
     console.log(userData, '<<<<<  this is userData');
-    setFormData({...formData, ...userData[0]});
+    setFormData({
+      ...formData,
+      ...userData[0],
+      certificate: {name: 'View certificate'},
+    });
   }, []);
 
   // console.log(imageData, '\n\n\n\n<<<this is userdata');

@@ -128,7 +128,7 @@ export default function WorksScreen({navigation}) {
   );
 }
 
-export const RenderSingleWork = ({item}) => {
+export const RenderSingleWork = ({item, showDot}) => {
   const [homeModalVisible, setHomeModalVisible] = useState(false);
 
   return (
@@ -165,15 +165,17 @@ export const RenderSingleWork = ({item}) => {
           </Text>
           <Text style={{...commonStyles.fs14_400}}>{item?.contactNumber}</Text>
         </View>
-        <TouchableHighlight
-          onPress={() => setHomeModalVisible(true)}
-          underlayColor="#f7f8f9">
-          <Image
-            source={require('../../assets/img/3dots.png')}
-            resizeMode="contain"
-            style={{width: 24, height: 24, borderRadius: 100}}
-          />
-        </TouchableHighlight>
+        {showDot && (
+          <TouchableHighlight
+            onPress={() => setHomeModalVisible(true)}
+            underlayColor="#f7f8f9">
+            <Image
+              source={require('../../assets/img/3dots.png')}
+              resizeMode="contain"
+              style={{width: 24, height: 24, borderRadius: 100}}
+            />
+          </TouchableHighlight>
+        )}
       </View>
 
       <HomeModal
@@ -198,6 +200,7 @@ export const RenderSingleWork = ({item}) => {
               JSON.stringify([...parseIT, item]),
             );
           }
+          setHomeModalVisible(false);
         }}
       />
     </View>

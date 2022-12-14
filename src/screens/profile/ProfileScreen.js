@@ -15,6 +15,8 @@ import {commonStyles} from '../../utils/styles';
 import {
   followersAndCount,
   followingAndCount,
+  getJobByApplicantId,
+  getJobDetailByID,
   getJobsByOwnerIdPostRequest,
   getOffersByOwnerIdPostRequest,
   getWorksByOwnerIdPostRequest,
@@ -31,6 +33,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useIsFocused} from '@react-navigation/native';
 import {JobsDetails} from '../jobs/JobsDetails';
 import {useState} from 'react';
+import {useEffect} from 'react';
+import LinearGradient from 'react-native-linear-gradient';
 
 export default function ProfileScreen({navigation, route}) {
   const [offerData, setOfferData] = React.useState([]);
@@ -44,7 +48,6 @@ export default function ProfileScreen({navigation, route}) {
   const isFocused = useIsFocused();
   const [followerCount, setFollowerCount] = React.useState(0);
   const [followingCount, setFollowingCount] = React.useState(0);
-  const [showJobData, setshowJobData] = useState(false);
 
   var userName = '';
   console.log(
@@ -118,17 +121,23 @@ export default function ProfileScreen({navigation, route}) {
       });
     } else {
       (async () => {
+        const token = await Auth.getLocalStorageData('bearer');
+        console.log('calling jobs by applicant idprofile');
+        getJobByApplicantId(token, userData[0]._id, res => {
+          console.log(res, '<<<<< applied jobs by user');
+          setJobsData(res.data);
+        });
         const data = await AsyncStorage.getItem('SAVED_OFFER');
         // Alert.alert(data);
         if (data != null) {
           const parsedata = JSON.parse(data);
           setOfferData(parsedata);
         } else setOfferData([]);
-        const data2 = await AsyncStorage.getItem('SAVED_JOBS');
-        if (data2 != null) {
-          const parsedata2 = JSON.parse(data2);
-          setJobsData(parsedata2);
-        } else setJobsData([]);
+        // const data2 = await AsyncStorage.getItem('SAVED_JOBS');
+        // if (data2 != null) {
+        //   const parsedata2 = JSON.parse(data2);
+        //   setJobsData(parsedata2);
+        // } else setJobsData([]);
         // Alert.alert(data);
         const data3 = await AsyncStorage.getItem('SAVED_WORK');
         if (data3 != null) {
@@ -382,199 +391,176 @@ export default function ProfileScreen({navigation, route}) {
             <ScrollView horizontal>
               {jobsData.map((item, index) => {
                 return (
-                  <View
-                    style={{
-                      elevation: 9,
-                      shadowColor: '#999',
-                      backgroundColor: '#fff',
-                      width: SIZES.width / 1.3,
-                      borderRadius: 9,
-                      paddingVertical: 12,
-                      margin: 12,
-                    }}>
-                    <JobsDetails text="Title:" item={item?.title} />
-                    <JobsDetails text="Description:" item={item?.description} />
-                    <JobsDetails text="Shop Name:" item={item?.shopName} />
-                    <JobsDetails
-                      text="Contact Number:"
-                      item={item?.contactNumber}
-                    />
-                    <JobsDetails
-                      text="Contact Email:"
-                      item={item?.contactEmail}
-                    />
-                    <JobsDetails
-                      text="Designation Name:"
-                      item={item?.designationName}
-                    />
-                    <JobsDetails
-                      text="Experience Required:"
-                      item={item?.experienceRequired}
-                    />
-                    <JobsDetails
-                      text="Incentive Offered:"
-                      item={item?.incentiveOffered}
-                    />
-                    <JobsDetails
-                      text="Interview Timing:"
-                      item={item?.interviewTiming}
-                    />
-                    <JobsDetails text="Location:" item={item?.Location} />
-                    <JobsDetails
-                      text="Experience Required:"
-                      item={item?.experienceRequired}
-                    />
-                    {showJobData ? (
-                      <View>
-                        <JobsDetails
-                          text="Incentive Offered:"
-                          item={item?.incentiveOffered}
-                        />
-                        <JobsDetails
-                          text="Interview Timing:"
-                          item={item?.interviewTiming}
-                        />
-                        <JobsDetails
-                          text="Area of work:"
-                          item={item?.areaWork}
-                        />
-                        <JobsDetails
-                          text="Facilities:"
-                          item={item?.facilities}
-                        />
-                        <JobsDetails text="Gender:" item={item?.gender} />
-                        <JobsDetails
-                          text="Man power Number:"
-                          item={item?.manpowerNumber}
-                        />
-                        <JobsDetails
-                          text="Number of work:"
-                          item={item?.numberWork}
-                        />
-                        <JobsDetails
-                          text="Vechile Required:"
-                          item={item?.vechileRequired}
-                        />
-                        <JobsDetails
-                          text="Work Timing:"
-                          item={item?.workTiming}
-                        />
-                        <JobsDetails text="Salary:" item={item?.salary} />
-                        <JobsDetails text="Message:" item={item?.message} />
-                        <JobsDetails text="StartDate:" item={item?.startDate} />
-                        <JobsDetails text="EndDate:" item={item?.endDate} />
-                        <Text style={{height: 8}} />
-                        {userType === 'user' ? (
-                          <LinearGradient
-                            colors={['#EDAA26', '#E27127']}
-                            style={{
-                              width: 160,
-                              height: 48,
-                              ...commonStyles.centerStyles,
-                              borderRadius: 5,
-                              marginLeft: 20,
-                            }}>
-                            <TouchableHighlight
-                              onPress={() => {
-                                handleApplyJob(item);
-                              }}
-                              underlayColor="#EDAA26"
-                              style={{
-                                width: '100%',
-                                height: '100%',
-                                ...commonStyles.centerStyles,
-                                borderRadius: 5,
-                              }}>
-                              <Text
-                                style={{
-                                  ...commonStyles.fs15_600,
-                                  color: '#fff',
-                                }}>
-                                Apply Job
-                              </Text>
-                            </TouchableHighlight>
-                          </LinearGradient>
-                        ) : (
-                          <></>
-                        )}
-                        <Text
-                          style={{
-                            backgroundColor: '#EDAA26',
-                            width: '50%',
-                            borderRadius: 5,
-                            alignSelf: 'center',
-                            color: '#ffff',
-                            height: 30,
-                            textAlign: 'center',
-                          }}
-                          onPress={() => {
-                            // Alert.alert('hello');
-                            navigation.navigate('GetAllCandidatesScreen', {
-                              item,
-                            });
-                          }}>
-                          {' '}
-                          View Candidate
-                        </Text>
-                        {/* <Text style={{...commonStyles.fs12_400}}>Expand</Text> */}
-                      </View>
-                    ) : (
-                      <></>
-                    )}
-
-                    <TouchableHighlight
-                      underlayColor="#f7f8f9"
-                      style={{
-                        width: SIZES.width / 1.5,
-                        height: 32,
-                        ...commonStyles.centerStyles,
-                        backgroundColor: '#eee',
-                        marginVertical: 8,
-                        marginLeft: 22,
-                      }}
-                      onPress={() => {
-                        setshowJobData(!showJobData);
-                      }}>
-                      {showJobData ? (
-                        <Text style={{...commonStyles.fs12_400}}>Collapse</Text>
-                      ) : (
-                        <Text style={{...commonStyles.fs12_400}}>Expand</Text>
-                      )}
-                    </TouchableHighlight>
-                  </View>
-                  // <View key={index} style={{ marginRight: 20 }}>
-                  //     <TouchableOpacity
-                  //         activeOpacity={0.5}
-                  //         onPress={() => {
-                  //             navigation.navigate('UserPostScreen', {
-                  //                 item: item,
-                  //                 userName: userName,
-                  //             });
-                  //         }}
-                  //         style={{
-                  //             borderWidth: 1, borderColor: "#dcdcdc", backgroundColor: "#fff",
-                  //             borderRadius: 10, padding: 12,
-                  //         }}
-                  //     >
-                  //         <Image
-                  //             source={{
-                  //                 uri: item?.offerImage
-                  //                     ? item?.offerImage
-                  //                     : 'https://plus.unsplash.com/premium_photo-1661679026942-db5aef08c093?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-                  //             }}
-                  //             resizeMode="cover"
-                  //             style={{
-                  //                 width: SIZES.width / 1.4,
-                  //                 height: SIZES.width / 1.4,
-                  //                 borderRadius: 12,
-                  //             }}
-                  //         />
-
-                  //         <Text style={{ ...commonStyles.fs16_500, marginTop: 8 }}>{item?.description}</Text>
-                  //         <Text style={{ ...commonStyles.fs13_400 }}>Location: {item?.location}</Text>
-                  //     </TouchableOpacity>
-                  // </View>
+                  <SingleJob
+                    userType={userType}
+                    item={item}
+                    index={index}
+                    navigation={navigation}
+                  />
                 );
+                // return (
+                //   <View
+                //     style={{
+                //       elevation: 9,
+                //       shadowColor: '#999',
+                //       backgroundColor: '#fff',
+                //       width: SIZES.width / 1.3,
+                //       borderRadius: 9,
+                //       paddingVertical: 12,
+                //       margin: 12,
+                //     }}>
+                //     <JobsDetails text="Title:" item={item?.title} />
+                //     <JobsDetails text="Description:" item={item?.description} />
+                //     <JobsDetails text="Shop Name:" item={item?.shopName} />
+                //     <JobsDetails
+                //       text="Contact Number:"
+                //       item={item?.contactNumber}
+                //     />
+                //     <JobsDetails
+                //       text="Contact Email:"
+                //       item={item?.contactEmail}
+                //     />
+                //     <JobsDetails
+                //       text="Designation Name:"
+                //       item={item?.designationName}
+                //     />
+                //     <JobsDetails
+                //       text="Experience Required:"
+                //       item={item?.experienceRequired}
+                //     />
+                //     <JobsDetails
+                //       text="Incentive Offered:"
+                //       item={item?.incentiveOffered}
+                //     />
+                //     <JobsDetails
+                //       text="Interview Timing:"
+                //       item={item?.interviewTiming}
+                //     />
+                //     <JobsDetails text="Location:" item={item?.Location} />
+                //     <JobsDetails
+                //       text="Experience Required:"
+                //       item={item?.experienceRequired}
+                //     />
+                //     {showJobData ? (
+                //       <View>
+                //         <JobsDetails
+                //           text="Incentive Offered:"
+                //           item={item?.incentiveOffered}
+                //         />
+                //         <JobsDetails
+                //           text="Interview Timing:"
+                //           item={item?.interviewTiming}
+                //         />
+                //         <JobsDetails
+                //           text="Area of work:"
+                //           item={item?.areaWork}
+                //         />
+                //         <JobsDetails
+                //           text="Facilities:"
+                //           item={item?.facilities}
+                //         />
+                //         <JobsDetails text="Gender:" item={item?.gender} />
+                //         <JobsDetails
+                //           text="Man power Number:"
+                //           item={item?.manpowerNumber}
+                //         />
+                //         <JobsDetails
+                //           text="Number of work:"
+                //           item={item?.numberWork}
+                //         />
+                //         <JobsDetails
+                //           text="Vechile Required:"
+                //           item={item?.vechileRequired}
+                //         />
+                //         <JobsDetails
+                //           text="Work Timing:"
+                //           item={item?.workTiming}
+                //         />
+                //         <JobsDetails text="Salary:" item={item?.salary} />
+                //         <JobsDetails text="Message:" item={item?.message} />
+                //         <JobsDetails text="StartDate:" item={item?.startDate} />
+                //         <JobsDetails text="EndDate:" item={item?.endDate} />
+                //         <Text style={{height: 8}} />
+                //         {userType === 'user' ? (
+                //           <LinearGradient
+                //             colors={['#EDAA26', '#E27127']}
+                //             style={{
+                //               width: 160,
+                //               height: 48,
+                //               ...commonStyles.centerStyles,
+                //               borderRadius: 5,
+                //               marginLeft: 20,
+                //             }}>
+                //             <TouchableHighlight
+                //               onPress={() => {
+                //                 handleApplyJob(item);
+                //               }}
+                //               underlayColor="#EDAA26"
+                //               style={{
+                //                 width: '100%',
+                //                 height: '100%',
+                //                 ...commonStyles.centerStyles,
+                //                 borderRadius: 5,
+                //               }}>
+                //               <Text
+                //                 style={{
+                //                   ...commonStyles.fs15_600,
+                //                   color: '#fff',
+                //                 }}>
+                //                 Apply Job
+                //               </Text>
+                //             </TouchableHighlight>
+                //           </LinearGradient>
+                //         ) : (
+                //           <></>
+                //         )}
+                //         <Text
+                //           style={{
+                //             backgroundColor: '#EDAA26',
+                //             width: '50%',
+                //             borderRadius: 5,
+                //             alignSelf: 'center',
+                //             color: '#ffff',
+                //             height: 30,
+                //             textAlign: 'center',
+                //           }}
+                //           onPress={() => {
+                //             // Alert.alert('hello');
+                //             navigation.navigate('GetAllCandidatesScreen', {
+                //               item,
+                //             });
+                //           }}>
+                //           {' '}
+                //           View Candidate
+                //         </Text>
+                //         {/* <Text style={{...commonStyles.fs12_400}}>Expand</Text> */}
+                //       </View>
+                //     ) : (
+                //       <></>
+                //     )}
+
+                //     <TouchableHighlight
+                //       underlayColor="#f7f8f9"
+                //       style={{
+                //         width: SIZES.width / 1.5,
+                //         height: 32,
+                //         ...commonStyles.centerStyles,
+                //         backgroundColor: '#eee',
+                //         marginVertical: 8,
+                //         marginLeft: 22,
+                //       }}
+                //       onPress={() => {
+                //         setshowJobData(!showJobData);
+                //       }}>
+                //       {showJobData ? (
+                //         <Text style={{...commonStyles.fs12_400}}>Collapse</Text>
+                //       ) : (
+                //         <Text style={{...commonStyles.fs12_400}}>Expand</Text>
+                //       )}
+                //     </TouchableHighlight>
+                //   </View>
+
+                // );
               })}
             </ScrollView>
           ) : (
@@ -591,7 +577,7 @@ export default function ProfileScreen({navigation, route}) {
               {workData.map((item, index) => {
                 return (
                   <View key={index} style={{marginTop: -4}}>
-                    <RenderSingleWork item={item} />
+                    <RenderSingleWork item={item} showDot={false} />
                   </View>
                 );
               })}
@@ -693,6 +679,143 @@ export default function ProfileScreen({navigation, route}) {
     </>
   );
 }
+
+export const SingleJob = ({item, index, userType, navigation}) => {
+  const [showJobData, setshowJobData] = useState(false);
+  const [jobData, setjobData] = useState({});
+  const [jobDetails, setJobDetails] = useState({});
+  useEffect(() => {
+    (async () => {
+      if (userType == 'shop') {
+        console.log(item, '<<<thisissinglejobdata----shop');
+        setJobDetails(item);
+      } else {
+        const token = await Auth.getLocalStorageData('bearer');
+        // console.log(item, '<<<thisissinglejobdata----');
+        getJobDetailByID(token, item.jobId, res => {
+          console.log(res.data[0], item, '<<<thisissinglejobdata----user');
+          setJobDetails(res.data[0]);
+        });
+      }
+    })();
+  }, []);
+
+  return (
+    <View
+      style={{
+        elevation: 9,
+        shadowColor: '#999',
+        backgroundColor: '#fff',
+        width: SIZES.width / 1.3,
+        borderRadius: 9,
+        paddingVertical: 12,
+        margin: 12,
+      }}>
+      {/* <JobsDetails text="Title:" item={jobDetails?.title} /> */}
+      <JobsDetails text="Shop Name:" item={jobDetails?.shopName} />
+      <JobsDetails text="Description:" item={jobDetails?.description} />
+      <JobsDetails text="Contact Number:" item={jobDetails?.contactNumber} />
+      <JobsDetails text="Contact Email:" item={jobDetails?.contactEmail} />
+      <JobsDetails
+        text="Designation Name:"
+        item={jobDetails?.designationName}
+      />
+      <JobsDetails
+        text="Experience Required:"
+        item={jobDetails?.experienceRequired}
+      />
+      <JobsDetails
+        text="Incentive Offered:"
+        item={jobDetails?.incentiveOffered}
+      />
+      <JobsDetails
+        text="Interview Timing:"
+        item={jobDetails?.interviewTiming}
+      />
+      <JobsDetails text="Location:" item={jobDetails?.Location} />
+      <JobsDetails
+        text="Experience Required:"
+        item={jobDetails?.experienceRequired}
+      />
+      {showJobData ? (
+        <View>
+          <JobsDetails
+            text="Incentive Offered:"
+            item={jobDetails?.incentiveOffered}
+          />
+          <JobsDetails
+            text="Interview Timing:"
+            item={jobDetails?.interviewTiming}
+          />
+          <JobsDetails text="Area of work:" item={jobDetails?.areaWork} />
+          <JobsDetails text="Facilities:" item={jobDetails?.facilities} />
+          <JobsDetails text="Gender:" item={jobDetails?.gender} />
+          <JobsDetails
+            text="Man power Number:"
+            item={jobDetails?.manpowerNumber}
+          />
+          <JobsDetails text="Number of work:" item={jobDetails?.numberWork} />
+          <JobsDetails
+            text="Vechile Required:"
+            item={jobDetails?.vechileRequired}
+          />
+          <JobsDetails text="Work Timing:" item={jobDetails?.workTiming} />
+          <JobsDetails text="Salary:" item={jobDetails?.salary} />
+          <JobsDetails text="Message:" item={jobDetails?.message} />
+          <JobsDetails text="StartDate:" item={jobDetails?.startDate} />
+          <JobsDetails text="EndDate:" item={jobDetails?.endDate} />
+          <Text style={{height: 8}} />
+          {/* {userType === 'user' ? <> </> : <></>} */}
+          {userType == 'shop' && (
+            <Text
+              style={{
+                backgroundColor: '#EDAA26',
+                width: '50%',
+                borderRadius: 5,
+                alignSelf: 'center',
+                color: '#ffff',
+                height: 30,
+                textAlign: 'center',
+              }}
+              onPress={() => {
+                // Alert.alert('hello');
+                navigation.navigate('GetAllCandidatesScreen', {
+                  item,
+                });
+              }}>
+              {' '}
+              View Candidate
+            </Text>
+          )}
+          {/* <Text style={{...commonStyles.fs12_400}}>Expand</Text> */}
+        </View>
+      ) : (
+        <></>
+      )}
+
+      <TouchableHighlight
+        underlayColor="#f7f8f9"
+        style={{
+          width: SIZES.width / 1.5,
+          height: 32,
+          ...commonStyles.centerStyles,
+          backgroundColor: '#eee',
+          marginVertical: 8,
+          marginLeft: 22,
+        }}
+        onPress={() => {
+          setshowJobData(!showJobData);
+        }}>
+        {showJobData ? (
+          <Text style={{...commonStyles.fs12_400}}>Collapse</Text>
+        ) : (
+          <Text style={{...commonStyles.fs12_400}}>Expand</Text>
+        )}
+      </TouchableHighlight>
+    </View>
+  );
+};
+
 const UserTypeModal = ({modalVisible, callback2, setUserTypeModalVisible}) => {
   return (
     <Modal

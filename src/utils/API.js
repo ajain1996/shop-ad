@@ -594,6 +594,57 @@ export const getUserByIDPostAPI = async (id, bearerToken, successCallBack) => {
   }
 };
 
+export const getJobDetailByID = (token, id, callBack) => {
+  var myHeaders = new Headers();
+  myHeaders.append('Authorization', 'Bearer ' + token);
+  myHeaders.append('Content-Type', 'application/json');
+
+  var raw = JSON.stringify({
+    id,
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow',
+  };
+
+  fetch(
+    'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/job/uid',
+    requestOptions,
+  )
+    .then(response => response.text())
+    .then(result => {
+      console.log(result);
+      callBack(JSON.parse(result));
+    })
+    .catch(error => console.log('error', error));
+};
+
+export const getJobByApplicantId = (token, id, callBAck) => {
+  console.log('gettingalljobsbyapplicant ID');
+  var myHeaders = new Headers();
+  myHeaders.append('Authorization', 'Bearer ' + token);
+
+  var requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+    redirect: 'follow',
+  };
+
+  fetch(
+    'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/jobapply',
+    requestOptions,
+  )
+    .then(response => response.text())
+    .then(result => {
+      //  console.log(result)
+      callBAck(JSON.parse(result));
+    })
+    .catch(error => console.log('error', error));
+};
+
 export const getLikesCountByIDPostAPI = async (
   itemId,
   bearerToken,

@@ -8,6 +8,7 @@ import {
   TouchableHighlight,
   TextInput,
   StyleSheet,
+  Linking,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {commonStyles} from '../../utils/styles';
@@ -18,14 +19,28 @@ import Auth from '../../services/Auth';
 export default function GetAllCandidatesScreen({navigation, route}) {
   const {item} = route.params;
   const [allCandidate, setAllCandidate] = useState([]);
+  const [tempData, setTempData] = useState([]);
   useEffect(() => {
     Auth.getLocalStorageData('bearer').then(token => {
       getAppliedCandidate(token, item._id, res => {
         console.log(res, '<<<<<jobdetail');
         setAllCandidate(res);
+        setTempData(res);
       });
     });
   }, []);
+
+  const searchIt = text => {
+    if (text == '' || text == null) return setAllCandidate(tempData);
+    const filter = tempData.filter(item => {
+      const short1 = item.applicantName.toLowerCase();
+      const short2 = text.toLowerCase();
+      if (short1.match(short2)) {
+        return true;
+      }
+    });
+    setAllCandidate(filter);
+  };
 
   console.log(item, '<<<this is item');
   return (
@@ -42,14 +57,15 @@ export default function GetAllCandidatesScreen({navigation, route}) {
           />
         </TouchableHighlight>
 
-        <TextInput
+        {/* <TextInput
           placeholder="Search Members"
           placeholderTextColor="#999"
           onChangeText={text => {
             console.log(text);
+            searchIt(text);
           }}
           style={styles.searchInput}
-        />
+        /> */}
       </View>
       <ScrollView>
         {allCandidate?.map((item, index) => {
@@ -110,16 +126,28 @@ export const GetAllCandidateScreen = ({item, index, navigation}) => {
     });
   }, []);
 
+  const openBrowser = link => {
+    Linking.canOpenURL(link).then(supported => {
+      if (supported) {
+        Linking.openURL(link);
+      } else {
+        console.log("Don't know how to open URI: " + link);
+      }
+      return false;
+    });
+  };
+
   return (
     <TouchableOpacity
       style={styles.itemWrapper}
       key={index}
       activeOpacity={0.9}
-      onPress={() => {
-        navigation.navigate('MemberDetailScreen', {
-          item: item,
-        });
-      }}>
+      // onPress={() => {
+      //   navigation.navigate('MemberDetailScreen', {
+      //     item: item,
+      //   });
+      // }}
+    >
       <View style={styles.itemContent}>
         <Image
           source={{
@@ -142,10 +170,11 @@ export const GetAllCandidateScreen = ({item, index, navigation}) => {
         userType : "shop" */}
         <View style={styles.memberNameBlock}>
           <Text style={[styles.memberName, {color: '#000'}]}>
+            {/* {item.applicantName} */}
             {userData.name}
           </Text>
-          <Text style={styles.conpanyName}>{userData.email}</Text>
-          <Text style={styles.conpanyName}>{userData.mobile}</Text>
+          <Text style={styles.conpanyName}>Email: {userData.email}</Text>
+          <Text style={styles.conpanyName}>Mobile: {userData.mobile}</Text>
           <Text style={styles.conpanyName}>Education: {userData.eduction}</Text>
           <Text style={styles.conpanyName}>
             Experience: {userData.experienceYears}
@@ -162,6 +191,52 @@ export const GetAllCandidateScreen = ({item, index, navigation}) => {
           {/* <Text style={styles.conpanyName}>{userData.martialStatus}</Text> */}
           <Text style={styles.conpanyName}>Address: {userData.rAddress}</Text>
           <Text style={styles.conpanyName}>Religion: {userData.religion}</Text>
+          <Text style={styles.conpanyName}>Religion: {userData.religion}</Text>
+          {item.resumeLink != '' && item.resumeLink != null && (
+            <Text
+              style={{
+                height: 20,
+                borderWidth: 1,
+                textAlign: 'center',
+                marginTop: 10,
+                color: '#000',
+              }}
+              onPress={() => {
+                openBrowser(item?.resumeLink);
+              }}>
+              Download Resume
+            </Text>
+          )}
+          {item.certificateLink != '' && item.certificateLink != null && (
+            <Text
+              style={{
+                height: 20,
+                borderWidth: 1,
+                textAlign: 'center',
+                marginTop: 10,
+                color: '#000',
+              }}
+              onPress={() => {
+                openBrowser(item?.certificateLink);
+              }}>
+              Certificate
+            </Text>
+          )}
+          {item.policeLink != '' && item.policeLink != null && (
+            <Text
+              style={{
+                height: 20,
+                borderWidth: 1,
+                textAlign: 'center',
+                marginTop: 10,
+                color: '#000',
+              }}
+              onPress={() => {
+                openBrowser(item?.policeLink);
+              }}>
+              Download Resume
+            </Text>
+          )}
         </View>
       </View>
     </TouchableOpacity>
