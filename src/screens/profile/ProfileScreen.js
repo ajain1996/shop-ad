@@ -5,6 +5,8 @@ import {
     TouchableOpacity,
     ScrollView,
     ActivityIndicator,
+    TouchableHighlight,
+    StyleSheet,
 } from 'react-native';
 import React from 'react';
 import { useSelector } from 'react-redux';
@@ -21,11 +23,15 @@ import Auth from '../../services/Auth';
 import { RenderSingleWork } from '../works/WorksScreen';
 import { SIZES } from '../../utils/theme';
 import CustomLoader, { CustomPanel } from '../../components/CustomLoader';
+import { JobsDetails } from '../jobs/JobsDetails';
+import LinearGradient from 'react-native-linear-gradient';
+import { Button } from 'react-native-paper';
 
 export default function ProfileScreen({ navigation, route }) {
     const [offerData, setOfferData] = React.useState([]);
     const [jobsData, setJobsData] = React.useState([]);
     const [workData, setWorkData] = React.useState([]);
+    const { userType } = useSelector(state => state.UserType);
 
     const { userData } = useSelector(state => state.User);
     const [followerCount, setFollowerCount] = React.useState(0);
@@ -85,28 +91,23 @@ export default function ProfileScreen({ navigation, route }) {
         });
     }, []);
 
+    const handleApplyJob = (item) => {
+        navigation.navigate('ApplyJobScreen', {
+            jobId: item?._id,
+            item: item,
+        });
+    };
+
+    const [showJobData, setshowJobData] = React.useState(false);
+
     return (
         <>
-            <ScrollView
-                style={{ width: '100%', height: SIZES.height, backgroundColor: '#fff' }}>
+            <ScrollView style={styles.container}>
                 <UserdetailsHeader navigation={navigation} title={userName} />
 
                 <View style={{ marginBottom: 20 }}>
-                    <View
-                        style={{
-                            paddingHorizontal: 14,
-                            paddingTop: 24,
-                            ...commonStyles.rowBetween,
-                            alignItems: 'flex-start',
-                        }}>
-                        <View
-                            style={{
-                                width: 75,
-                                ...commonStyles.centerStyles,
-                                height: 75,
-                                backgroundColor: '#dcdcdc',
-                                borderRadius: 100,
-                            }}>
+                    <View style={styles.profileWrapper}>
+                        <View style={styles.profileImg}>
                             {userData[0]?.userProfile ? (
                                 <Image
                                     source={{ uri: userData[0]?.userProfile }}
@@ -242,38 +243,113 @@ export default function ProfileScreen({ navigation, route }) {
                         <ScrollView horizontal>
                             {jobsData.map((item, index) => {
                                 return (
-                                    <View key={index} style={{ marginRight: 20 }}>
-                                        <TouchableOpacity
-                                            activeOpacity={0.5}
-                                            onPress={() => {
-                                                navigation.navigate('UserPostScreen', {
-                                                    item: item,
-                                                    userName: userName,
-                                                });
-                                            }}
-                                            style={{
-                                                borderWidth: 1, borderColor: "#dcdcdc", backgroundColor: "#fff",
-                                                borderRadius: 10, padding: 12,
-                                            }}
-                                        >
-                                            <Image
-                                                source={{
-                                                    uri: item?.offerImage
-                                                        ? item?.offerImage
-                                                        : 'https://plus.unsplash.com/premium_photo-1661679026942-db5aef08c093?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-                                                }}
-                                                resizeMode="cover"
-                                                style={{
-                                                    width: SIZES.width / 1.4,
-                                                    height: SIZES.width / 1.4,
-                                                    borderRadius: 12,
-                                                }}
-                                            />
+                                    <View style={{ elevation: 9, shadowColor: "#999", backgroundColor: "#fff", width: SIZES.width / 1.3, borderRadius: 9, paddingVertical: 12, margin: 12 }}>
+                                        <JobsDetails text="Title:" item={item?.title} />
+                                        <JobsDetails text="Description:" item={item?.description} />
+                                        <JobsDetails text="Shop Name:" item={item?.shopName} />
+                                        <JobsDetails text="Contact Number:" item={item?.contactNumber} />
+                                        <JobsDetails text="Contact Email:" item={item?.contactEmail} />
+                                        <JobsDetails text="Designation Name:" item={item?.designationName} />
+                                        <JobsDetails
+                                            text="Experience Required:"
+                                            item={item?.experienceRequired}
+                                        />
+                                        <JobsDetails text="Incentive Offered:" item={item?.incentiveOffered} />
+                                        <JobsDetails text="Interview Timing:" item={item?.interviewTiming} />
+                                        <JobsDetails text="Location:" item={item?.Location} />
+                                        <JobsDetails
+                                            text="Experience Required:"
+                                            item={item?.experienceRequired}
+                                        />
+                                        {showJobData
+                                            ? <View>
+                                                <JobsDetails text="Incentive Offered:" item={item?.incentiveOffered} />
+                                                <JobsDetails text="Interview Timing:" item={item?.interviewTiming} />
+                                                <JobsDetails text="Area of work:" item={item?.areaWork} />
+                                                <JobsDetails text="Facilities:" item={item?.facilities} />
+                                                <JobsDetails text="Gender:" item={item?.gender} />
+                                                <JobsDetails text="Man power Number:" item={item?.manpowerNumber} />
+                                                <JobsDetails text="Number of work:" item={item?.numberWork} />
+                                                <JobsDetails text="Vechile Required:" item={item?.vechileRequired} />
+                                                <JobsDetails text="Work Timing:" item={item?.workTiming} />
+                                                <JobsDetails text="Salary:" item={item?.salary} />
+                                                <JobsDetails text="Message:" item={item?.message} />
+                                                <JobsDetails text="StartDate:" item={item?.startDate} />
+                                                <JobsDetails text="EndDate:" item={item?.endDate} />
+                                                <Text style={{ height: 8 }} />
+                                                {userType === 'user' ? (
+                                                    <LinearGradient
+                                                        colors={['#EDAA26', '#E27127']}
+                                                        style={{
+                                                            width: 160,
+                                                            height: 48,
+                                                            ...commonStyles.centerStyles,
+                                                            borderRadius: 5,
+                                                            marginLeft: 20,
+                                                        }}>
+                                                        <TouchableHighlight
+                                                            onPress={() => { handleApplyJob(item) }}
+                                                            underlayColor="#EDAA26"
+                                                            style={{
+                                                                width: '100%',
+                                                                height: '100%',
+                                                                ...commonStyles.centerStyles,
+                                                                borderRadius: 5,
+                                                            }}>
+                                                            <Text style={{ ...commonStyles.fs15_600, color: '#fff' }}>
+                                                                Apply Job
+                                                            </Text>
+                                                        </TouchableHighlight>
+                                                    </LinearGradient>
+                                                ) : (
+                                                    <></>
+                                                )}
+                                            </View> : <></>}
 
-                                            <Text style={{ ...commonStyles.fs16_500, marginTop: 8 }}>{item?.description}</Text>
-                                            <Text style={{ ...commonStyles.fs13_400 }}>Location: {item?.location}</Text>
-                                        </TouchableOpacity>
+                                        <TouchableHighlight underlayColor="#f7f8f9"
+                                            style={{
+                                                width: SIZES.width / 1.5, height: 32, ...commonStyles.centerStyles,
+                                                backgroundColor: "#eee", marginVertical: 8, marginLeft: 22
+                                            }}
+                                            onPress={() => { setshowJobData(!showJobData) }}
+                                        >
+                                            {showJobData
+                                                ? <Text style={{ ...commonStyles.fs12_400 }}>Collapse</Text>
+                                                : <Text style={{ ...commonStyles.fs12_400 }}>Expand</Text>}
+                                        </TouchableHighlight>
                                     </View>
+                                    // <View key={index} style={{ marginRight: 20 }}>
+                                    //     <TouchableOpacity
+                                    //         activeOpacity={0.5}
+                                    //         onPress={() => {
+                                    //             navigation.navigate('UserPostScreen', {
+                                    //                 item: item,
+                                    //                 userName: userName,
+                                    //             });
+                                    //         }}
+                                    //         style={{
+                                    //             borderWidth: 1, borderColor: "#dcdcdc", backgroundColor: "#fff",
+                                    //             borderRadius: 10, padding: 12,
+                                    //         }}
+                                    //     >
+                                    //         <Image
+                                    //             source={{
+                                    //                 uri: item?.offerImage
+                                    //                     ? item?.offerImage
+                                    //                     : 'https://plus.unsplash.com/premium_photo-1661679026942-db5aef08c093?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+                                    //             }}
+                                    //             resizeMode="cover"
+                                    //             style={{
+                                    //                 width: SIZES.width / 1.4,
+                                    //                 height: SIZES.width / 1.4,
+                                    //                 borderRadius: 12,
+                                    //             }}
+                                    //         />
+
+                                    //         <Text style={{ ...commonStyles.fs16_500, marginTop: 8 }}>{item?.description}</Text>
+                                    //         <Text style={{ ...commonStyles.fs13_400 }}>Location: {item?.location}</Text>
+                                    //     </TouchableOpacity>
+                                    // </View>
                                 );
                             })}
                         </ScrollView>
@@ -314,3 +390,22 @@ export default function ProfileScreen({ navigation, route }) {
         </>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        width: '100%', height: SIZES.height, backgroundColor: '#fff'
+    },
+    profileWrapper: {
+        paddingHorizontal: 14,
+        paddingTop: 24,
+        ...commonStyles.rowBetween,
+        alignItems: 'flex-start',
+    },
+    profileImg: {
+        width: 75,
+        ...commonStyles.centerStyles,
+        height: 75,
+        backgroundColor: '#dcdcdc',
+        borderRadius: 100,
+    }
+})
