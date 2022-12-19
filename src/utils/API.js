@@ -1231,3 +1231,25 @@ export const monthsArray = [
   'Nov',
   'Dec',
 ];
+
+export const getCategoryById = (token, id, callBack) => {
+  var myHeaders = new Headers();
+  myHeaders.append('Authorization', 'Bearer ' + token);
+  myHeaders.append('Content-Type', 'application/json');
+
+  var raw = JSON.stringify({
+    id,
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow',
+  };
+
+  fetch(BASE_URL2 + 'category/byId', requestOptions)
+    .then(response => response.text())
+    .then(result => callBack(JSON.parse(result)))
+    .catch(error => console.log('error', error));
+};

@@ -571,7 +571,7 @@ export default function AddJobScreen({navigation}) {
           <View style={{paddingHorizontal: 16}}>
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Area of work
+                Area of work <ReqField />
               </Text>
               <TextInput
                 placeholder="Area of work"
@@ -597,7 +597,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Number of Workers
+                Number of Workers <ReqField />
               </Text>
               <TextInput
                 placeholder="Number of Workers"
@@ -624,7 +624,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Experience Required (in years)
+                Experience Required (in years) <ReqField />
               </Text>
               <TextInput
                 placeholder="Experience Required"
@@ -651,7 +651,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Number of Manpower Required
+                Number of Manpower Required <ReqField />
               </Text>
               <TextInput
                 placeholder="Number of Manpower Required"
@@ -678,7 +678,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Work Start Timing
+                Work Start Timing <ReqField />
               </Text>
               <TextInput
                 placeholder="Start hour (ex 13 for 1 PM)"
@@ -704,7 +704,7 @@ export default function AddJobScreen({navigation}) {
             </>
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Work End Timing
+                Work End Timing <ReqField />
               </Text>
               <TextInput
                 placeholder="End hour (ex 20 for 8 PM)"
@@ -745,7 +745,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Vehicle Required
+                Vehicle Required <ReqField />
               </Text>
               <TextInput
                 placeholder="Vehicle Required"
@@ -829,7 +829,7 @@ export default function AddJobScreen({navigation}) {
                   marginBottom: 10,
                   marginTop: 10,
                 }}>
-                Facilities
+                Facilities <ReqField />
               </Text>
               <FlatList
                 data={[
@@ -882,7 +882,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Incentive Offered
+                Incentive Offered <ReqField />
               </Text>
               <TextInput
                 placeholder="Incentive Offered"
@@ -935,7 +935,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 10}}>
-                Description
+                Description <ReqField />
               </Text>
               <TextInput
                 placeholder=""

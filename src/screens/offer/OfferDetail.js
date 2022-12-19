@@ -13,13 +13,18 @@ import {
 import React, {useEffect, useState} from 'react';
 import {commonStyles} from '../../utils/styles';
 import {COLORS, SIZES} from '../../utils/theme';
-import {getAppliedCandidate, getUserByIDPostAPI} from '../../utils/API';
+import {
+  getAppliedCandidate,
+  getCategoryById,
+  getUserByIDPostAPI,
+} from '../../utils/API';
 import Auth from '../../services/Auth';
 import {RFC_2822} from 'moment';
 
 export default function Offerdetail({navigation, route}) {
   const {item} = route.params;
   const [allCandidate, setAllCandidate] = useState([]);
+  const [category, setcategory] = useState('');
   const [tempData, setTempData] = useState([]);
   useEffect(() => {
     Auth.getLocalStorageData('bearer').then(token => {
@@ -27,6 +32,11 @@ export default function Offerdetail({navigation, route}) {
         console.log(res, '<<<<<jobdetail');
         setAllCandidate(res);
         setTempData(res);
+      });
+
+      getCategoryById(token, item.cateoryId, res => {
+        console.log(res, '<<<this is category');
+        setcategory(res.data[0].categoryName);
       });
     });
   }, []);
@@ -43,7 +53,7 @@ export default function Offerdetail({navigation, route}) {
     setAllCandidate(filter);
   };
 
-  console.log(item, '<<<this is item');
+  console.log(item, '<<<this is itemb');
   return (
     <View style={{width: '100%', height: '100%', backgroundColor: '#fff'}}>
       {/* {membersHeader(navigation, setSearchInput, searchInput)} */}
@@ -69,7 +79,11 @@ export default function Offerdetail({navigation, route}) {
           /> */}
       </View>
       <ScrollView>
-        <GetAllCandidateScreen item={item} navigation={navigation} />
+        <GetAllCandidateScreen
+          item={item}
+          navigation={navigation}
+          category={category}
+        />
 
         <View style={{height: 20}} />
       </ScrollView>
@@ -77,7 +91,7 @@ export default function Offerdetail({navigation, route}) {
   );
 }
 
-export const GetAllCandidateScreen = ({item, index, navigation}) => {
+export const GetAllCandidateScreen = ({item, index, navigation, category}) => {
   const userImage = require('../../assets/img/profile-tab.png');
   // const userImage = require('../../assets/img/pro');
   console.log('OFferdetailitem', item);
@@ -169,6 +183,13 @@ export const GetAllCandidateScreen = ({item, index, navigation}) => {
             {userData.name} ddd
           </Text>
           <Text style={styles.conpanyName}>location: {item?.location}</Text>
+          <View
+            style={{
+              height: 20,
+            }}
+          />
+
+          <Text style={styles.conpanyName}>Category: {category}</Text>
           <Text style={styles.conpanyName}>
             Description: {item?.description}
           </Text>
