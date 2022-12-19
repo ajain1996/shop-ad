@@ -13,12 +13,14 @@ import React, {useEffect} from 'react';
 import CustomInputHeader from '../../components/CustomInputHeader';
 import {SIZES} from '../../utils/theme';
 import {launchImageLibrary, openPicker} from 'react-native-image-picker';
+import Toast from 'react-native-simple-toast';
 import {commonStyles} from '../../utils/styles';
 import ImagePicker from 'react-native-image-crop-picker';
 import moment from 'moment';
 import Custom_Auth_Btn from '../../components/Custom_Auth_Btn';
 import {
   addNewOfferPostRequest,
+  getAllCategoriesAPI,
   getOffersByOwnerIdPostRequest,
   monthsArray,
 } from '../../utils/API';
@@ -36,13 +38,18 @@ export default function AddSaleOfferScreen({navigation}) {
   const [locationError, setLocationError] = React.useState(false);
   const [startDateError, setStartDateError] = React.useState(false);
   const [endDateError, setEndDateError] = React.useState(false);
+  const [price, setPrice] = useState(0);
+  const [code, setCode] = useState('');
 
   const [imageData, setImageData] = React.useState('');
+  const [priceError, setPriceError] = useState(false);
+  const [docError, setdocError] = useState(false);
   const [description, setDescription] = React.useState('');
   const [location, setLocation] = React.useState('');
   const [startDate, setStartDate] = React.useState('');
   const [endDate, setEndDate] = React.useState('');
-
+  const [allCategory, setAllCategory] = useState([]);
+  // const [, set] = useState(second)
   const [loading, setLoading] = React.useState(false);
   const [canApply, setCanApply] = useState(true);
   const getImage = () => {
@@ -75,11 +82,25 @@ export default function AddSaleOfferScreen({navigation}) {
   };
 
   const [showCategoryModal, setShowCategoryModal] = React.useState(false);
+  const [categories, setCategories] = useState([]);
   const [category, setCategory] = React.useState({
     name: '',
     id: '',
   });
 
+  React.useEffect(() => {
+    Auth.getLocalStorageData('bearer').then(token => {
+      getAllCategoriesAPI(token, response => {
+        if (response !== null) {
+          if (response?.data !== null || response?.data !== undefined) {
+            setCategories(response?.data);
+            setAllCategory(response.data);
+            console.log(response, '<<<<<response');
+          }
+        }
+      });
+    });
+  }, []);
   useEffect(() => {
     Auth.getLocalStorageData('bearer').then(token => {
       getOffersByOwnerIdPostRequest(userData[0]?._id, token, response => {
@@ -88,7 +109,9 @@ export default function AddSaleOfferScreen({navigation}) {
           if (response?.message === 'Data From Database') {
             // setOfferData(response?.data);
             console.log(response, '<<<< this is sales offer screen');
-            setCanApply(false);
+            if (response.data.length > 0) {
+              setCanApply(false);
+            }
             // console.log(
             //   '\n\n\n\n\n\n\n\n\n\n\n',
             //   response.data,
@@ -100,7 +123,28 @@ export default function AddSaleOfferScreen({navigation}) {
     });
   }, []);
 
+  const getCategoryId = () => {
+    const checId = allCategory.filter(item => item.categoryName == category);
+    if (checId.length) return checId[0]._id;
+    else return category;
+  };
+
+  const filterSearch = text => {
+    if (text.trim() == '') return setCategories(allCategory);
+    else {
+      const t1 = text.toLocaleLowerCase().trim();
+      let filtered = allCategory.filter(item => {
+        const t2 = item.categoryName.toLocaleLowerCase().trim();
+        if (t2.match(t1)) return true;
+        else false;
+      });
+      setCategories(filtered);
+    }
+  };
+
   const handleSubmit = () => {
+    // getCategoryId();
+    console.log(getCategoryId());
     if (!canApply) {
       Toast.show('Please by membership to create more Offers!!');
       return null;
@@ -133,7 +177,8 @@ export default function AddSaleOfferScreen({navigation}) {
         startDate: finalStartDate,
         location,
         category: category.id,
-
+        price: price,
+        code: code,
         endDate: finalEndDate,
         imageData,
       });
@@ -150,9 +195,12 @@ export default function AddSaleOfferScreen({navigation}) {
             startDate,
             endDate,
             imageData,
+
             userData[0]._id,
             null,
-            category?.id,
+            getCategoryId(),
+            price,
+            code,
             token,
             response => {
               setLoading(false);
@@ -199,7 +247,7 @@ export default function AddSaleOfferScreen({navigation}) {
 
           <>
             <Text style={{...commonStyles.fs16_500, marginTop: 10}}>
-              Description
+              Description <ReqField />
             </Text>
             <TextInput
               placeholder="Description"
@@ -225,10 +273,57 @@ export default function AddSaleOfferScreen({navigation}) {
               <></>
             )}
           </>
+          <>
+            <Text style={{...commonStyles.fs16_500, marginTop: 10}}>
+              Price <ReqField />
+            </Text>
+            <TextInput
+              placeholder="Price"
+              placeholderTextColor="#999"
+              value={price}
+              // numberOfLines={1}
+              keyboardType="number-pad"
+              multiline={true}
+              textAlignVertical="top"
+              onChangeText={val => {
+                setPrice(val);
+                setPriceError(false);
+              }}
+              style={[
+                styles.locationInput,
+                {borderColor: descriptionError ? 'red' : '#BDBDBD'},
+              ]}
+            />
+            {priceError ? (
+              <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+                Price is mandatory
+              </Text>
+            ) : (
+              <></>
+            )}
+          </>
+          <>
+            <Text style={{...commonStyles.fs16_500, marginTop: 10}}>
+              Discount Code
+            </Text>
+            <TextInput
+              placeholder="Discount"
+              placeholderTextColor="#999"
+              value={code}
+              onChangeText={val => {
+                setCode(val);
+                setdocError(false);
+              }}
+              style={[
+                styles.locationInput,
+                {borderColor: locationError ? '#BDBDBD' : '#BDBDBD'},
+              ]}
+            />
+          </>
 
           <>
             <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-              Add Location
+              Add Location <ReqField />
             </Text>
             <View>
               <TextInput
@@ -325,42 +420,69 @@ export default function AddSaleOfferScreen({navigation}) {
             <Text style={{...commonStyles.fs16_500, marginTop: -20}}>
               Add Category
             </Text>
-            <TouchableOpacity onPress={() => setShowCategoryModal(true)}>
-              <View
-                style={[
-                  styles.locationInput,
-                  {borderColor: locationError ? 'red' : '#BDBDBD'},
-                ]}>
-                {category?.name?.length === 0 ? (
-                  <Text style={{...commonStyles.fs14_400, color: '#999'}}>
-                    Category
-                  </Text>
-                ) : (
-                  <Text style={{...commonStyles.fs14_400, color: '#000'}}>
-                    {category.name}
-                  </Text>
-                )}
+            {/* <TouchableOpacity onPress={() => setShowCategoryModal(true)}> */}
+            <>
+              <View>
+                <TextInput
+                  placeholder="Category"
+                  placeholderTextColor="#999"
+                  value={category}
+                  onChangeText={val => {
+                    setCategory(val);
+                    filterSearch(val);
+                    // seter(false);
+                  }}
+                  style={[
+                    styles.locationInput,
+                    {borderColor: locationError ? 'red' : '#BDBDBD'},
+                  ]}
+                />
+
+                <Image
+                  source={require('../../assets/img/location-track.png')}
+                  style={{
+                    width: 24,
+                    height: 24,
+                    position: 'absolute',
+                    right: 16,
+                    top: 22,
+                  }}
+                />
               </View>
-              <Image
-                source={require('../../assets/img/location-track.png')}
-                style={{
-                  width: 24,
-                  height: 24,
-                  position: 'absolute',
-                  right: 16,
-                  top: 22,
-                }}
-              />
-            </TouchableOpacity>
-            {locationError ? (
-              <Text style={{...commonStyles.fs12_400, color: 'red'}}>
-                Category is mandatory
-              </Text>
-            ) : (
-              <></>
+            </>
+            <Image
+              source={require('../../assets/img/location-track.png')}
+              style={{
+                width: 24,
+                height: 24,
+                position: 'absolute',
+                right: 16,
+                top: 22,
+              }}
+            />
+            {/* </TouchableOpacity> */}
+            {category != '' && (
+              <View>
+                {categories.map(item => {
+                  return (
+                    <Text
+                      style={{
+                        width: '100%',
+                        height: 30,
+                        borderWidth: 0.5,
+                        marginTop: 2,
+                      }}
+                      onPress={() => {
+                        setCategory(item?.categoryName);
+                        setCategories([]);
+                      }}>
+                      {item.categoryName}
+                    </Text>
+                  );
+                })}
+              </View>
             )}
           </>
-          <Text />
 
           <Custom_Auth_Btn btnText="Upload" onPress={handleSubmit} />
           <Text />
@@ -388,6 +510,9 @@ export default function AddSaleOfferScreen({navigation}) {
     </>
   );
 }
+export const ReqField = () => {
+  return <Text style={{color: '#FF0000'}}>*</Text>;
+};
 
 export const RenderUpload = ({
   image,

@@ -23,6 +23,7 @@ import DocumentPicker from 'react-native-document-picker';
 import {
   addNewJobPostRequest,
   getJobsByOwnerIdPostRequest,
+  monthsArray,
 } from '../../utils/API';
 import Auth from '../../services/Auth';
 import PersonalLeaveDatePicker from '../../components/CustomDatePicker';
@@ -30,6 +31,7 @@ import CustomLoader, {CustomPanel} from '../../components/CustomLoader';
 import {useSelector} from 'react-redux';
 import {useEffect} from 'react';
 import {useState} from 'react';
+import {ReqField} from '../offer/AddSaleOfferScreen';
 
 export default function AddJobScreen({navigation}) {
   const {userData} = useSelector(state => state.User);
@@ -58,6 +60,7 @@ export default function AddJobScreen({navigation}) {
   const [experienceError, setExperienceError] = React.useState(false);
   const [manPowerError, setManPowerError] = React.useState(false);
   const [workTimingError, setWorkTimingError] = React.useState(false);
+  const [workTimingError2, setWorkTimingError2] = React.useState(false);
   const [salaryOfferedError, setSalaryOfferedError] = React.useState(false);
   const [vehicleRequiredError, setVehicleRequiredError] = React.useState(false);
   const [facilitiesError, setFacilitiesError] = React.useState(false);
@@ -90,6 +93,7 @@ export default function AddJobScreen({navigation}) {
   const [experience, setExperience] = React.useState('');
   const [manPower, setManPower] = React.useState('');
   const [workTiming, setWorkTiming] = React.useState('');
+  const [workTiming2, setWorkTiming2] = React.useState('');
   const [salaryOffered, setSalaryOffered] = React.useState('');
   const [vehicleRequired, setVehicleRequired] = React.useState('');
   const [facilities, setFacilities] = React.useState('');
@@ -111,14 +115,14 @@ export default function AddJobScreen({navigation}) {
   const [canAppy, setCanAppy] = useState(true);
 
   useEffect(() => {
-    Alert.alert('hello');
+    // Alert.alert('hello');
     Auth.getLocalStorageData('bearer').then(token => {
       getJobsByOwnerIdPostRequest(userData[0]?._id, token, response => {
         setLoading(false);
         if (response !== null) {
           if (response.data.length > 0) {
             console.log(response, '<<<<this is response of get all job--- ');
-            Alert.alert('having job');
+            // Alert.alert('having job');
             setCanAppy(false);
           }
         }
@@ -126,11 +130,43 @@ export default function AddJobScreen({navigation}) {
     });
   }, []);
 
+  const dayDiff = (startDate, endDate) => {
+    const convertArr = d => {
+      const a = d.replace('/', '-');
+      const b = a.replace('/', '-');
+      return b.split('-');
+    };
+
+    // const diffInMs = moment(`12-Dec-2022`) - moment(`10-Dec-2022`);
+    const diffInMs =
+      moment(
+        `${parseInt(convertArr(endDate)[0])}-${
+          monthsArray[parseInt(convertArr(endDate)[1])]
+        }-${parseInt(convertArr(endDate)[2])}`,
+      ) -
+      moment(
+        `${parseInt(convertArr(startDate)[0])}-${
+          monthsArray[parseInt(convertArr(startDate)[1])]
+        }-${parseInt(convertArr(startDate)[2])}`,
+      );
+
+    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+    return diffInDays + 1;
+  };
   const handleSubmit = () => {
     if (!canAppy) {
-      Toast.show('Please by membership to create more jobs!!');
+      Toast.show('Please buy membership to create more jobs!!');
       return null;
     }
+
+    // var start1 = moment(startDate).format('DD/MM/YYYY');
+    // var end1 = moment(endDate).format('DD/MM/YYYY');
+    // var diffDays = dayDiff(start1, end1);
+
+    // console.log(diffDays);
+    // return null;
+
     if (userType === 'shop') {
       if (interviewTiming.length === 0) {
         setInterviewTimingError(true);
@@ -150,7 +186,7 @@ export default function AddJobScreen({navigation}) {
               shopName,
               location,
               userData[0]?._id,
-              'salaryOffered',
+              salaryOffered,
               contactPersonName,
               startDate,
               endDate,
@@ -161,7 +197,7 @@ export default function AddJobScreen({navigation}) {
               numberOfWorks,
               experience,
               manPower,
-              workTiming,
+              `${workTiming} to ${workTiming2}`,
               facilities,
               incentive,
               interviewTiming,
@@ -204,82 +240,6 @@ export default function AddJobScreen({navigation}) {
                   if (response.errors) {
                     Alert.alert('Alert', response.errors.offerImage.message);
                     return true;
-                  }
-                }
-              },
-            );
-          });
-        });
-      }
-    } else {
-      if (cvFile.length === 0) {
-        setCvFileError(true);
-      } else if (educationCertificate.length === 0) {
-        setEducationCertificateError(true);
-      } else if (experienceCertificate.length === 0) {
-        setExperienceCertificateError(true);
-      } else if (policyVerification.length === 0) {
-        setPolicyVerificationError(true);
-      } else if (interviewTiming.length === 0) {
-        setInterviewTimingError(true);
-      } else if (contactNumber.length === 0) {
-        setContactNumberError(true);
-      } else if (contactPersonName.length === 0) {
-        setContactPersonNameError(true);
-      } else if (message.length === 0) {
-        setMessageError(true);
-      } else {
-        setLoading(true);
-        Auth.getAccount().then(userData => {
-          Auth.getLocalStorageData('bearer').then(token => {
-            addNewJobPostRequest(
-              title,
-              description,
-              shopName,
-              location,
-              userData[0]?._id,
-              salaryOffered,
-              contactPersonName,
-              startDate,
-              endDate,
-              contactNumber,
-              userData[0]?.email,
-              gender,
-              areaOfWork,
-              numberOfWorks,
-              experience,
-              manPower,
-              workTiming,
-              facilities,
-              incentive,
-              interviewTiming,
-              vehicleRequired,
-              message,
-              cvFile,
-              policyVerification,
-              educationCertificate,
-              experienceCertificate,
-              token,
-              response => {
-                setLoading(false);
-                if (response !== null) {
-                  if (response?.message) {
-                    Alert.alert(
-                      'Alert',
-                      response.message,
-                      [
-                        {
-                          text: 'OK',
-                          onPress: async () => {
-                            navigation.goBack();
-                          },
-                        },
-                      ],
-                      {cancelable: false},
-                    );
-                  }
-                  if (response.errors) {
-                    Alert.alert('Alert', response.errors.offerImage.message);
                   }
                 }
               },
@@ -338,16 +298,46 @@ export default function AddJobScreen({navigation}) {
             justifyContent: 'space-around',
             marginTop: 30,
           }}>
-          <RenderTickComponent showNext={showTick.tick1} title="Basic" />
-          <RenderTickComponent showNext={showTick.tick2} title="Work" />
-          <RenderTickComponent showNext={showTick.tick3} title="Document" />
+          <RenderTickComponent
+            showNext={showTick.tick1}
+            title="Basic"
+            onPress={() => {
+              setShowNext({
+                next1: true,
+                next2: false,
+                next3: false,
+              });
+            }}
+          />
+          <RenderTickComponent
+            showNext={showTick.tick2}
+            title="Work"
+            onPress={() => {
+              setShowNext({
+                next1: false,
+                next2: true,
+                next3: false,
+              });
+            }}
+          />
+          <RenderTickComponent
+            showNext={showTick.tick3}
+            title="Document"
+            onPress={() => {
+              setShowNext({
+                next1: false,
+                next2: false,
+                next3: true,
+              });
+            }}
+          />
         </View>
 
         {showNext.next1 ? (
           <View style={{paddingHorizontal: 16}}>
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Add Title
+                Add Title <ReqField />
               </Text>
               <TextInput
                 placeholder="Title"
@@ -364,7 +354,7 @@ export default function AddJobScreen({navigation}) {
               />
               {titleError ? (
                 <Text style={{...commonStyles.fs12_400, color: 'red'}}>
-                  Description is mandatory
+                  Title is mandatory
                 </Text>
               ) : (
                 <></>
@@ -373,7 +363,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Shop Name
+                Shop Name <ReqField />
               </Text>
               <TextInput
                 placeholder="Shop name"
@@ -399,7 +389,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Address of Firm
+                Address of Firm <ReqField />
               </Text>
               <TextInput
                 placeholder="Address"
@@ -425,7 +415,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Marital Status
+                Marital Status <ReqField />
               </Text>
               {['Married', 'Not-Married'].map(item => {
                 return (
@@ -472,7 +462,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Gender
+                Gender <ReqField />
               </Text>
               {['Men', 'Women', 'Others'].map(item => {
                 return (
@@ -519,7 +509,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Location
+                Location <ReqField />
               </Text>
               <TextInput
                 placeholder="Location"
@@ -536,7 +526,7 @@ export default function AddJobScreen({navigation}) {
               />
               {locationError ? (
                 <Text style={{...commonStyles.fs12_400, color: 'red'}}>
-                  Gender is mandatory
+                  Location is mandatory
                 </Text>
               ) : (
                 <></>
@@ -634,12 +624,13 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Experience Required
+                Experience Required (in years)
               </Text>
               <TextInput
                 placeholder="Experience Required"
                 placeholderTextColor="#999"
                 value={experience}
+                keyboardType="number-pad"
                 onChangeText={val => {
                   setExperience(val);
                   setExperienceError(false);
@@ -687,12 +678,13 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Work Timing
+                Work Start Timing
               </Text>
               <TextInput
-                placeholder="Work Timing"
+                placeholder="Start hour (ex 13 for 1 PM)"
                 placeholderTextColor="#999"
                 value={workTiming}
+                keyboardType="number-pad"
                 onChangeText={val => {
                   setWorkTiming(val);
                   setWorkTimingError(false);
@@ -704,7 +696,33 @@ export default function AddJobScreen({navigation}) {
               />
               {workTimingError ? (
                 <Text style={{...commonStyles.fs12_400, color: 'red'}}>
-                  Work Timing is mandatory
+                  Work Start Timing is mandatory
+                </Text>
+              ) : (
+                <></>
+              )}
+            </>
+            <>
+              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+                Work End Timing
+              </Text>
+              <TextInput
+                placeholder="End hour (ex 20 for 8 PM)"
+                placeholderTextColor="#999"
+                value={workTiming2}
+                keyboardType="number-pad"
+                onChangeText={val => {
+                  setWorkTiming2(val);
+                  setWorkTimingError2(false);
+                }}
+                style={[
+                  styles.titleInput,
+                  {borderColor: workTimingError ? 'red' : '#BDBDBD'},
+                ]}
+              />
+              {workTimingError2 ? (
+                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+                  Work End Timing is mandatory
                 </Text>
               ) : (
                 <></>
@@ -773,7 +791,7 @@ export default function AddJobScreen({navigation}) {
                                 })
                             } */}
               <PersonalLeaveDatePicker
-                heading="Shift"
+                heading="Job publish Start date"
                 placeholderText="Start Date"
                 minimumDate={''}
                 maximumDate={endDate === '' ? '' : endDate}
@@ -782,18 +800,23 @@ export default function AddJobScreen({navigation}) {
                 error={startDateError}
                 onDateSelected={function (selectedStartDate) {
                   setStartDate(moment(selectedStartDate).format('DD-MMM-YYYY'));
+
+                  const forStart =
+                    moment(selectedStartDate).format('DD-MM-YYYY');
+                  console.log(selectedStartDate);
                   setStartDateError(false);
                 }}
               />
 
               <PersonalLeaveDatePicker
-                // heading="End Date"
+                heading="End Date"
                 placeholderText="End Date"
                 minimumDate={''}
                 maximumDate=""
                 initialDate={endDate === '' ? startDate : endDate}
                 onDateSelected={function (selectedStartDate) {
                   setEndDate(moment(selectedStartDate).format('DD-MMM-YYYY'));
+                  // handleSubmit();
                 }}
               />
               {/* </View> */}
@@ -961,6 +984,21 @@ export default function AddJobScreen({navigation}) {
                   setIncentiveError(true);
                 } else if (description.length === 0) {
                   setDescriptionError(true);
+                }
+                var start1 = moment(startDate).format('DD/MM/YYYY');
+                var end1 = moment(endDate).format('DD/MM/YYYY');
+                var diffDays = dayDiff(start1, end1);
+                if (diffDays > 4) {
+                  Toast.show(
+                    'Only Premium members can create job for more than 4 days',
+                  );
+                  return null;
+                }
+                if (diffDays < 0) {
+                  Toast.show(
+                    'Start date and end date is wrong!. (check dates again)',
+                  );
+                  return null;
                 } else {
                   setShowNext({
                     next1: false,
@@ -1281,6 +1319,45 @@ export default function AddJobScreen({navigation}) {
             </>
             <View style={{marginTop: 20}} />
 
+            <Custom_Auth_Btn
+              btnText="Preview"
+              // style={{width: '50%'}}
+              onPress={() => {
+                navigation.navigate('PreviewJob', {
+                  title,
+                  description,
+                  shopName,
+                  location,
+                  userId: userData[0]?._id,
+                  salaryOffered,
+                  contactPersonName,
+                  startDate,
+                  endDate,
+                  contactNumber,
+                  email: userData[0]?.email,
+                  gender,
+                  areaOfWork,
+                  numberOfWorks,
+                  experience,
+                  manPower,
+                  workTiming,
+                  facilities,
+                  incentive,
+                  interviewTiming,
+                  vehicleRequired,
+                  message,
+                  cvFile,
+                  policyVerification,
+                  educationCertificate,
+                  experienceCertificate,
+                });
+              }}
+            />
+            <View
+              style={{
+                height: 20,
+              }}
+            />
             <Custom_Auth_Btn btnText="Submit" onPress={handleSubmit} />
             <View style={{marginTop: 20}} />
           </View>
@@ -1295,37 +1372,39 @@ export default function AddJobScreen({navigation}) {
   );
 }
 
-const RenderTickComponent = ({showNext, title}) => {
+const RenderTickComponent = ({showNext, title, onPress}) => {
   return (
-    <View style={{alignItems: 'center'}}>
-      <LinearGradient
-        style={{
-          width: 24,
-          height: 24,
-          borderRadius: 100,
-          ...commonStyles.centerStyles,
-        }}
-        colors={showNext ? ['#1572B9', '#0995C8'] : ['#D9D9D9', '#D9D9D9']}>
-        {showNext ? (
-          <Image
-            source={require('../../assets/img/tick.png')}
-            style={{width: 10.5, height: 7.5, tintColor: '#fff'}}
-          />
-        ) : (
-          <></>
-        )}
-      </LinearGradient>
-      <Text style={{...commonStyles.fs14_500}}>{title}</Text>
-      <View
-        style={{
-          width: SIZES.width / 3,
-          height: 2,
-          backgroundColor: showNext ? '#1572B9' : '#D9D9D9',
-          position: 'absolute',
-          top: 12,
-        }}
-      />
-    </View>
+    <TouchableOpacity onPress={onPress}>
+      <View style={{alignItems: 'center'}}>
+        <LinearGradient
+          style={{
+            width: 24,
+            height: 24,
+            borderRadius: 100,
+            ...commonStyles.centerStyles,
+          }}
+          colors={showNext ? ['#1572B9', '#0995C8'] : ['#D9D9D9', '#D9D9D9']}>
+          {showNext ? (
+            <Image
+              source={require('../../assets/img/tick.png')}
+              style={{width: 10.5, height: 7.5, tintColor: '#fff'}}
+            />
+          ) : (
+            <></>
+          )}
+        </LinearGradient>
+        <Text style={{...commonStyles.fs14_500}}>{title}</Text>
+        <View
+          style={{
+            width: SIZES.width / 3,
+            height: 2,
+            backgroundColor: showNext ? '#1572B9' : '#D9D9D9',
+            position: 'absolute',
+            top: 12,
+          }}
+        />
+      </View>
+    </TouchableOpacity>
   );
 };
 

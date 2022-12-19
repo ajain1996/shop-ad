@@ -97,7 +97,7 @@ export default function WorksScreen({navigation}) {
       />
       <PTRView onRefresh={_refresh}>
         <ScrollView>
-          {workData.map((item, index) => {
+          {[...workData]?.reverse().map((item, index) => {
             return (
               <View key={index}>
                 <RenderSingleWork item={item} />
@@ -142,10 +142,9 @@ export const RenderSingleWork = ({item, showDot}) => {
         borderRadius: 4,
       }}>
       <View style={{...commonStyles.rowBetween, alignItems: 'flex-start'}}>
-        {/* <Image
-                    source={require('../../assets/img/work_img.png')}
-                    style={{ width: 101, height: 61 }}
-                /> */}
+        {item?.image && (
+          <Image source={{uri: item?.image}} style={{width: 101, height: 61}} />
+        )}
         <View style={{width: SIZES.width / 1.85, marginHorizontal: 10}}>
           <Text style={{...commonStyles.fs18_700}}>{item?.shopName}</Text>
 

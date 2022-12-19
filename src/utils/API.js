@@ -120,6 +120,8 @@ export const addNewOfferPostRequest = async (
   ownerId,
   shopId,
   cateoryId,
+  price,
+  code,
   bearerToken,
   successCallBack,
 ) => {
@@ -127,6 +129,8 @@ export const addNewOfferPostRequest = async (
   console.log('callign apis');
   formData.append('description', desc);
   formData.append('location', location);
+  formData.append('price', price);
+  formData.append('code', code);
   formData.append('startDate', startDate);
   formData.append('endDate', endDate);
   formData.append('offerImage', image[0]);
@@ -226,6 +230,35 @@ export const getOffersByLocationPostRequest = async (
     console.error('error', error);
     successCallBack(null);
   }
+};
+
+export const commonSearch = async (location, ask, token, callBack) => {
+  var myHeaders = new Headers();
+  myHeaders.append('Authorization', 'Bearer ' + token);
+  myHeaders.append('Content-Type', 'application/json');
+
+  var raw = JSON.stringify({
+    location: location,
+    ask: ask,
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow',
+  };
+
+  fetch(
+    'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/shop/location',
+    requestOptions,
+  )
+    .then(response => response.text())
+    .then(result => {
+      callBack(JSON.parse(result));
+      console.log(result);
+    })
+    .catch(error => console.log('error', error));
 };
 
 export const getOffersByCategoryAPI = async (
@@ -465,45 +498,63 @@ export const addNewWorkPostRequest = async (
   ownerId,
   contactNumber,
   contactEmail,
+  imageData,
   bearerToken,
   successCallBack,
 ) => {
-  var body = {
-    description: description,
-    shopName: shopName,
-    location: location,
-    ownerId: ownerId,
-    salary: salary,
-    designationName: designationName,
-    shiftTime: shiftTime,
-    contactNumber: contactNumber,
-    contactEmail: contactEmail,
+  let formData = new FormData();
+  // return null;
+  var myHeaders = new Headers();
+  myHeaders.append('Authorization', 'Bearer ' + bearerToken);
+  console.log(imageData, '<<<this is imagedata');
+  formData.append('description', description);
+  formData.append('shopName', shopName);
+  formData.append('location', location);
+  formData.append('ownerId', ownerId);
+  formData.append('salary', salary);
+  formData.append('designationName', designationName);
+  formData.append('shiftTime', shiftTime);
+  formData.append('contactNumber', contactNumber);
+  formData.append('contactEmail', contactEmail);
+  // formdata.append("image", imageData, "/C:/Users/dell/Pictures/Screenshots/1.png");
+
+  if (imageData.length > 0) {
+    formData.append('image', imageData[0], imageData[0].name);
+  }
+  // var body = {
+  //   description: description,
+  //   shopName: shopName,
+  //   location: location,
+  //   ownerId: ownerId,
+  //   salary: salary,
+  //   designationName: designationName,
+  //   shiftTime: shiftTime,
+  //   contactNumber: contactNumber,
+  //   contactEmail: contactEmail,
+  // };
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: formData,
+    redirect: 'follow',
   };
 
-  try {
-    let response = await fetch(BASE_URL2 + 'work', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${bearerToken}`,
-      },
-      body: JSON.stringify(body),
-    });
-    let json = await response.json();
-    successCallBack(json);
-  } catch (error) {
-    console.error('error', error);
-    successCallBack(null);
-  }
+  fetch(BASE_URL2 + 'work', requestOptions)
+    .then(response => response.text())
+    .then(result => successCallBack(JSON.parse(result)))
+    .catch(error => console.log('error', error));
 };
 
 export const getAllWorksPostRequest = async (bearerToken, successCallBack) => {
   try {
-    let response = await fetch(BASE_URL2 + 'work', {
-      method: 'GET',
-      headers: {Authorization: `Bearer ${bearerToken}`},
-    });
+    let response = await fetch(
+      'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/work',
+      {
+        method: 'GET',
+        headers: {Authorization: `Bearer ${bearerToken}`},
+      },
+    );
 
     let json = await response.json();
     successCallBack(json);
@@ -587,6 +638,7 @@ export const getUserByIDPostAPI = async (id, bearerToken, successCallBack) => {
       body: JSON.stringify(body),
     });
     let json = await response.json();
+    console.log('tis is user Data', json);
     successCallBack(json);
   } catch (error) {
     console.error('error', error);
@@ -962,10 +1014,11 @@ export const updateUserPostRequest = async (
   formdata.append('uid', uid);
   formdata.append('email', email);
   formdata.append('name', name);
-  formdata.append('userType', userType);
+  // formdata.append('userType', userType);
   formdata.append('mobile', mobile);
-  if (imageChanged) {
-    formdata.append('Image', image, image.name);
+  if (imageChanged == true) {
+    console.log('data changed');
+    formdata.append('image', image, image.name);
   }
 
   formdata.append('eduction', formdata.education);

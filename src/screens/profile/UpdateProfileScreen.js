@@ -78,11 +78,12 @@ export default function UpdateProfileScreen({navigation}) {
     if (name.length === 0) {
       setNameError(true);
     }
+
     if (phone.length === 0) {
       setPhoneError(true);
     }
-    if (imageData.uri.length === 0) {
-      Alert.alert('Alert', 'Image is mandatory!');
+    if (imageData?.uri?.length === 0) {
+      // Alert.alert('Alert', 'Image is mandatory!');
     } else {
       setLoading(true);
       let allValid = true;
@@ -96,13 +97,18 @@ export default function UpdateProfileScreen({navigation}) {
         'pAddress',
         'eduction',
       ];
+
       validArr.map(item => {
         if (formData[item].trim() === '' && allValid) {
-          Alert.alert(item + ' is required');
+          // Alert.alert(item + ' is required');
           allValid = false;
         }
       });
-      if (allValid == false) return null;
+      console.log(allValid, '<<<allvalid');
+      if (allValid == false) {
+        setLoading(false);
+        return null;
+      }
 
       console.log(formData, '<<<< this is formdata');
       // return null;
@@ -229,7 +235,7 @@ export default function UpdateProfileScreen({navigation}) {
       }
     });
   };
-
+  const userImage = require('../../assets/img/profile-tab.png');
   return (
     <>
       <StatusBar barStyle="light-content" backgroundColor="#1572B9" />
@@ -264,7 +270,8 @@ export default function UpdateProfileScreen({navigation}) {
               style={{alignItems: 'center', marginBottom: 30, marginTop: '20%'}}
               onPress={getImage}
               underlayColor="transparent">
-              {imageData?.uri.length == 0 ? (
+              {/* {!userData?.userProfile ? ( */}
+              {!imageData?.uri ? (
                 <View
                   style={{
                     width: 120,
@@ -274,7 +281,8 @@ export default function UpdateProfileScreen({navigation}) {
                     ...commonStyles.centerStyles,
                   }}>
                   <Image
-                    source={require('../../assets/img/camera.png')}
+                    // source={require('../../assets/img/camera.png')}
+                    source={userImage}
                     style={{width: '75%', height: '75%', tintColor: '#999'}}
                   />
                 </View>

@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import React from 'react';
 import CustomInputHeader from '../../components/CustomInputHeader';
+import ImagePicker from 'react-native-image-crop-picker';
 import {SIZES} from '../../utils/theme';
 import {commonStyles} from '../../utils/styles';
 import Custom_Auth_Btn from '../../components/Custom_Auth_Btn';
@@ -24,6 +25,7 @@ import DayNightModal from '../home/DayNightModal';
 import {useEffect} from 'react';
 import Toast from 'react-native-simple-toast';
 import {useSelector} from 'react-redux';
+import {RenderUpload, ReqField} from '../offer/AddSaleOfferScreen';
 
 export default function AddWorksScreen({navigation}) {
   const [nameError, setNameError] = React.useState(false);
@@ -43,11 +45,14 @@ export default function AddWorksScreen({navigation}) {
   const [desc, setDesc] = React.useState('');
   const [location, setLocation] = React.useState('');
   const [salary, setSalary] = React.useState(false);
+  const [imageData, setImageData] = React.useState('');
   //   const [shift, setshift] = useState(second)
   const [shift, setShift] = React.useState(false);
   const [designation, setDesignation] = React.useState('');
   const [contact, setContact] = React.useState('');
+
   const [loading, setLoading] = React.useState(false);
+  const [imageError, setImageError] = useState(false);
   const [canApply, setCanApply] = useState(true);
 
   useEffect(() => {
@@ -73,6 +78,8 @@ export default function AddWorksScreen({navigation}) {
       return null;
     }
 
+    // console.log(imageData, '<<<<<');
+    // return null;
     if (desc.length === 0) {
       setDescError(true);
     } else if (name.length === 0) {
@@ -83,6 +90,9 @@ export default function AddWorksScreen({navigation}) {
       setDesignationError(true);
     } else if (contact.length === 0) {
       setContactError(true);
+    } else if (imageData.length == 0) {
+      setImageError(true);
+      return true;
     } else {
       Auth.getAccount().then(userData => {
         Auth.getLocalStorageData('bearer').then(token => {
@@ -96,6 +106,7 @@ export default function AddWorksScreen({navigation}) {
             userData[0]._id,
             contact,
             userData[0].email,
+            imageData,
             token,
             response => {
               setLoading(false);
@@ -126,6 +137,35 @@ export default function AddWorksScreen({navigation}) {
     }
   };
 
+  const getImage = () => {
+    ImagePicker.openPicker({
+      width: 200,
+      height: 200,
+      compressImageMaxHeight: 400,
+      compressImageMaxWidth: 400,
+      cropping: true,
+      multiple: true,
+    }).then(response => {
+      let tempArray = [];
+      response.forEach(item => {
+        console.log(item);
+        let image = {
+          name: item?.path,
+          uri: item?.path,
+          type: item?.mime,
+        };
+        tempArray.push(image);
+      });
+      if (tempArray.length < 1) {
+        Alert.alert('Alert', 'Please select atleast an images');
+      } else if (tempArray.length > 5) {
+        Alert.alert('Alert', 'Selected images cannot be greater then 5');
+      } else {
+        setImageData(tempArray);
+      }
+    });
+  };
+
   return (
     <>
       <CustomInputHeader navigation={navigation} title="Add Work" />
@@ -137,10 +177,23 @@ export default function AddWorksScreen({navigation}) {
             height: '90%',
             justifyContent: 'space-between',
           }}>
+          {/*  */}
+          <RenderUpload
+            image={imageData}
+            getImage={getImage}
+            imageError={false}
+            setImageError={() => {}}
+            setImageData={setImageData}
+          />
+          {/*  */}
+
           <View>
+            {imageError && (
+              <Text style={{color: '#FF0000'}}>Image is mandatory</Text>
+            )}
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Your Name
+                Your Name <ReqField />
               </Text>
               <TextInput
                 placeholder="Your Name"
@@ -166,7 +219,7 @@ export default function AddWorksScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Description
+                Description <ReqField />
               </Text>
               <TextInput
                 placeholder="Description"
@@ -192,7 +245,7 @@ export default function AddWorksScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Relationship
+                Relationship <ReqField />
               </Text>
               <TextInput
                 placeholder="Relationship"
@@ -218,7 +271,7 @@ export default function AddWorksScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Location
+                Location <ReqField />
               </Text>
               <TextInput
                 placeholder="Location"
@@ -325,7 +378,7 @@ export default function AddWorksScreen({navigation}) {
             />
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Contact
+                Contact <ReqField />
               </Text>
               <TextInput
                 placeholder="Contact"

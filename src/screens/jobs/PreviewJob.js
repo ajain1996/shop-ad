@@ -38,26 +38,29 @@ import LinearGradient from 'react-native-linear-gradient';
 import {JobsDetails} from './JobsDetails';
 import moment from 'moment';
 
-export default function JobsScreen({navigation}) {
+export default function PreviewJobScreen({navigation, route}) {
   const dispatch = useDispatch();
-  const {jobsData} = useSelector(state => state.Job);
-
+  const data = route.params;
+  console.log(data, '<<<<this is preview data');
+  // const {jobsData} = useSelector(state => state.Job);
+  const [jobsData, setJobData] = useState([]);
   const [bearerToken, setBearerToken] = useState('');
   const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
     (async () => {
-      const unsubscribe = navigation.addListener('focus', () => {
-        Auth.getLocalStorageData('bearer').then(token => {
-          setBearerToken(token);
-          getAllJobsPostRequest(token, response => {
-            if (response !== null) {
-              dispatch(setJob([...response?.data].reverse()));
-            }
-          });
-        });
-      });
-      return unsubscribe;
+      setJobData([data]);
+      // const unsubscribe = navigation.addListener('focus', () => {
+      //   Auth.getLocalStorageData('bearer').then(token => {
+      //     setBearerToken(token);
+      //     getAllJobsPostRequest(token, response => {
+      //       if (response !== null) {
+      //         dispatch(setJob([...response?.data].reverse()));
+      //       }
+      //     });
+      //   });
+      // });
+      // return unsubscribe;
     })();
   }, [navigation]);
 
@@ -90,13 +93,26 @@ export default function JobsScreen({navigation}) {
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      <HomeHeader
-        navigation={navigation}
-        onPress={() => navigation.navigate('AddJobScreen')}
-      />
 
+      <Text
+        style={{
+          ...commonStyles.fs14_700,
+          height: 40,
+          marginTop: 20,
+          marginLeft: 20,
+        }}
+        onPress={() => {
+          navigation.goBack();
+        }}>
+        {/* <Text style={{fontSize: 40}}>{`<-`}</Text> */}
+        Go Back
+      </Text>
+      {/* <HomeHeader
+        navigation={navigation}
+        // onPress={() => navigation.navigate('AddJobScreen')}
+      /> */}
+      {/* 
       <HomeSearch
-        showSwitchText={true}
         onChange={val => {
           setLoading(true);
           Auth.getLocalStorageData('bearer').then(token => {
@@ -108,9 +124,9 @@ export default function JobsScreen({navigation}) {
             });
           });
         }}
-      />
+      /> */}
       <PTRView onRefresh={_refresh}>
-        <ScrollView>
+        <ScrollView style={{marginTop: 20}}>
           {jobsData.map((item, index) => {
             return (
               <View key={index}>
@@ -136,7 +152,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
   const {userType} = useSelector(state => state.UserType);
   const {userData} = useSelector(state => state.User);
 
-  const [user, setUser] = useState([]);
+  const [user, setUser] = useState(userData[0]);
   const [likesCount, setLikesCount] = useState(0);
   const [isLike, setIsLike] = useState(false);
   const [commentsCount, setCommentsCount] = useState(0);
@@ -211,6 +227,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
     })();
   }, [item]);
 
+  console.log('This is user data', userData);
   const handleLike = () => {
     if (isLike) {
       setLikesCount(prev => prev - 1);
@@ -333,14 +350,14 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
           <TouchableHighlight
             underlayColor="#f7f8f9"
             onPress={() => {
-              navigation.navigate('UserDetailsScreen', {
-                user: user,
-                userId: item?.ownerId,
-              });
+              // navigation.navigate('UserDetailsScreen', {
+              //   user: user,
+              //   userId: item?.ownerId,
+              // });
             }}>
-            {user?.userProfile !== undefined ? (
+            {userData[0]?.userProfile !== undefined ? (
               <Image
-                source={{uri: user?.userProfile}}
+                source={{uri: userData[0]?.userProfile}}
                 resizeMode="contain"
                 style={{
                   width: 40,
@@ -380,10 +397,10 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
             <TouchableHighlight
               underlayColor="#f7f8f9"
               onPress={() => {
-                navigation.navigate('UserDetailsScreen', {
-                  user: user,
-                  userId: item?.ownerId,
-                });
+                // navigation.navigate('UserDetailsScreen', {
+                //   user: user,
+                //   userId: item?.ownerId,
+                // });
               }}>
               <Text style={{...commonStyles.fs14_700}}>{user?.name}</Text>
             </TouchableHighlight>
@@ -394,9 +411,9 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
                 style={{width: 18, height: 16}}
               />
               <TouchableHighlight
-                onPress={() => {
-                  navigation.navigate('LocationScreen');
-                }}
+                // onPress={() => {
+                //   navigation.navigate('LocationScreen');
+                // }}
                 underlayColor="#f7f8f9">
                 <Text style={{...commonStyles.fs12_400, marginLeft: 2}}>
                   {item?.location}
@@ -405,7 +422,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
             </View>
           </View>
         </View>
-        <TouchableHighlight
+        {/* <TouchableHighlight
           onPress={() => setHomeModalVisible(true)}
           underlayColor="#f7f8f9">
           <Image
@@ -413,7 +430,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
             resizeMode="contain"
             style={{width: 24, height: 24, borderRadius: 100}}
           />
-        </TouchableHighlight>
+        </TouchableHighlight> */}
       </View>
 
       <View>
@@ -459,7 +476,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
               marginLeft: 20,
             }}>
             <TouchableHighlight
-              onPress={handleApplyJob}
+              // onPress={handleApplyJob}
               underlayColor="#EDAA26"
               style={{
                 width: '100%',
@@ -480,7 +497,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
       <View style={{...commonStyles.rowBetween, padding: 20}}>
         <View style={{...commonStyles.rowStart}}>
           <TouchableHighlight
-            onPress={handleLike}
+            // onPress={handleLike}
             underlayColor="#eee"
             style={{padding: 5}}>
             <View style={{...commonStyles.row}}>
@@ -503,7 +520,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
           </TouchableHighlight>
 
           <TouchableHighlight
-            onPress={handleComment}
+            // onPress={handleComment}
             underlayColor="#eee"
             style={{padding: 5, marginLeft: 34}}>
             <View style={{...commonStyles.row}}>
@@ -517,7 +534,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
             </View>
           </TouchableHighlight>
         </View>
-        <TouchableHighlight onPress={handleShare} underlayColor="#eee">
+        <TouchableHighlight underlayColor="#eee">
           <Image
             source={require('../../assets/img/share.png')}
             style={{width: 22, height: 22, tintColor: '#000000'}}

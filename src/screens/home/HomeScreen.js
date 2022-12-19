@@ -7,6 +7,7 @@ import {
   ScrollView,
   Share,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import React from 'react';
 import {commonStyles} from '../../utils/styles';
@@ -15,6 +16,7 @@ import HomeSearch from './HomeSearch';
 import {SIZES} from '../../utils/theme';
 import {
   addLikesByIDPostAPI,
+  commonSearch,
   getAllJobsPostRequest,
   getAllOffersPostRequest,
   getAllWorksPostRequest,
@@ -42,16 +44,19 @@ import HomeCarousel from './HomeCarousel';
 import {useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HomeFilterCategory2 from './FilterCategoryHome2';
+import {parse} from '@babel/core';
 
 export default function HomeScreen({navigation}) {
   const dispatch = useDispatch();
+
   const {offerData} = useSelector(state => state.Offer);
-  const [filteredOffer, setFilteredOffer] = useState([]);
+  const [allOffers, setAllOffers] = useState([]);
   const [categoryId, setCategoryId] = useState('');
   const [bearerToken, setBearerToken] = useState('');
   const [loading, setLoading] = React.useState(false);
   const onFocus = useIsFocused();
   const {userData} = useSelector(state => state.User);
+
   console.log(userData, '<<<< this is user Data \n\n\n\n');
 
   // console.log(userData, '<<<<\n\n\n this is filer data');
@@ -76,13 +81,14 @@ export default function HomeScreen({navigation}) {
   React.useEffect(() => {
     setLoading(true);
     Auth.getLocalStorageData('bearer').then(token => {
+      console.log(token, '<<<<<<token');
       setBearerToken(token);
       getAllOffersPostRequest(token, response => {
         setLoading(false);
         if (response !== null) {
           console.log('offers', response.data, '\n\n\n\n offers');
           dispatch(setOffer(response?.data));
-          setFilteredOffer(response.data);
+          setAllOffers(response.data);
           console.log(response.data);
         }
       });
@@ -124,7 +130,11 @@ export default function HomeScreen({navigation}) {
 
   const filterData = val => {
     console.log(val);
-    filteredOffer.filter(item => {});
+    let searchField = val.toLocaleLowerCase();
+    allOffers.filter(item => {
+      console.log(item, '<<<this is item');
+      // const location=item.
+    });
     setLoading2(false);
   };
 
@@ -144,6 +154,7 @@ export default function HomeScreen({navigation}) {
           onChange={val => {
             setLoading2(true);
             // filterData(val);
+            // return null;
             Auth.getLocalStorageData('bearer').then(token => {
               setLoading2(false);
               setShowSuggestion(true);
@@ -153,7 +164,9 @@ export default function HomeScreen({navigation}) {
                 dispatch(setOffer(offerData));
                 return true;
               }
-              getOffersByLocationPostRequest(val, token, response => {
+              // getOffersByLocationPostRequest(val,2,token, response => {
+              commonSearch(val, 2, token, response => {
+                console.log(response, '<<<<this is search response');
                 if (response !== null) {
                   dispatch(setOffer(response?.data));
                   setSuggestionTitleData(response?.data);
@@ -232,7 +245,7 @@ export default function HomeScreen({navigation}) {
                 ...commonStyles.centerStyles,
               }}>
               <Text style={{...commonStyles.fs14_400, color: '#000'}}>
-                No Data
+                No Result
               </Text>
             </View>
           ) : (
@@ -260,13 +273,15 @@ const RenderSingleOffer = ({
   const [likesCount, setLikesCount] = useState(0);
   const [isLike, setIsLike] = useState(false);
   const [commentsCount, setCommentsCount] = useState(0);
-
+  console.log(item, '<<<thisisitem');
   React.useEffect(() => {
     (async () => {
       const unsubscribe = navigation.addListener('focus', () => {
         getUserByIDPostAPI(item?.ownerId, bearerToken, response => {
+          console.log(response, '<<<<<userDAta1');
           if (response !== null) {
             setUser(response?.data[0]);
+            console.log(response?.data[0], '<<<<thisisitemofsingleoffer');
           }
         });
 
@@ -294,7 +309,7 @@ const RenderSingleOffer = ({
       });
       return unsubscribe;
     })();
-  }, [navigation]);
+  }, []);
 
   React.useEffect(() => {
     (async () => {
@@ -328,7 +343,7 @@ const RenderSingleOffer = ({
     })();
   }, []);
 
-  const handleLike = () => {
+  const handleLike = async () => {
     if (isLike) {
       setLikesCount(prev => prev - 1);
       setIsLike(false);
@@ -339,6 +354,13 @@ const RenderSingleOffer = ({
           }
         }
       });
+      const alllike = await AsyncStorage.getItem('LIKED_OFFER');
+      if (alllike && parseInt(alllike) > 0) {
+        const d = parseInt(alllike) - +1;
+        await AsyncStorage.setItem('LIKED_OFFER', `${d}`);
+        console.log(d);
+      }
+      // const alllike=await AsyncStorage.getItem("LIKED_OFFER")
     } else if (!isLike) {
       setLikesCount(prev => prev + 1);
       setIsLike(true);
@@ -356,6 +378,16 @@ const RenderSingleOffer = ({
           }
         },
       );
+      const alllike = await AsyncStorage.getItem('LIKED_OFFER');
+      // console.log(alllike, 'plus');
+      if (alllike) {
+        const d = parseInt(alllike) + +1;
+        await AsyncStorage.setItem('LIKED_OFFER', `${d}`);
+        console.log(d, 'minus');
+      } else {
+        console.log(1);
+        await AsyncStorage.setItem('LIKED_OFFER', `1`);
+      }
     }
   };
 
@@ -379,6 +411,17 @@ const RenderSingleOffer = ({
         url: 'https://play.google.com/store/apps',
       });
       if (result.action === Share.sharedAction) {
+        // console.log('here');
+        const sharedPost = await AsyncStorage.getItem('TOTAL_SHARED');
+        if (sharedPost == null) {
+          console.log(sharedPost, '<<<sharedpost if');
+          await AsyncStorage.setItem('TOTAL_SHARED', '1');
+        } else {
+          const num = parseInt(sharedPost) + +1;
+          console.log(num, '<<<sharedpost else');
+
+          await AsyncStorage.setItem('TOTAL_SHARED', `${num}`);
+        }
         if (result.activityType) {
         } else {
         }
@@ -410,32 +453,19 @@ const RenderSingleOffer = ({
       );
 
     const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-    // console.log(
-    //   '\n\n\n',
-    //   parseInt(convertArr(startDate)[0]),
-    //   parseInt(convertArr(endDate)[0]),
-    //   'ppp',
-    //   startDate,
-    //   endDate,
-    //   'aaa',
-    //   des,
-    //   '--',
-    //   id,
-    //   diffInDays,
-    //   convertArr(startDate),
-    //   convertArr(endDate),
-    //   // monthsArray[convertArr('12-12-2022')[1]],
-    //   // monthsArray[convertArr(endDate)[1]]
-    //   '----------',
-    //   '\n\n\n\n',
-    // );
+
     return diffInDays + 1;
   }
 
   var startDate = moment(item?.startDate).format('DD/MM/YYYY');
   var endDate = moment(item?.endDate).format('DD/MM/YYYY');
   var diffDays = dayDiff(startDate, endDate, item.description, item._id);
-
+  // if (diffDays > 4) {
+  //   return null;
+  // }
+  if (diffDays < 0) {
+    return null;
+  }
   return (
     <View
       style={{
@@ -537,11 +567,52 @@ const RenderSingleOffer = ({
           />
         </TouchableHighlight>
       </View>
-
-      <Image
-        source={{uri: item?.offerImage}}
-        style={{width: SIZES.width, height: 311}}
-      />
+      <TouchableHighlight
+        onPress={() => {
+          // Alert.alert('ok');
+          navigation.navigate('OfferDetail', {
+            item,
+          });
+        }}>
+        <ScrollView horizontal={true}>
+          {item?.offerImage && (
+            <Image
+              source={{uri: item?.offerImage}}
+              style={{width: SIZES.width, height: 311}}
+            />
+          )}
+          {/* {item?.offerImage && (
+            <Image
+              source={{uri: item?.offerImage}}
+              style={{width: SIZES.width, height: 311}}
+            />
+          )} */}
+          {item?.offerImage1 && (
+            <Image
+              source={{uri: item?.offerImage1}}
+              style={{width: SIZES.width, height: 311}}
+            />
+          )}
+          {item?.offerImage2 && (
+            <Image
+              source={{uri: item?.offerImage2}}
+              style={{width: SIZES.width, height: 311}}
+            />
+          )}
+          {item?.offerImage3 && (
+            <Image
+              source={{uri: item?.offerImage3}}
+              style={{width: SIZES.width, height: 311}}
+            />
+          )}
+          {item?.offerImage34 && (
+            <Image
+              source={{uri: item?.offerImage4}}
+              style={{width: SIZES.width, height: 311}}
+            />
+          )}
+        </ScrollView>
+      </TouchableHighlight>
 
       <View style={{...commonStyles.rowBetween, padding: 15}}>
         <View style={{...commonStyles.rowStart}}>
@@ -605,6 +676,24 @@ const RenderSingleOffer = ({
           {item?.description}
         </Text>
       </View>
+      {item?.price && (
+        <View
+          style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -16}}>
+          <Text style={{...commonStyles.fs14_500, marginBottom: 12}}>
+            Price
+          </Text>
+          <Text
+            style={{
+              ...commonStyles.fs12_400,
+              marginLeft: 8,
+              marginBottom: 10,
+              marginTop: 2,
+              color: '#E27127',
+            }}>
+            Rs {item?.price}
+          </Text>
+        </View>
+      )}
       <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -10}}>
         <Text style={{...commonStyles.fs13_500, marginBottom: 12}}>
           Days left:
@@ -629,12 +718,15 @@ const RenderSingleOffer = ({
           // setSavedItems(oldArray => [...oldArray, item]);
           const oldData = await AsyncStorage.getItem('SAVED_OFFER');
           // console.log(parseIT, '<<<this is od');
+          console.log(oldData, '<<<this is old data');
+
           if (oldData == null) {
             await AsyncStorage.setItem('SAVED_OFFER', JSON.stringify([item]));
           } else {
             const parseIT = JSON.parse(oldData);
+            console.log(parseIT, '<<<<<this is parseddata', item);
             await AsyncStorage.setItem(
-              'Saved_Item',
+              'SAVED_OFFER',
               JSON.stringify([...parseIT, item]),
             );
           }

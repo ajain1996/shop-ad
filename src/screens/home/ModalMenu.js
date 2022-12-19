@@ -76,7 +76,7 @@ const ModalMenu = ({modalVisible, callback, navigation}) => {
               </View>
 
               <View style={{marginLeft: 9, marginTop: -5}}>
-                <Text style={[commonStyles.fs16_500]}>{username}</Text>
+                <Text style={[commonStyles.fs16_500]}>{userData[0]?.name}</Text>
                 <TouchableHighlight
                   style={{...styles.switchAccount}}
                   underlayColor="#eee"

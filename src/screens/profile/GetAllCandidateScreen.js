@@ -15,6 +15,7 @@ import {commonStyles} from '../../utils/styles';
 import {COLORS, SIZES} from '../../utils/theme';
 import {getAppliedCandidate, getUserByIDPostAPI} from '../../utils/API';
 import Auth from '../../services/Auth';
+import {RFC_2822} from 'moment';
 
 export default function GetAllCandidatesScreen({navigation, route}) {
   const {item} = route.params;
@@ -56,7 +57,16 @@ export default function GetAllCandidatesScreen({navigation, route}) {
             style={{width: 25, height: 25}}
           />
         </TouchableHighlight>
-
+        <Text
+          style={{
+            width: '90%',
+            textAlign: 'right',
+            color: '#0073FF',
+            fontSize: 20,
+            // backgroundColor: '#0073ff',
+          }}>
+          Total applicant {allCandidate.length}
+        </Text>
         {/* <TextInput
           placeholder="Search Members"
           placeholderTextColor="#999"
@@ -289,9 +299,12 @@ const styles = StyleSheet.create({
   headerContainer: {
     ...commonStyles.rowStart,
     width: '100%',
-    height: 62,
+    height: 50,
     ...commonStyles.elevation9,
     paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    // elevation: 10,
+    marginTop: 10,
   },
   searchInput: {
     borderWidth: 1,

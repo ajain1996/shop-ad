@@ -23,7 +23,8 @@ const HomeModal = ({
   feedbackFor,
   feedbackNumber,
   callback,
-  onSaveIT,
+  showSave = true,
+  onSaveIT = () => {},
   setModalVisible,
   savedCallback,
 }) => {
@@ -80,12 +81,14 @@ const HomeModal = ({
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
-          callback();
+          // callback();
+          setModalVisible(!modalVisible);
         }}>
         <TouchableHighlight
           style={styles.centeredView}
           onPress={() => {
-            callback();
+            // callback();
+            setModalVisible(!modalVisible);
           }}
           underlayColor="transparent">
           <TouchableOpacity style={styles.modalView} activeOpacity={1}>
@@ -97,27 +100,31 @@ const HomeModal = ({
               }}>
               <Text style={styles.textStyle}>Report</Text>
             </TouchableHighlight>
-            <View
-              style={{
-                width: SIZES.width / 1.6,
-                height: 1,
-                backgroundColor: '#dcdcdc',
-              }}
-            />
-            <TouchableHighlight
-              style={[styles.button]}
-              underlayColor="#dcdcdc"
-              onPress={() => {
-                setIsSaved(!isSaved);
-                onSaveIT();
-                savedCallback();
-              }}>
-              {isSaved ? (
-                <Text style={styles.textStyle}>Saved</Text>
-              ) : (
-                <Text style={styles.textStyle}>Save</Text>
-              )}
-            </TouchableHighlight>
+            {showSave && (
+              <>
+                <View
+                  style={{
+                    width: SIZES.width / 1.6,
+                    height: 1,
+                    backgroundColor: '#dcdcdc',
+                  }}
+                />
+                <TouchableHighlight
+                  style={[styles.button]}
+                  underlayColor="#dcdcdc"
+                  onPress={() => {
+                    setIsSaved(!isSaved);
+                    onSaveIT();
+                    savedCallback();
+                  }}>
+                  {isSaved ? (
+                    <Text style={styles.textStyle}>Saved</Text>
+                  ) : (
+                    <Text style={styles.textStyle}>Save</Text>
+                  )}
+                </TouchableHighlight>
+              </>
+            )}
 
             {showCheck ? (
               <View style={{marginVertical: 10}}>
@@ -151,6 +158,7 @@ const HomeModal = ({
                   setIsChecked={setIsChecked}
                   callback={() => {
                     setError(false);
+                    setModalVisible(!modalVisible);
                   }}
                 />
                 <CustomCheckbox
@@ -159,6 +167,7 @@ const HomeModal = ({
                   setIsChecked={setIsChecked}
                   callback={() => {
                     setError(false);
+                    setModalVisible(!modalVisible);
                   }}
                 />
                 <CustomCheckbox
@@ -167,6 +176,7 @@ const HomeModal = ({
                   setIsChecked={setIsChecked}
                   callback={() => {
                     setError(false);
+                    setModalVisible(!modalVisible);
                   }}
                 />
                 <CustomCheckbox
@@ -175,6 +185,7 @@ const HomeModal = ({
                   setIsChecked={setIsChecked}
                   callback={() => {
                     setError(false);
+                    setModalVisible(!modalVisible);
                   }}
                 />
 

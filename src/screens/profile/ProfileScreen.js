@@ -47,14 +47,11 @@ export default function ProfileScreen({navigation, route}) {
   const [savedOffers, setSavedOffers] = React.useState([]);
   const isFocused = useIsFocused();
   const [followerCount, setFollowerCount] = React.useState(0);
+  const [countLike, setCountLike] = useState(0);
   const [followingCount, setFollowingCount] = React.useState(0);
 
   var userName = '';
-  console.log(
-    '\n\n \n\n\n\n\n this is user data \n\n\n\n\n\n\n',
-    userData[0]._id,
-    '\n\n\n\n\n\n',
-  );
+
   if (userData !== null && userData !== undefined) {
     userName = userData[0].name;
   }
@@ -129,9 +126,11 @@ export default function ProfileScreen({navigation, route}) {
         });
         const data = await AsyncStorage.getItem('SAVED_OFFER');
         // Alert.alert(data);
+
         if (data != null) {
           const parsedata = JSON.parse(data);
           setOfferData(parsedata);
+          console.log(parsedata, '<<<< Tehsearesavedoffers');
         } else setOfferData([]);
         // const data2 = await AsyncStorage.getItem('SAVED_JOBS');
         // if (data2 != null) {
@@ -139,13 +138,22 @@ export default function ProfileScreen({navigation, route}) {
         //   setJobsData(parsedata2);
         // } else setJobsData([]);
         // Alert.alert(data);
+        const alllike = await AsyncStorage.getItem('LIKED_OFFER');
+        if (alllike) {
+          setCountLike(alllike);
+        }
+
+        // ---
+
         const data3 = await AsyncStorage.getItem('SAVED_WORK');
         if (data3 != null) {
           const parsedata3 = JSON.parse(data3);
           setWorkData(parsedata3);
         } else setWorkData([]);
 
-        setFollowerCount(offerData.length + jobsData.length + workData.length);
+        const count = await AsyncStorage.getItem('TOTAL_SHARED');
+
+        setFollowingCount(count);
         setLoading(false);
         // Alert.alert(data);
         // console.log(
@@ -159,12 +167,12 @@ export default function ProfileScreen({navigation, route}) {
   React.useEffect(() => {
     (async () => {
       const data = await AsyncStorage.getItem('Saved_Item');
-      // Alert.alert(data);
-      // console.log(
-      //   '\n\n\n\n\n',
-      //   setSavedOffers(JSON.parse(data)),
-      //   '<<<<<< \n\n\n\n this is saved item',
-      // );
+      Alert.alert(data);
+      console.log(
+        '\n\n\n\n\n',
+        // setSavedOffers(JSON.parse(data)),
+        '<<<<<< \n\n\n\n this is saved item',
+      );
     })();
   }, [isFocused]);
 
@@ -251,7 +259,8 @@ export default function ProfileScreen({navigation, route}) {
                 }}>
                 <View style={{alignItems: 'center'}}>
                   <Text style={{...commonStyles.fs24_700}}>
-                    {offerData?.length + jobsData?.length + workData?.length}
+                    {/* {offerData?.length + jobsData?.length + workData?.length} */}
+                    {countLike}
                   </Text>
                   <Text style={{...commonStyles.fs14_500}}>Liked</Text>
                 </View>
@@ -261,7 +270,7 @@ export default function ProfileScreen({navigation, route}) {
                     <ActivityIndicator color="#000" size={34} />
                   ) : (
                     <Text style={{...commonStyles.fs24_700}}>
-                      {followerCount}
+                      {offerData.length}
                     </Text>
                   )}
                   <Text style={{...commonStyles.fs14_500}}>Saved</Text>
@@ -340,7 +349,7 @@ export default function ProfileScreen({navigation, route}) {
                     <TouchableOpacity
                       activeOpacity={0.5}
                       onPress={() => {
-                        navigation.navigate('UserPostScreen', {
+                        navigation.navigate('OfferDetail', {
                           item: item,
                           userName: userName,
                         });
