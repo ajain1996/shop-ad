@@ -24,7 +24,10 @@ export default function HomeSearch({
           backgroundColor: '#EFEFEF',
           alignItems: 'center',
           padding: 20,
-          elevation: 8,
+          // elevation: 1,
+          borderColor: 'grey',
+          // borderWidth: 0.4,
+          // borderRadius: 11,
           shadowColor: '#999',
         }}>
         <Image
@@ -56,11 +59,11 @@ export default function HomeSearch({
               paddingLeft: 10,
               // width: '100%',
             }}>
-            Switch to user profile to apply on Job
+            switch to user to apply on job
           </Text>
           <Text
             style={{
-              fontSize: 15,
+              fontSize: 13,
               color: '#000',
               // textAlign: 'center',
               textAlign: 'right',
@@ -72,7 +75,7 @@ export default function HomeSearch({
             onPress={() => {
               dispatch(setUserType('user'));
             }}>
-            Switch to User
+            switch to user
           </Text>
         </View>
       )}

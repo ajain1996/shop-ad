@@ -330,7 +330,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
           width: '100%',
           padding: 20,
         }}>
-        <View style={{...commonStyles.rowStart, alignItems: 'center'}}>
+        {/* <View style={{...commonStyles.rowStart, alignItems: 'center'}}>
           <TouchableHighlight
             underlayColor="#f7f8f9"
             onPress={() => {
@@ -405,52 +405,385 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
               </TouchableHighlight>
             </View>
           </View>
+        </View> */}
+        <View>
+          <Text style={{fontSize: 20, fontWeight: 'bold', color: '#000'}}>
+            {item?.title}
+          </Text>
         </View>
-        <TouchableHighlight
-          onPress={() => setHomeModalVisible(true)}
-          underlayColor="#f7f8f9">
-          <Image
-            source={require('../../assets/img/3dots.png')}
-            resizeMode="contain"
-            style={{width: 24, height: 24, borderRadius: 100}}
-          />
-        </TouchableHighlight>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+          }}>
+          <Text
+            style={{
+              marginRight: 15,
+              fontWeight: '800',
+              color: 'skyblue',
+              fontSize: 14,
+            }}>
+            Rs {item?.salary}
+          </Text>
+          <TouchableHighlight
+            onPress={() => setHomeModalVisible(true)}
+            underlayColor="#f7f8f9">
+            <Image
+              source={require('../../assets/img/3dots.png')}
+              resizeMode="contain"
+              style={{width: 24, height: 24, borderRadius: 100}}
+            />
+          </TouchableHighlight>
+        </View>
       </View>
 
-      <View>
-        <JobsDetails text="Title:" item={item?.title} />
-        <JobsDetails
-          text="Date to apply"
-          item={`${item?.startDate} to ${item.endDate}`}
-        />
+      <View style={{paddingHorizontal: 12}}>
+        <View
+          style={{
+            flexWrap: 'wrap',
+            flexDirection: 'row',
+          }}>
+          <View
+            style={{
+              marginHorizontal: 6,
+              marginVertical: 4,
+              backgroundColor: 'lightgrey',
+              alignSelf: 'center',
+              paddingHorizontal: 7,
+              borderRadius: 5,
+            }}>
+            <Text
+              style={{
+                color: 'rgba(0,0,0,0.7)',
+                fontSize: 13,
+                fontWeight: '500',
+              }}>
+              Experience: {item?.experienceRequired}
+            </Text>
+          </View>
+          <View
+            style={{
+              marginHorizontal: 6,
+              marginVertical: 4,
+              backgroundColor: 'lightgrey',
+              alignSelf: 'center',
+              paddingHorizontal: 7,
+              borderRadius: 5,
+            }}>
+            <Text
+              style={{
+                color: 'rgba(0,0,0,0.7)',
+                fontSize: 13,
+                fontWeight: '500',
+              }}>
+              Location: {item?.location}
+            </Text>
+          </View>
+          <View
+            style={{
+              marginHorizontal: 6,
+              marginVertical: 4,
+              backgroundColor: 'lightgrey',
+              alignSelf: 'center',
+              paddingHorizontal: 7,
+              borderRadius: 5,
+            }}>
+            <Text
+              style={{
+                color: 'rgba(0,0,0,0.7)',
+                fontSize: 13,
+                fontWeight: '500',
+              }}>
+              Designation: {item?.designationName}
+            </Text>
+          </View>
+          <View
+            style={{
+              marginHorizontal: 6,
+              marginVertical: 4,
+              backgroundColor: 'lightgrey',
+              alignSelf: 'center',
+              paddingHorizontal: 7,
+              borderRadius: 5,
+            }}>
+            <Text
+              style={{
+                color: 'rgba(0,0,0,0.7)',
+                fontSize: 13,
+                fontWeight: '500',
+              }}>
+              Number: {item?.contactNumber}
+            </Text>
+          </View>
+          <View
+            style={{
+              marginHorizontal: 6,
+              marginVertical: 4,
+              backgroundColor: 'lightgrey',
+              alignSelf: 'center',
+              paddingHorizontal: 7,
+              borderRadius: 5,
+            }}>
+            <Text
+              style={{
+                color: 'rgba(0,0,0,0.7)',
+                fontSize: 13,
+                fontWeight: '500',
+              }}>
+              Mail: {item?.contactEmail}
+            </Text>
+          </View>
+          <View
+            style={{
+              marginHorizontal: 6,
+              marginVertical: 4,
+              backgroundColor: 'lightgrey',
+              alignSelf: 'center',
+              paddingHorizontal: 7,
+              borderRadius: 5,
+            }}>
+            <Text
+              style={{
+                color: 'rgba(0,0,0,0.7)',
+                fontSize: 13,
+                fontWeight: '500',
+              }}>
+              Incentive: {item?.incentiveOffered}
+            </Text>
+          </View>
+          <View
+            style={{
+              marginHorizontal: 6,
+              marginVertical: 4,
+              backgroundColor: 'lightgrey',
+              alignSelf: 'center',
+              paddingHorizontal: 7,
+              borderRadius: 5,
+            }}>
+            <Text
+              style={{
+                color: 'rgba(0,0,0,0.7)',
+                fontSize: 13,
+                fontWeight: '500',
+              }}>
+              Gender: {item?.gender}
+            </Text>
+          </View>
+          <View
+            style={{
+              marginHorizontal: 6,
+              marginVertical: 4,
+              backgroundColor: 'lightgrey',
+              alignSelf: 'center',
+              paddingHorizontal: 7,
+              borderRadius: 5,
+            }}>
+            <Text
+              style={{
+                color: 'rgba(0,0,0,0.7)',
+                fontSize: 13,
+                fontWeight: '500',
+              }}>
+              Man Power: {item?.manpowerNumber}
+            </Text>
+          </View>
 
-        <JobsDetails text="Description:" item={item?.description} />
-        <JobsDetails text="Shop Name:" item={item?.shopName} />
-        <JobsDetails text="Contact Number:" item={item?.contactNumber} />
-        <JobsDetails text="Contact Email:" item={item?.contactEmail} />
-        <JobsDetails text="Designation Name:" item={item?.designationName} />
-        <JobsDetails
-          text="Experience Required:"
-          item={item?.experienceRequired}
-        />
-        <JobsDetails text="Incentive Offered:" item={item?.incentiveOffered} />
-        <JobsDetails text="Interview Timing:" item={item?.interviewTiming} />
-        <JobsDetails text="Location:" item={item?.location} />
-        <JobsDetails
-          text="Experience Required:"
-          item={item?.experienceRequired}
-        />
-        <JobsDetails text="Incentive Offered:" item={item?.incentiveOffered} />
-        <JobsDetails text="Interview Timing:" item={item?.interviewTiming} />
-        <JobsDetails text="Area of work:" item={item?.areaWork} />
+          <View
+            style={{
+              marginHorizontal: 6,
+              marginVertical: 4,
+              backgroundColor: 'lightgrey',
+              alignSelf: 'center',
+              paddingHorizontal: 7,
+              borderRadius: 5,
+            }}>
+            <Text
+              style={{
+                color: 'rgba(0,0,0,0.7)',
+                fontSize: 13,
+                fontWeight: '500',
+              }}>
+              Area of Work: {item?.areaWork}
+            </Text>
+          </View>
+
+          <View
+            style={{
+              marginHorizontal: 6,
+              marginVertical: 4,
+              backgroundColor: 'lightgrey',
+              alignSelf: 'center',
+              paddingHorizontal: 7,
+              borderRadius: 5,
+            }}>
+            <Text
+              style={{
+                color: 'rgba(0,0,0,0.7)',
+                fontSize: 13,
+                fontWeight: '500',
+              }}>
+              Workers Required: {item?.numberWork}
+            </Text>
+          </View>
+
+          <View
+            style={{
+              marginHorizontal: 6,
+              marginVertical: 4,
+              backgroundColor: 'lightgrey',
+              alignSelf: 'center',
+              paddingHorizontal: 7,
+              borderRadius: 5,
+            }}>
+            <Text
+              style={{
+                color: 'rgba(0,0,0,0.7)',
+                fontSize: 13,
+                fontWeight: '500',
+              }}>
+              vechile Required: {item?.vechileRequired}
+            </Text>
+          </View>
+
+          <View
+            style={{
+              marginHorizontal: 6,
+              marginVertical: 4,
+              backgroundColor: 'lightgrey',
+              alignSelf: 'center',
+              paddingHorizontal: 7,
+              borderRadius: 5,
+            }}>
+            <Text
+              style={{
+                color: 'rgba(0,0,0,0.7)',
+                fontSize: 13,
+                fontWeight: '500',
+              }}>
+              Work Timing: {item?.workTiming}
+            </Text>
+          </View>
+          
+        </View>
+
+        <View style={{height: 11}} />
+
+
+
+ <View style={{...commonStyles.rowStart, alignItems: 'center', paddingHorizontal: 8}}>
+          <TouchableHighlight
+            underlayColor="#f7f8f9"
+            onPress={() => {
+              navigation.navigate('UserDetailsScreen', {
+                user: user,
+                userId: item?.ownerId,
+              });
+            }}>
+            {user?.userProfile !== undefined ? (
+              <Image
+                source={{uri: user?.userProfile}}
+                resizeMode="contain"
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 100,
+                  marginTop: 6,
+                  borderWidth: 2,
+                  borderColor: '#E27127',
+                }}
+              />
+            ) : (
+              <View
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 100,
+                  marginTop: 6,
+                  borderWidth: 2,
+                  borderColor: '#E27127',
+                }}>
+                <Image
+                  source={require('../../assets/img/profile-tab.png')}
+                  resizeMode="contain"
+                  style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: 100,
+                    marginHorizontal: 4,
+                    marginVertical: 3,
+                  }}
+                />
+              </View>
+            )}
+          </TouchableHighlight>
+
+          <View style={{marginLeft: 12}}>
+            <TouchableHighlight
+              underlayColor="#f7f8f9"
+              onPress={() => {
+                navigation.navigate('UserDetailsScreen', {
+                  user: user,
+                  userId: item?.ownerId,
+                });
+              }}>
+              <Text style={{...commonStyles.fs14_700}}>{user?.name}</Text>
+            </TouchableHighlight>
+            <View style={{...commonStyles.rowStart, alignItems: 'center'}}>
+              <Text>Interview Timing: </Text>
+              <TouchableHighlight
+                onPress={() => {
+                  navigation.navigate('LocationScreen');
+                }}
+                underlayColor="#f7f8f9">
+                <Text style={{...commonStyles.fs14_700, marginLeft: 2}}>
+                  {item?.interviewTiming}
+                </Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+        </View> 
+        <View style={{height: 8}} />
+
+
+
+        <View style={{paddingHorizontal: 8}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+            <Text style={{color: '#000', fontWeight: "900", fontSize: 15}}>{item?.shopName} </Text>
+            <Text>Last Date: {`${item?.startDate} to ${item.endDate}`}</Text>
+          </View>
+          <Text style={{color: '#000'}}>Description: {item?.description}</Text>
+          <Text style={{color: '#000'}}>Message: {item?.message}</Text>
+        </View>
+      </View>
+      <View>
+
+        
+        {/* <JobsDetails text="Title:" item={item?.title} /> */}
+        {/* <JobsDetails text="Date to apply" item={`${item?.startDate} to ${item.endDate}`} /> */}
+        {/* <JobsDetails text="Description:" item={item?.description} /> */}
+        {/* <JobsDetails text="Shop Name:" item={item?.shopName} /> */}
+        {/* <JobsDetails text="Contact Number:" item={item?.contactNumber} />
+        <JobsDetails text="Contact Email:" item={item?.contactEmail} /> */}
+        {/* <JobsDetails text="Designation Name:" item={item?.designationName} /> */}
+        {/* <JobsDetails text="Incentive Offered:" item={item?.incentiveOffered} /> */}
+        {/* <JobsDetails text="Interview Timing:" item={item?.interviewTiming} /> */}
+        {/* <JobsDetails text="Location:" item={item?.location} /> */}
+        {/* <JobsDetails text="Experience Required:" item={item?.experienceRequired} /> */}
+        {/* <JobsDetails text="Area of work:" item={item?.areaWork} /> */}
         {/* <JobsDetails text="Facilities:" item={item?.facilities} /> */}
-        <JobsDetails text="Gender:" item={item?.gender} />
-        <JobsDetails text="Man power Number:" item={item?.manpowerNumber} />
-        <JobsDetails text="Number of work:" item={item?.numberWork} />
-        <JobsDetails text="Vechile Required:" item={item?.vechileRequired} />
-        <JobsDetails text="Work Timing:" item={item?.workTiming} />
-        <JobsDetails text="Salary:" item={item?.salary} />
-        <JobsDetails text="Message:" item={item?.message} />
+        {/* <JobsDetails text="Gender:" item={item?.gender} />
+        <JobsDetails text="Man power Number:" item={item?.manpowerNumber} /> */}
+        {/* <JobsDetails text="Number of work:" item={item?.numberWork} /> */}
+        {/* <JobsDetails text="Vechile Required:" item={item?.vechileRequired} /> */}
+        {/* <JobsDetails text="Work Timing:" item={item?.workTiming} /> */}
+        {/* <JobsDetails text="Salary:" item={item?.salary} /> */}
+        {/* <JobsDetails text="Message:" item={item?.message} /> */}
 
         <Text style={{height: 8}} />
         {userType === 'user' ? (
@@ -530,7 +863,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         </TouchableHighlight>
       </View>
 
-      <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -16}}>
+      {/* <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -16}}>
         <Text style={{...commonStyles.fs14_500, marginBottom: 12}}>
           @{email}
         </Text>
@@ -552,7 +885,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
           style={{...commonStyles.fs12_400, marginLeft: 8, marginBottom: 12}}>
           {item?.date}
         </Text>
-      </View>
+      </View> */}
 
       <HomeModal
         modalVisible={homeModalVisible}

@@ -44,19 +44,19 @@ export default function HomeHeader({navigation, onPress}) {
         />
 
         {userType === 'shop' ? (
-          <TouchableOpacity
+          <TouchableOpacity 
             onPress={() => {
               if (onPress) {
                 onPress();
               }
             }}
             underlayColor="#f7f8f9">
-            <Text>{userData[0]?.name}</Text>
             <Image
               source={require('../../assets/img/plus.png')}
               resizeMode="contain"
               style={{width: 28, height: 28, alignSelf: 'flex-end'}}
-            />
+              />
+              <Text style={{textAlign: "center"}}>{userData[0]?.name}</Text>
           </TouchableOpacity>
         ) : (
           <TouchableHighlight
