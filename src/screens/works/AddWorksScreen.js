@@ -16,6 +16,7 @@ import {commonStyles} from '../../utils/styles';
 import Custom_Auth_Btn from '../../components/Custom_Auth_Btn';
 import {
   addNewWorkPostRequest,
+  getAllCategoriesAPI,
   getWorksByOwnerIdPostRequest,
 } from '../../utils/API';
 import Auth from '../../services/Auth';
@@ -54,7 +55,22 @@ export default function AddWorksScreen({navigation}) {
   const [loading, setLoading] = React.useState(false);
   const [imageError, setImageError] = useState(false);
   const [canApply, setCanApply] = useState(true);
-
+  const [category, setCategory] = React.useState('');
+  const [categories, setCategories] = useState([]);
+  const [allCategory, setAllCategory] = useState([]);
+  React.useEffect(() => {
+    Auth.getLocalStorageData('bearer').then(token => {
+      getAllCategoriesAPI(token, response => {
+        if (response !== null) {
+          if (response?.data !== null || response?.data !== undefined) {
+            setCategories(response?.data);
+            setAllCategory(response.data);
+            console.log(response, '<<<<<response');
+          }
+        }
+      });
+    });
+  }, []);
   useEffect(() => {
     Auth.getLocalStorageData('bearer').then(token => {
       getWorksByOwnerIdPostRequest(userData[0]?._id, token, response => {
@@ -137,6 +153,18 @@ export default function AddWorksScreen({navigation}) {
     }
   };
 
+  const filterSearch = text => {
+    if (text.trim() == '') return setCategories(allCategory);
+    else {
+      const t1 = text.toLocaleLowerCase().trim();
+      let filtered = allCategory.filter(item => {
+        const t2 = item.categoryName.toLocaleLowerCase().trim();
+        if (t2.match(t1)) return true;
+        else false;
+      });
+      setCategories(filtered);
+    }
+  };
   const getImage = () => {
     ImagePicker.openPicker({
       width: 200,
@@ -295,6 +323,76 @@ export default function AddWorksScreen({navigation}) {
                 <></>
               )}
             </>
+
+            <>
+              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+                Add Category
+              </Text>
+              {/* <TouchableOpacity onPress={() => setShowCategoryModal(true)}> */}
+              <>
+                <View>
+                  <TextInput
+                    placeholder="Category"
+                    placeholderTextColor="#999"
+                    value={category}
+                    onChangeText={val => {
+                      setCategory(val);
+                      filterSearch(val);
+                      // seter(false);
+                    }}
+                    style={[
+                      styles.locationInput,
+                      {borderColor: locationError ? 'red' : '#BDBDBD'},
+                    ]}
+                  />
+
+                  <Image
+                    source={require('../../assets/img/location-track.png')}
+                    style={{
+                      width: 24,
+                      height: 24,
+                      position: 'absolute',
+                      right: 16,
+                      top: 22,
+                    }}
+                  />
+                </View>
+              </>
+              <Image
+                source={require('../../assets/img/location-track.png')}
+                style={{
+                  width: 24,
+                  height: 24,
+                  position: 'absolute',
+                  right: 16,
+                  top: 22,
+                }}
+              />
+              {/* </TouchableOpacity> */}
+              {category != '' && (
+                <View>
+                  {categories.map(item => {
+                    return (
+                      <Text
+                        style={{
+                          width: '100%',
+                          height: 30,
+                          borderWidth: 0.5,
+                          marginTop: 2,
+                          paddingHorizontal: 10,
+                        }}
+                        onPress={() => {
+                          setCategory(item?.categoryName);
+                          setCategories([]);
+                        }}>
+                        {item.categoryName}
+                      </Text>
+                    );
+                  })}
+                </View>
+              )}
+            </>
+
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
                 Shift

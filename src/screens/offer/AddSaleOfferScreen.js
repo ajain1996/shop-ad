@@ -82,11 +82,11 @@ export default function AddSaleOfferScreen({navigation}) {
   };
 
   const [showCategoryModal, setShowCategoryModal] = React.useState(false);
-  const [categories, setCategories] = useState([]);
   const [category, setCategory] = React.useState({
     name: '',
     id: '',
   });
+  const [categories, setCategories] = useState([]);
 
   React.useEffect(() => {
     Auth.getLocalStorageData('bearer').then(token => {
