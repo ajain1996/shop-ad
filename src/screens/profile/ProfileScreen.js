@@ -167,7 +167,7 @@ export default function ProfileScreen({navigation, route}) {
   React.useEffect(() => {
     (async () => {
       const data = await AsyncStorage.getItem('Saved_Item');
-      Alert.alert(data);
+      // Alert.alert(data);
       console.log(
         '\n\n\n\n\n',
         // setSavedOffers(JSON.parse(data)),

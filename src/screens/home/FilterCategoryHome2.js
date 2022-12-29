@@ -53,7 +53,7 @@ const HomeFilterCategory2 = ({
           underlayColor="transparent">
           <View style={styles.modalView}>
             <ScrollView>
-              {categories.map((item, index) => {
+              {[1].map((item, index) => {
                 if (index > 1) return null;
                 return (
                   <TouchableHighlight
@@ -72,7 +72,7 @@ const HomeFilterCategory2 = ({
                     }}>
                     <Text style={styles.textStyle}>
                       {/* {item?.categoryName} */}
-                      {index == 1 && 'Most Liked'}
+                      {/* {index == 1 && 'Most Liked'} */}
                       {index == 0 && 'Most Shared'}
                     </Text>
                   </TouchableHighlight>
@@ -135,9 +135,12 @@ const styles = StyleSheet.create({
   },
   button: {
     padding: 20,
-    width: SIZES.width / 1.1,
+    width: 250,
     backgroundColor: '#f7f8f9',
     marginBottom: 8,
+    // flexDirection: 'row',
+    // justifyContent: 'center',
+    // textAlign: 'center',
   },
   button2: {
     padding: 15,
@@ -153,6 +156,8 @@ const styles = StyleSheet.create({
     color: '#000',
     fontWeight: 'bold',
     textAlign: 'center',
+    width: '100%',
+    // borderWidth: 2,
   },
   modalText: {
     marginBottom: 15,

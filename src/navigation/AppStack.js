@@ -21,6 +21,7 @@ import SavedScreen from '../screens/saved/SavedScreen';
 import GetAllCandidatesScreen from '../screens/profile/GetAllCandidateScreen';
 import Offerdetail from '../screens/offer/OfferDetail';
 import PreviewJobScreen, {PreviewJob} from '../screens/jobs/PreviewJob';
+import PreviewWork from '../screens/works/PreviewWork';
 
 export default function AppStack() {
   const Stack = createStackNavigator();
@@ -50,6 +51,7 @@ export default function AppStack() {
         <Stack.Screen name="OfferDetail" component={Offerdetail} />
         <Stack.Screen name="PreviewJob" component={PreviewJobScreen} />
         <Stack.Screen name="UserDetailsScreen" component={UserDetailsScreen} />
+        <Stack.Screen name="PreviewWork" component={PreviewWork} />
         <Stack.Screen name="UserPostScreen" component={UserPostScreen} />
         <Stack.Screen name="CommentScreen" component={CommentScreen} />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} />

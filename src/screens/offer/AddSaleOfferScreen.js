@@ -141,9 +141,35 @@ export default function AddSaleOfferScreen({navigation}) {
       setCategories(filtered);
     }
   };
+  const dayDiff = (startDate, endDate) => {
+    const convertArr = d => {
+      const a = d.replace('/', '-');
+      const b = a.replace('/', '-');
+      return b.split('-');
+    };
+    const diffInMs =
+      moment(
+        `${parseInt(convertArr(endDate)[0])}-${
+          monthsArray[parseInt(convertArr(endDate)[1])]
+        }-${parseInt(convertArr(endDate)[2])}`,
+      ) -
+      moment(
+        `${parseInt(convertArr(startDate)[0])}-${
+          monthsArray[parseInt(convertArr(startDate)[1])]
+        }-${parseInt(convertArr(startDate)[2])}`,
+      );
+
+    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+    return diffInDays + 1;
+  };
 
   const handleSubmit = () => {
     // getCategoryId();
+    var start1 = moment(startDate).format('DD/MM/YYYY');
+    var end1 = moment(endDate).format('DD/MM/YYYY');
+    var diffDays = dayDiff(start1, end1);
+    // console.log(diffDays, '<<<this is deiff');
     console.log(getCategoryId());
     if (!canApply) {
       Toast.show('Please by membership to create more Offers!!');
@@ -171,7 +197,15 @@ export default function AddSaleOfferScreen({navigation}) {
       const finalEndDate = `${getMonthShort(endDate)[0]}-${monthsArray.indexOf(
         getMonthShort(endDate)[1],
       )}-${getMonthShort(endDate)[2]}`;
-
+      if (diffDays > 4) {
+        Toast.show('Only Premium members can create job for more than 4 days');
+        return null;
+      }
+      if (diffDays < 0) {
+        Toast.show('Start date and end date is wrong!. (check dates again)');
+        return null;
+      }
+      // return null;
       console.log('submit it \n\n\n\n\n\n\n', {
         description,
         startDate: finalStartDate,
@@ -323,16 +357,17 @@ export default function AddSaleOfferScreen({navigation}) {
 
           <>
             <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-              Add Location <ReqField />
+              Location <ReqField />
             </Text>
             <View>
               <TextInput
                 placeholder="Location"
                 placeholderTextColor="#999"
-                value={location}
+                value={userData[0].pAddress}
                 onChangeText={val => {
-                  setLocation(val);
-                  setLocationError(false);
+                  Toast.show('Please contact admin to change location');
+                  // setLocation(val);
+                  // setLocationError(false);
                 }}
                 style={[
                   styles.locationInput,
@@ -510,6 +545,51 @@ export default function AddSaleOfferScreen({navigation}) {
     </>
   );
 }
+const styles = StyleSheet.create({
+  upload: {
+    width: 56,
+    height: 56,
+    borderRadius: 100,
+    backgroundColor: '#fff',
+    position: 'absolute',
+    ...commonStyles.centerStyles,
+  },
+  descriptionInput: {
+    width: '100%',
+    height: 77,
+    borderWidth: 1,
+    borderColor: '#BDBDBD',
+    borderRadius: 4,
+    color: '#000',
+    padding: 10,
+    fontSize: 14,
+    lineHeight: 20,
+    marginTop: 6,
+  },
+  locationInput: {
+    width: '100%',
+    height: 55,
+    borderWidth: 1,
+    borderColor: '#BDBDBD',
+    borderRadius: 4,
+    color: '#000',
+    padding: 16,
+    fontSize: 14,
+    lineHeight: 20,
+    marginTop: 6,
+  },
+  datePicker: {
+    width: SIZES.width / 2.24,
+    borderWidth: 1,
+    height: 55,
+    borderColor: '#BDBDBD',
+    ...commonStyles.rowStart,
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    marginTop: 6,
+  },
+});
+
 export const ReqField = () => {
   return <Text style={{color: '#FF0000'}}>*</Text>;
 };
@@ -595,48 +675,3 @@ export const RenderUpload = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  upload: {
-    width: 56,
-    height: 56,
-    borderRadius: 100,
-    backgroundColor: '#fff',
-    position: 'absolute',
-    ...commonStyles.centerStyles,
-  },
-  descriptionInput: {
-    width: '100%',
-    height: 77,
-    borderWidth: 1,
-    borderColor: '#BDBDBD',
-    borderRadius: 4,
-    color: '#000',
-    padding: 10,
-    fontSize: 14,
-    lineHeight: 20,
-    marginTop: 6,
-  },
-  locationInput: {
-    width: '100%',
-    height: 55,
-    borderWidth: 1,
-    borderColor: '#BDBDBD',
-    borderRadius: 4,
-    color: '#000',
-    padding: 16,
-    fontSize: 14,
-    lineHeight: 20,
-    marginTop: 6,
-  },
-  datePicker: {
-    width: SIZES.width / 2.24,
-    borderWidth: 1,
-    height: 55,
-    borderColor: '#BDBDBD',
-    ...commonStyles.rowStart,
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    marginTop: 6,
-  },
-});

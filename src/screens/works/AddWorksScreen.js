@@ -219,7 +219,7 @@ export default function AddWorksScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Description <ReqField />
+                Work Description <ReqField />
               </Text>
               <TextInput
                 placeholder="Description"
@@ -276,10 +276,11 @@ export default function AddWorksScreen({navigation}) {
               <TextInput
                 placeholder="Location"
                 placeholderTextColor="#999"
-                value={location}
+                value={userData[0].pAddress}
                 onChangeText={val => {
-                  setLocation(val);
-                  setLocationError(false);
+                  Toast.show('Please contact admin to change location');
+                  // setLocation(val);
+                  // setLocationError(false);
                 }}
                 style={[
                   styles.descriptionInput,
@@ -406,6 +407,23 @@ export default function AddWorksScreen({navigation}) {
           </View>
           <Text />
 
+          <Custom_Auth_Btn
+            btnText="Preview Work"
+            // style={{width: '50%'}}
+            onPress={() => {
+              navigation.navigate('PreviewWork', {
+                name,
+                desc,
+                contact,
+                designation,
+                image: imageData[0].uri,
+              });
+            }}
+          />
+          <View
+            style={{
+              marginTop: 20,
+            }}></View>
           <Custom_Auth_Btn btnText="Sumbit" onPress={handleSubmit} />
           <Text />
         </View>

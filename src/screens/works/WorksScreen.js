@@ -146,12 +146,12 @@ export const RenderSingleWork = ({item, showDot}) => {
           <Image source={{uri: item?.image}} style={{width: 101, height: 61}} />
         )}
         <View style={{width: SIZES.width / 1.85, marginHorizontal: 10}}>
-          <Text style={{...commonStyles.fs18_700}}>{item?.shopName}</Text>
+          <Text style={{...commonStyles.fs18_700}}>{item?.description}</Text>
 
           <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
-            Description:{' '}
+            Shop Name:{' '}
           </Text>
-          <Text style={{...commonStyles.fs14_400}}>{item?.description}</Text>
+          <Text style={{...commonStyles.fs14_400}}>{item?.shopName}</Text>
           <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
             Designation:{' '}
           </Text>

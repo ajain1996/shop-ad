@@ -68,6 +68,7 @@ export default function JobsScreen({navigation}) {
       setBearerToken(token);
       getAllJobsPostRequest(token, response => {
         if (response !== null) {
+          console.log(response.data.reverse(), '<<<<these are all jobst');
           dispatch(setJob([...response?.data].reverse()));
         }
       });
@@ -81,7 +82,7 @@ export default function JobsScreen({navigation}) {
       setBearerToken(token);
       getAllJobsPostRequest(token, response => {
         if (response !== null) {
-          dispatch(setJob(response?.data));
+          dispatch(setJob([...response?.data].reverse()));
         }
       });
     });
@@ -418,6 +419,11 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
 
       <View>
         <JobsDetails text="Title:" item={item?.title} />
+        <JobsDetails
+          text="Date to apply"
+          item={`${item?.startDate} to ${item.endDate}`}
+        />
+
         <JobsDetails text="Description:" item={item?.description} />
         <JobsDetails text="Shop Name:" item={item?.shopName} />
         <JobsDetails text="Contact Number:" item={item?.contactNumber} />
@@ -429,7 +435,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         />
         <JobsDetails text="Incentive Offered:" item={item?.incentiveOffered} />
         <JobsDetails text="Interview Timing:" item={item?.interviewTiming} />
-        <JobsDetails text="Location:" item={item?.Location} />
+        <JobsDetails text="Location:" item={item?.location} />
         <JobsDetails
           text="Experience Required:"
           item={item?.experienceRequired}
@@ -445,8 +451,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         <JobsDetails text="Work Timing:" item={item?.workTiming} />
         <JobsDetails text="Salary:" item={item?.salary} />
         <JobsDetails text="Message:" item={item?.message} />
-        <JobsDetails text="StartDate:" item={item?.startDate} />
-        <JobsDetails text="EndDate:" item={item?.endDate} />
+
         <Text style={{height: 8}} />
         {userType === 'user' ? (
           <LinearGradient

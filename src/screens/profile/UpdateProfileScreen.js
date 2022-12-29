@@ -56,7 +56,7 @@ export default function UpdateProfileScreen({navigation}) {
   const [phone, setPhone] = React.useState('');
   const [imageChanged, setImageChanged] = React.useState(false);
   const [imageData, setImageData] = React.useState({uri: ''});
-
+  const [canChangeAddress, setCanChangeAddress] = useState(true);
   const [formData, setFormData] = useState(initialValues);
   const [errors, seterrors] = useState({});
 
@@ -65,6 +65,15 @@ export default function UpdateProfileScreen({navigation}) {
     setPhone(userData[0].mobile);
     setImageData({uri: userData[0].userProfile});
     console.log(userData, '<<<<<  this is userData');
+    const {pAddress, rAddress} = userData[0];
+    if (pAddress == '' || pAddress == null || pAddress == undefined) {
+      setCanChangeAddress(true);
+    } else {
+      if (pAddress.trim().length > 0) {
+        setCanChangeAddress(false);
+      }
+    }
+
     setFormData({
       ...formData,
       ...userData[0],
@@ -333,21 +342,25 @@ export default function UpdateProfileScreen({navigation}) {
               <></>
             )}
             <View style={{height: 14}} />
-            <Text style={{color: '#000', fontSize: 17}}>Mother name</Text>
-            <CustomTextInput
-              placeholder="Mother Name"
-              value={formData.mothername}
-              // keyboardType="number-pad"
-              maxLength={30}
-              // icon={require('../../assets/img/phone.png')}
-              onChange={val => {
-                // setPhone(val);
-                handleChange('mothername', val);
-                setPhoneError(false);
-              }}
-            />
+            {userType == 'user' && (
+              <>
+                <Text style={{color: '#000', fontSize: 17}}>Mother name</Text>
+                <CustomTextInput
+                  placeholder="Mother Name"
+                  value={formData.mothername}
+                  // keyboardType="number-pad"
+                  maxLength={30}
+                  // icon={require('../../assets/img/phone.png')}
+                  onChange={val => {
+                    // setPhone(val);
+                    handleChange('mothername', val);
+                    setPhoneError(false);
+                  }}
+                />
+              </>
+            )}
 
-            {formData.mothername.trim() == '' ? (
+            {userType == 'user' && formData.mothername.trim() == '' ? (
               <Text style={{...commonStyles.fs13_400, color: 'red'}}>
                 Mother name is required
               </Text>
@@ -355,43 +368,63 @@ export default function UpdateProfileScreen({navigation}) {
               <></>
             )}
 
-            <View style={{height: 14}} />
-            <Text style={{color: '#000', fontSize: 17}}>Father name</Text>
-            <CustomTextInput
-              placeholder="Father Name"
-              value={formData.fathername}
-              // keyboardType="number-pad"
-              maxLength={30}
-              // icon={require('../../assets/img/phone.png')}
-              onChange={val => {
-                // setPhone(val);
-                handleChange('fathername', val);
-                setPhoneError(false);
-              }}
-            />
-
-            {formData.fathername.trim() == '' ? (
-              <Text style={{...commonStyles.fs13_400, color: 'red'}}>
-                Father name is required
-              </Text>
-            ) : (
-              <></>
+            {userType == 'user' && (
+              <>
+                {' '}
+                <View style={{height: 14}} />
+                <Text style={{color: '#000', fontSize: 17}}>Father name</Text>
+                <CustomTextInput
+                  placeholder="Father Name"
+                  value={formData.fathername}
+                  // keyboardType="number-pad"
+                  maxLength={30}
+                  // icon={require('../../assets/img/phone.png')}
+                  onChange={val => {
+                    // setPhone(val);
+                    handleChange('fathername', val);
+                    setPhoneError(false);
+                  }}
+                />
+                {formData.fathername.trim() == '' ? (
+                  <Text style={{...commonStyles.fs13_400, color: 'red'}}>
+                    Father name is required
+                  </Text>
+                ) : (
+                  <></>
+                )}
+              </>
             )}
 
             <View style={{height: 14}} />
-            <Text style={{color: '#000', fontSize: 17}}>Permanent Address</Text>
-            <CustomTextInput
-              placeholder="Permanent Address"
-              value={formData.pAddress}
-              // keyboardType="number-pad"
-              maxLength={30}
-              // icon={require('../../assets/img/phone.png')}
-              onChange={val => {
-                // setPhone(val);
-                handleChange('pAddress', val);
-                setPhoneError(false);
-              }}
-            />
+            <Text style={{color: '#000', fontSize: 17}}>
+              Permanent Address{' '}
+              <Text style={{fontSize: 10, color: '#FF0000'}}>
+                {`${
+                  !canChangeAddress ? '(Contact Admin To change Address)' : ''
+                }`}
+              </Text>
+            </Text>
+            {!canChangeAddress && (
+              <Text style={{fontSize: 14}}>{formData.pAddress}</Text>
+            )}
+            {canChangeAddress && (
+              <CustomTextInput
+                placeholder="Permanent Address"
+                value={formData.pAddress}
+                // keyboardType="number-pad"
+                maxLength={30}
+                // icon={require('../../assets/img/phone.png')}
+                onChange={val => {
+                  // setPhone(val);
+                  if (canChangeAddress) {
+                    handleChange('pAddress', val);
+                    // setPhoneError(false);
+                  } else {
+                    Toast.show('Please contact admin to change address');
+                  }
+                }}
+              />
+            )}
 
             {formData.pAddress.trim() == '' ? (
               <Text style={{...commonStyles.fs13_400, color: 'red'}}>
@@ -403,20 +436,29 @@ export default function UpdateProfileScreen({navigation}) {
 
             <View style={{height: 14}} />
             <Text style={{color: '#000', fontSize: 17}}>
-              Residential Address
+              Residential Address{' '}
+              <Text style={{fontSize: 10, color: '#FF0000'}}>
+                {`${
+                  !canChangeAddress ? '(Contact Admin To change Address)' : ''
+                }`}
+              </Text>
             </Text>
-            <CustomTextInput
-              placeholder="Residential Address"
-              value={formData.rAddress}
-              // keyboardType="number-pad"
-              maxLength={30}
-              // icon={require('../../assets/img/phone.png')}
-              onChange={val => {
-                // setPhone(val);
-                handleChange('rAddress', val);
-                setPhoneError(false);
-              }}
-            />
+            {canChangeAddress ? (
+              <CustomTextInput
+                placeholder="Residential Address"
+                value={formData.rAddress}
+                // keyboardType="number-pad"
+                maxLength={30}
+                // icon={require('../../assets/img/phone.png')}
+                onChange={val => {
+                  // setPhone(val);
+                  handleChange('rAddress', val);
+                  setPhoneError(false);
+                }}
+              />
+            ) : (
+              <Text>{formData.rAddress}</Text>
+            )}
 
             {formData.rAddress.trim() == '' ? (
               <Text style={{...commonStyles.fs13_400, color: 'red'}}>
@@ -457,79 +499,97 @@ export default function UpdateProfileScreen({navigation}) {
               );
             })}
 
-            <View style={{height: 14}} />
-            <Text style={{color: '#000', fontSize: 17}}>
-              {' '}
-              Certified Course Name
-            </Text>
-            <CustomTextInput
-              placeholder="Certified Course Name"
-              value={formData?.certifiedCourse}
-              // keyboardType="number-pad"
-              maxLength={30}
-              // icon={require('../../assets/img/phone.png')}
-              onChange={val => {
-                // setPhone(val);
-                handleChange('certifiedCourse', val);
-                setPhoneError(false);
-              }}
-            />
-
-            <View style={{height: 14}} />
-            <Text style={{color: '#000', fontSize: 17}}>
-              {' '}
-              Upload Certificate
-            </Text>
-            {formData.certificate == null ? (
-              <TouchableHighlight
-                style={[styles.attachCV]}
-                onPress={() => {
-                  selectPdfFile('certificate');
-                  // handleChange("certificate",)
-                  // setCvFileError(false);
-                }}
-                underlayColor="#f7f8f9">
-                <Image
-                  source={require('../../assets/img/attach.png')}
-                  style={{width: 24, height: 24, tintColor: '#BDBDBD'}}
-                />
-              </TouchableHighlight>
-            ) : (
-              <View style={[styles.attachCV, commonStyles.rowBetween]}>
-                <Text style={{...commonStyles.fs14_500}}>
-                  {formData?.certificate?.name}
+            {userType == 'user' && (
+              <>
+                {' '}
+                <View style={{height: 14}} />
+                <Text style={{color: '#000', fontSize: 17}}>
+                  {' '}
+                  Certified Course Name
                 </Text>
-                <TouchableHighlight
-                  onPress={() => setFormData({...formData, certificate: null})}
-                  underlayColor="#f7f8f9">
-                  <Image
-                    source={require('../../assets/img/cross.png')}
-                    style={{width: 20, height: 20, tintColor: '#BDBDBD'}}
-                  />
-                </TouchableHighlight>
-              </View>
+                <CustomTextInput
+                  placeholder="Certified Course Name"
+                  value={formData?.certifiedCourse}
+                  // keyboardType="number-pad"
+                  maxLength={30}
+                  // icon={require('../../assets/img/phone.png')}
+                  onChange={val => {
+                    // setPhone(val);
+                    handleChange('certifiedCourse', val);
+                    setPhoneError(false);
+                  }}
+                />{' '}
+              </>
             )}
-            <View style={{height: 14}} />
-            <Text style={{color: '#000', fontSize: 17}}>Experience Years</Text>
-            <CustomTextInput
-              placeholder="Experience Years"
-              value={formData.experienceYears}
-              keyboardType="number-pad"
-              maxLength={30}
-              // icon={require('../../assets/img/phone.png')}
-              onChange={val => {
-                // setPhone(val);
-                handleChange('experienceYears', val);
-                setPhoneError(false);
-              }}
-            />
 
-            {formData.experienceYears.trim() == '' ? (
-              <Text style={{...commonStyles.fs13_400, color: 'red'}}>
-                Experience Year is required
-              </Text>
-            ) : (
-              <></>
+            {userType == 'user' && (
+              <>
+                {' '}
+                <View style={{height: 14}} />
+                <Text style={{color: '#000', fontSize: 17}}>
+                  {' '}
+                  Upload Certificate
+                </Text>
+                {formData.certificate == null ? (
+                  <TouchableHighlight
+                    style={[styles.attachCV]}
+                    onPress={() => {
+                      selectPdfFile('certificate');
+                      // handleChange("certificate",)
+                      // setCvFileError(false);
+                    }}
+                    underlayColor="#f7f8f9">
+                    <Image
+                      source={require('../../assets/img/attach.png')}
+                      style={{width: 24, height: 24, tintColor: '#BDBDBD'}}
+                    />
+                  </TouchableHighlight>
+                ) : (
+                  <View style={[styles.attachCV, commonStyles.rowBetween]}>
+                    <Text style={{...commonStyles.fs14_500}}>
+                      {formData?.certificate?.name}
+                    </Text>
+                    <TouchableHighlight
+                      onPress={() =>
+                        setFormData({...formData, certificate: null})
+                      }
+                      underlayColor="#f7f8f9">
+                      <Image
+                        source={require('../../assets/img/cross.png')}
+                        style={{width: 20, height: 20, tintColor: '#BDBDBD'}}
+                      />
+                    </TouchableHighlight>
+                  </View>
+                )}{' '}
+              </>
+            )}
+            {userType == 'user' && (
+              <>
+                {' '}
+                <View style={{height: 14}} />
+                <Text style={{color: '#000', fontSize: 17}}>
+                  Experience Years
+                </Text>
+                <CustomTextInput
+                  placeholder="Experience Years"
+                  value={formData.experienceYears}
+                  keyboardType="number-pad"
+                  maxLength={30}
+                  // icon={require('../../assets/img/phone.png')}
+                  onChange={val => {
+                    // setPhone(val);
+                    handleChange('experienceYears', val);
+                    setPhoneError(false);
+                  }}
+                />
+                {formData.experienceYears.trim() == '' ? (
+                  <Text style={{...commonStyles.fs13_400, color: 'red'}}>
+                    Experience Year is required
+                  </Text>
+                ) : (
+                  <></>
+                )}
+              </>
             )}
 
             <View style={{height: 14}} />
@@ -555,29 +615,33 @@ export default function UpdateProfileScreen({navigation}) {
               <></>
             )}
 
-            <View style={{height: 14}} />
-            <Text style={{color: '#000', fontSize: 17}}>
-              Educational Details
-            </Text>
-            <CustomTextInput
-              placeholder="Educational Details"
-              value={formData.eduction}
-              // keyboardType="number-pad"
-              maxLength={30}
-              // icon={require('../../assets/img/phone.png')}
-              onChange={val => {
-                // setPhone(val);
-                handleChange('eduction', val);
-                setPhoneError(false);
-              }}
-            />
+            {userType == 'user' && (
+              <>
+                <View style={{height: 14}} />
+                <Text style={{color: '#000', fontSize: 17}}>
+                  Educational Details
+                </Text>
+                <CustomTextInput
+                  placeholder="Educational Details"
+                  value={formData.eduction}
+                  // keyboardType="number-pad"
+                  maxLength={30}
+                  // icon={require('../../assets/img/phone.png')}
+                  onChange={val => {
+                    // setPhone(val);
+                    handleChange('eduction', val);
+                    setPhoneError(false);
+                  }}
+                />
 
-            {formData.eduction.trim() == '' ? (
-              <Text style={{...commonStyles.fs13_400, color: 'red'}}>
-                Education Details is required
-              </Text>
-            ) : (
-              <></>
+                {formData.eduction.trim() == '' ? (
+                  <Text style={{...commonStyles.fs13_400, color: 'red'}}>
+                    Education Details is required
+                  </Text>
+                ) : (
+                  <></>
+                )}
+              </>
             )}
 
             {/* <View style={{height: 14}} />

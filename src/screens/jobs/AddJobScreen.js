@@ -105,6 +105,8 @@ export default function AddJobScreen({navigation}) {
   const [experienceCertificate, setExperienceCertificate] = React.useState('');
   const [policyVerification, setPolicyVerification] = React.useState('');
   const [interviewTiming, setInterviewTiming] = React.useState('');
+  const [MinSalary, setMinSalary] = useState(null);
+  const [MaxSalatry, setMaxSalatry] = useState(null);
   const [contactNumber, setContactNumber] = React.useState('');
   const [contactPersonName, setContactPersonName] = React.useState('');
   const [message, setMessage] = React.useState('');
@@ -186,7 +188,7 @@ export default function AddJobScreen({navigation}) {
               shopName,
               location,
               userData[0]?._id,
-              salaryOffered,
+              MinSalary + ' to ' + MaxSalatry, // salaryOffered,
               contactPersonName,
               startDate,
               endDate,
@@ -394,10 +396,11 @@ export default function AddJobScreen({navigation}) {
               <TextInput
                 placeholder="Address"
                 placeholderTextColor="#999"
-                value={address}
+                value={userData[0].pAddress}
                 onChangeText={val => {
-                  setAddress(val);
-                  setAddressError(false);
+                  Toast.show('Please contact admin to change location');
+                  // setAddress(val);
+                  // setAddressError(false);
                 }}
                 style={[
                   styles.titleInput,
@@ -887,7 +890,7 @@ export default function AddJobScreen({navigation}) {
               <TextInput
                 placeholder="Incentive Offered"
                 placeholderTextColor="#999"
-                keyboardType="number-pad"
+                // keyboardType="number-pad"
                 value={incentive}
                 onChangeText={val => {
                   setIncentive(val);
@@ -908,15 +911,43 @@ export default function AddJobScreen({navigation}) {
             </>
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Salary Offered
+                Min Salary Offered
               </Text>
               <TextInput
-                placeholder="Salary Offered"
+                placeholder="ex: Rs 10,000 to Rs 20,000"
                 placeholderTextColor="#999"
                 keyboardType="number-pad"
-                value={salaryOffered}
+                value={MinSalary}
                 onChangeText={val => {
-                  setSalaryOffered(val);
+                  // setSalaryOffered(val)
+                  setMinSalary(val);
+                  // setIncentiveError(false);
+                }}
+                style={[
+                  styles.titleInput,
+                  {borderColor: incentiveError ? 'red' : '#BDBDBD'},
+                ]}
+              />
+              {/* { ? (
+                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+                  Incentive is mandatory
+                </Text>
+              ) : (
+                <></>
+              )} */}
+            </>
+            <>
+              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+                Max Salary Offered
+              </Text>
+              <TextInput
+                placeholder="ex: Rs 10,000 to Rs 20,000"
+                placeholderTextColor="#999"
+                keyboardType="number-pad"
+                value={MaxSalatry}
+                onChangeText={val => {
+                  // setSalaryOffered(val)
+                  setMaxSalatry(val);
                   // setIncentiveError(false);
                 }}
                 style={[
@@ -999,6 +1030,13 @@ export default function AddJobScreen({navigation}) {
                     'Start date and end date is wrong!. (check dates again)',
                   );
                   return null;
+                }
+                if (
+                  MinSalary == null ||
+                  MaxSalatry == null ||
+                  MinSalary > MaxSalatry
+                ) {
+                  return Toast.show('Please enter valid salary range');
                 } else {
                   setShowNext({
                     next1: false,

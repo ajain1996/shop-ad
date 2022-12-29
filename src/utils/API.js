@@ -1018,7 +1018,7 @@ export const updateUserPostRequest = async (
   formdata.append('mobile', mobile);
   if (imageChanged == true) {
     console.log('data changed');
-    formdata.append('image', image, image.name);
+    formdata.append('image', image, 'file_name123.jpg');
   }
 
   formdata.append('eduction', formdata.education);
@@ -1152,6 +1152,31 @@ export const followUserPostAPI = async (
     console.error('error', error);
     successCallBack(null);
   }
+};
+export const unFollowPostAPI = async (payload, successCallBack) => {
+  var myHeaders = new Headers();
+  myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append('Authorization', 'Bearer ' + payload.bearerToken);
+
+  var raw = JSON.stringify({
+    userId: payload.userId,
+    follwedId: payload.follwedId,
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow',
+  };
+
+  fetch(BASE_URL + 'unfollow', requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      console.log(result);
+      successCallBack(JSON.parse(result));
+    })
+    .catch(error => console.log('error', error));
 };
 
 export const applyJobPostAPI = async (
