@@ -44,7 +44,7 @@ export default function AddWorksScreen({navigation}) {
 
   const [name, setName] = React.useState('');
   const [desc, setDesc] = React.useState('');
-  const [location, setLocation] = React.useState('');
+  const [location, setLocation] = React.useState(userData[0].pAddress);
   const [salary, setSalary] = React.useState(false);
   const [imageData, setImageData] = React.useState('');
   //   const [shift, setshift] = useState(second)
@@ -514,7 +514,7 @@ export default function AddWorksScreen({navigation}) {
                 desc,
                 contact,
                 designation,
-                image: imageData[0].uri,
+                image: imageData[0]?.uri,
               });
             }}
           />

@@ -19,6 +19,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setUser} from '../redux/reducer/user';
 import CustomLoader, {CustomPanel} from '../components/CustomLoader';
 import {launchImageLibrary} from 'react-native-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function RegisterScreen({navigation}) {
   const dispatch = useDispatch();
@@ -76,6 +77,9 @@ export default function RegisterScreen({navigation}) {
                 );
 
                 Toast.show('Register Successfully!');
+                await AsyncStorage.setItem('LIKED_OFFER', `0`);
+                await AsyncStorage.setItem('SAVED_OFFER', `[]`);
+                await AsyncStorage.setItem('TOTAL_SHARED', `0`);
                 setName('');
                 setEmail('');
                 setPassword('');

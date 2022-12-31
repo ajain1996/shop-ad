@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Storage from '../utils/Storage';
 
 async function getAccount() {
@@ -19,6 +20,7 @@ async function setIntro(data) {
 async function logout() {
   await AsyncStorage.setItem('SAVED_OFFER', JSON.stringify(null));
   await AsyncStorage.setItem('LIKED_OFFER', JSON.stringify(null));
+  await AsyncStorage.setItem('SAVED_WORK', JSON.stringify(null));
   await AsyncStorage.setItem('TOTAL_SHARED', JSON.stringify(null));
   return await Storage.set('account', null);
 }

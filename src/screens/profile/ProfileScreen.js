@@ -53,7 +53,7 @@ export default function ProfileScreen({navigation, route}) {
   var userName = '';
 
   if (userData !== null && userData !== undefined) {
-    userName = userData[0].name;
+    userName = userData[0]?.name;
   }
   const userImage = require('../../assets/img/profile-tab.png');
 
@@ -139,7 +139,9 @@ export default function ProfileScreen({navigation, route}) {
         // } else setJobsData([]);
         // Alert.alert(data);
         const alllike = await AsyncStorage.getItem('LIKED_OFFER');
-        if (alllike) {
+        if (alllike == 'null' || alllike == null || alllike == 'NaN') {
+          setCountLike(0);
+        } else {
           setCountLike(alllike);
         }
 
@@ -152,8 +154,11 @@ export default function ProfileScreen({navigation, route}) {
         } else setWorkData([]);
 
         const count = await AsyncStorage.getItem('TOTAL_SHARED');
-
-        setFollowingCount(count);
+        if (count == 'null' || count == null || count == 'NaN') {
+          setFollowingCount(0);
+        } else {
+          setFollowingCount(count);
+        }
         setLoading(false);
         // Alert.alert(data);
         // console.log(
@@ -270,7 +275,11 @@ export default function ProfileScreen({navigation, route}) {
                     <ActivityIndicator color="#000" size={34} />
                   ) : (
                     <Text style={{...commonStyles.fs24_700}}>
-                      {offerData.length}
+                      {offerData == 'null' ||
+                      offerData == null ||
+                      offerData == 'NaN'
+                        ? 0
+                        : offerData?.length}
                     </Text>
                   )}
                   <Text style={{...commonStyles.fs14_500}}>Saved</Text>
@@ -341,9 +350,9 @@ export default function ProfileScreen({navigation, route}) {
             All Offers
           </Text>
 
-          {offerData.length !== 0 ? (
+          {offerData?.length !== 0 ? (
             <ScrollView horizontal>
-              {offerData.map((item, index) => {
+              {offerData?.map((item, index) => {
                 return (
                   <View key={index} style={{marginRight: 20}}>
                     <TouchableOpacity
@@ -577,30 +586,34 @@ export default function ProfileScreen({navigation, route}) {
           )}
         </View>
 
-        <View style={{paddingVertical: 10, paddingHorizontal: 3}}>
-          <Text style={{...commonStyles.fs18_500, marginLeft: 9, marginTop: 2}}>
-            All Works
-          </Text>
-          {workData.length !== 0 ? (
-            <ScrollView horizontal>
-              {workData.map((item, index) => {
-                return (
-                  <View key={index} style={{marginTop: -4}}>
-                    <RenderSingleWork item={item} showDot={false} />
-                  </View>
-                );
-              })}
-            </ScrollView>
-          ) : (
+        {userType == 'shop' && (
+          <View style={{paddingVertical: 10, paddingHorizontal: 3}}>
             <Text
-              style={{...commonStyles.fs13_500, marginLeft: 9, marginTop: 2}}>
-              No Works Found
+              style={{...commonStyles.fs18_500, marginLeft: 9, marginTop: 2}}>
+              All Works
             </Text>
-          )}
-        </View>
-
+            {workData != 'null' &&
+            workData != null &&
+            workData?.length !== 0 ? (
+              <ScrollView horizontal>
+                {workData.map((item, index) => {
+                  return (
+                    <View key={index} style={{marginTop: -4}}>
+                      <RenderSingleWork item={item} showDot={false} />
+                    </View>
+                  );
+                })}
+              </ScrollView>
+            ) : (
+              <Text
+                style={{...commonStyles.fs13_500, marginLeft: 9, marginTop: 2}}>
+                No Works Found
+              </Text>
+            )}
+          </View>
+        )}
         {/*  saved jobs */}
-        <View style={{paddingVertical: 10, paddingHorizontal: 3}}>
+        {/* <View style={{paddingVertical: 10, paddingHorizontal: 3}}>
           <Text style={{...commonStyles.fs18_500, marginLeft: 9, marginTop: 2}}>
             Saved Offers
           </Text>
@@ -655,7 +668,7 @@ export default function ProfileScreen({navigation, route}) {
               No Works Found
             </Text>
           )}
-        </View>
+        </View> */}
 
         <View>
           <View style={{height: 60}} />

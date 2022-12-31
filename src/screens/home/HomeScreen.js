@@ -54,6 +54,7 @@ export default function HomeScreen({navigation}) {
   const [categoryId, setCategoryId] = useState('');
   const [bearerToken, setBearerToken] = useState('');
   const [loading, setLoading] = React.useState(false);
+  const [refreshScreen, setRefreshScreen] = useState(false);
   const onFocus = useIsFocused();
   const {userData} = useSelector(state => state.User);
 
@@ -105,7 +106,8 @@ export default function HomeScreen({navigation}) {
         }
       });
     });
-  }, [onFocus]);
+  }, [refreshScreen]);
+  // }, [onFocus]);
 
   function _refresh() {
     setLoading(true);
@@ -194,6 +196,8 @@ export default function HomeScreen({navigation}) {
         </TouchableHighlight>
         <HomeFilterCategory2
           modalVisible={showCategoryModal}
+          refreshScreen={refreshScreen}
+          setRefreshScreen={setRefreshScreen}
           navigation={navigation}
           setCategoryId={setCategoryId}
           callback={() => {
@@ -344,7 +348,9 @@ const RenderSingleOffer = ({
   }, []);
 
   const handleLike = async () => {
+    const totalPrev = await AsyncStorage.getItem('LIKED_OFFER');
     if (isLike) {
+      console.log('going to unlike', totalPrev);
       setLikesCount(prev => prev - 1);
       setIsLike(false);
       unLikesByIDPostAPI(item?._id, userData[0]?._id, bearerToken, response => {
@@ -354,14 +360,20 @@ const RenderSingleOffer = ({
           }
         }
       });
+
       const alllike = await AsyncStorage.getItem('LIKED_OFFER');
-      if (alllike && parseInt(alllike) > 0) {
+      console.log(alllike, '<<<thisislike');
+      if (alllike == 'NaN') {
+        await AsyncStorage.setItem('LIKED_OFFER', `1`);
+      } else if (alllike && parseInt(alllike) > 0) {
         const d = parseInt(alllike) - +1;
         await AsyncStorage.setItem('LIKED_OFFER', `${d}`);
         console.log(d);
       }
       // const alllike=await AsyncStorage.getItem("LIKED_OFFER")
     } else if (!isLike) {
+      console.log('going to like');
+
       setLikesCount(prev => prev + 1);
       setIsLike(true);
       addLikesByIDPostAPI(
@@ -380,6 +392,9 @@ const RenderSingleOffer = ({
       );
       const alllike = await AsyncStorage.getItem('LIKED_OFFER');
       // console.log(alllike, 'plus');
+      if (alllike == 'NaN') {
+        await AsyncStorage.setItem('LIKED_OFFER', `1`);
+      }
       if (alllike) {
         const d = parseInt(alllike) + +1;
         await AsyncStorage.setItem('LIKED_OFFER', `${d}`);

@@ -117,7 +117,7 @@ export default function UserDetailsScreen({navigation, route}) {
         }
       });
     });
-  }, [followerCount, followingCount]);
+  }, [followerCount, followingCount, isFollowed]);
 
   const handleFollow = () => {
     // setIsFollowed(true);

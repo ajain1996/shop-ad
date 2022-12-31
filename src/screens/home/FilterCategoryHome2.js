@@ -19,6 +19,8 @@ const HomeFilterCategory2 = ({
   callback,
   setCategoryId,
   navigation,
+  refreshScreen,
+  setRefreshScreen,
   selectedCategory = () => {},
 }) => {
   const dispatch = useDispatch();
@@ -61,14 +63,16 @@ const HomeFilterCategory2 = ({
                     style={[styles.button]}
                     underlayColor="#dcdcdc"
                     onPress={() => {
-                      Auth.getLocalStorageData('bearer').then(token => {
-                        getOffersByCategoryAPI(item?._id, token, response => {
-                          if (response !== null) {
-                            dispatch(setOffer(response?.data));
-                            callback();
-                          }
-                        });
-                      });
+                      setRefreshScreen(!refreshScreen);
+                      callback();
+                      // Auth.getLocalStorageData('bearer').then(token => {
+                      //   getOffersByCategoryAPI(item?._id, token, response => {
+                      //     if (response !== null) {
+                      //       dispatch(setOffer(response?.data));
+                      //       callback();
+                      //     }
+                      //   });
+                      // });
                     }}>
                     <Text style={styles.textStyle}>
                       {/* {item?.categoryName} */}

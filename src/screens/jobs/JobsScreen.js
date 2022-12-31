@@ -459,7 +459,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
                 fontSize: 13,
                 fontWeight: '500',
               }}>
-              Experience: {item?.experienceRequired}
+              Experience: {item?.experienceRequired} year(s)
             </Text>
           </View>
           <View
@@ -664,14 +664,16 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
               Work Timing: {item?.workTiming}
             </Text>
           </View>
-          
         </View>
 
         <View style={{height: 11}} />
 
-
-
- <View style={{...commonStyles.rowStart, alignItems: 'center', paddingHorizontal: 8}}>
+        <View
+          style={{
+            ...commonStyles.rowStart,
+            alignItems: 'center',
+            paddingHorizontal: 8,
+          }}>
           <TouchableHighlight
             underlayColor="#f7f8f9"
             onPress={() => {
@@ -742,10 +744,8 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
               </TouchableHighlight>
             </View>
           </View>
-        </View> 
+        </View>
         <View style={{height: 8}} />
-
-
 
         <View style={{paddingHorizontal: 8}}>
           <View
@@ -754,7 +754,9 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
               alignItems: 'center',
               justifyContent: 'space-between',
             }}>
-            <Text style={{color: '#000', fontWeight: "900", fontSize: 15}}>{item?.shopName} </Text>
+            <Text style={{color: '#000', fontWeight: '900', fontSize: 15}}>
+              {item?.shopName}{' '}
+            </Text>
             <Text>Last Date: {`${item?.startDate} to ${item.endDate}`}</Text>
           </View>
           <Text style={{color: '#000'}}>Description: {item?.description}</Text>
@@ -762,8 +764,6 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         </View>
       </View>
       <View>
-
-        
         {/* <JobsDetails text="Title:" item={item?.title} /> */}
         {/* <JobsDetails text="Date to apply" item={`${item?.startDate} to ${item.endDate}`} /> */}
         {/* <JobsDetails text="Description:" item={item?.description} /> */}

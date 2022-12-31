@@ -370,7 +370,6 @@ export default function UpdateProfileScreen({navigation}) {
 
             {userType == 'user' && (
               <>
-                {' '}
                 <View style={{height: 14}} />
                 <Text style={{color: '#000', fontSize: 17}}>Father name</Text>
                 <CustomTextInput
@@ -501,7 +500,6 @@ export default function UpdateProfileScreen({navigation}) {
 
             {userType == 'user' && (
               <>
-                {' '}
                 <View style={{height: 14}} />
                 <Text style={{color: '#000', fontSize: 17}}>
                   {' '}
@@ -518,13 +516,12 @@ export default function UpdateProfileScreen({navigation}) {
                     handleChange('certifiedCourse', val);
                     setPhoneError(false);
                   }}
-                />{' '}
+                />
               </>
             )}
 
             {userType == 'user' && (
               <>
-                {' '}
                 <View style={{height: 14}} />
                 <Text style={{color: '#000', fontSize: 17}}>
                   {' '}
@@ -560,12 +557,11 @@ export default function UpdateProfileScreen({navigation}) {
                       />
                     </TouchableHighlight>
                   </View>
-                )}{' '}
+                )}
               </>
             )}
             {userType == 'user' && (
               <>
-                {' '}
                 <View style={{height: 14}} />
                 <Text style={{color: '#000', fontSize: 17}}>
                   Experience Years

@@ -675,25 +675,28 @@ export const getJobDetailByID = (token, id, callBack) => {
 };
 
 export const getJobByApplicantId = (token, id, callBAck) => {
-  console.log('gettingalljobsbyapplicant ID');
+  console.log('gettingalljobsbyapplicant ID', id);
   var myHeaders = new Headers();
   myHeaders.append('Authorization', 'Bearer ' + token);
+  myHeaders.append('Content-Type', 'application/json');
+
+  var raw = JSON.stringify({
+    id: id,
+  });
 
   var requestOptions = {
-    method: 'GET',
+    method: 'POST',
     headers: myHeaders,
+    body: raw,
     redirect: 'follow',
   };
 
   fetch(
-    'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/jobapply',
+    'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/jobapply/applicantId',
     requestOptions,
   )
     .then(response => response.text())
-    .then(result => {
-      //  console.log(result)
-      callBAck(JSON.parse(result));
-    })
+    .then(result => callBAck(JSON.parse(result)))
     .catch(error => console.log('error', error));
 };
 
