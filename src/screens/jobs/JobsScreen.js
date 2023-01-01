@@ -840,7 +840,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         {/* <JobsDetails text="Salary:" item={item?.salary} /> */}
         {/* <JobsDetails text="Message:" item={item?.message} /> */}
 
-        <Text style={{height: 8}} />
+        <Text style={{height: 1}} />
         {userType === 'user' ? (
           <LinearGradient
             colors={['#EDAA26', '#E27127']}
