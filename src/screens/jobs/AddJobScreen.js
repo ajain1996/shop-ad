@@ -118,6 +118,23 @@ export default function AddJobScreen({navigation}) {
 
   useEffect(() => {
     // Alert.alert('hello');
+    if (
+      userData[0]?.pAddress == undefined ||
+      userData[0].pAddress == 'undefined' ||
+      userData[0].pAddress == null ||
+      userData[0].pAddress == 'null'
+    ) {
+      Alert.alert('Alert', 'Update your profile to add offer', [
+        {
+          text: 'Redirect',
+          onPress: () => {
+            navigation.navigate('UpdateProfileScreen', {});
+          },
+        },
+      ]);
+    } else {
+      setAddress(userData[0].pAddress);
+    }
     Auth.getLocalStorageData('bearer').then(token => {
       getJobsByOwnerIdPostRequest(userData[0]?._id, token, response => {
         setLoading(false);
@@ -914,7 +931,7 @@ export default function AddJobScreen({navigation}) {
                 Min Salary Offered
               </Text>
               <TextInput
-                placeholder="ex: Rs 10,000 to Rs 20,000"
+                placeholder="ex: Rs 10,000 "
                 placeholderTextColor="#999"
                 keyboardType="number-pad"
                 value={MinSalary}
@@ -941,7 +958,7 @@ export default function AddJobScreen({navigation}) {
                 Max Salary Offered
               </Text>
               <TextInput
-                placeholder="ex: Rs 10,000 to Rs 20,000"
+                placeholder="ex: Rs 20,000 "
                 placeholderTextColor="#999"
                 keyboardType="number-pad"
                 value={MaxSalatry}

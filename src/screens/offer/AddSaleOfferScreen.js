@@ -16,6 +16,7 @@ import {launchImageLibrary, openPicker} from 'react-native-image-picker';
 import Toast from 'react-native-simple-toast';
 import {commonStyles} from '../../utils/styles';
 import ImagePicker from 'react-native-image-crop-picker';
+import {useIsFocused} from '@react-navigation/native';
 import moment from 'moment';
 import Custom_Auth_Btn from '../../components/Custom_Auth_Btn';
 import {
@@ -45,7 +46,7 @@ export default function AddSaleOfferScreen({navigation}) {
   const [priceError, setPriceError] = useState(false);
   const [docError, setdocError] = useState(false);
   const [description, setDescription] = React.useState('');
-  const [location, setLocation] = React.useState('');
+  const [location, setLocation] = React.useState();
   const [startDate, setStartDate] = React.useState('');
   const [endDate, setEndDate] = React.useState('');
   const [allCategory, setAllCategory] = useState([]);
@@ -82,13 +83,29 @@ export default function AddSaleOfferScreen({navigation}) {
   };
 
   const [showCategoryModal, setShowCategoryModal] = React.useState(false);
-  const [category, setCategory] = React.useState({
-    name: '',
-    id: '',
-  });
+  const [category, setCategory] = React.useState('');
   const [categories, setCategories] = useState([]);
+  const onFocus = useIsFocused();
 
   React.useEffect(() => {
+    console.log(userData[0].pAddress, '<<<<< thisisuserdata');
+    if (
+      userData[0]?.pAddress == undefined ||
+      userData[0].pAddress == 'undefined' ||
+      userData[0].pAddress == null ||
+      userData[0].pAddress == 'null'
+    ) {
+      Alert.alert('Alert', 'Update your profile to add offer', [
+        {
+          text: 'Redirect',
+          onPress: () => {
+            navigation.navigate('UpdateProfileScreen', {});
+          },
+        },
+      ]);
+    } else {
+      setLocation(userData[0].pAddress);
+    }
     Auth.getLocalStorageData('bearer').then(token => {
       getAllCategoriesAPI(token, response => {
         if (response !== null) {
@@ -165,7 +182,7 @@ export default function AddSaleOfferScreen({navigation}) {
   };
 
   const handleSubmit = () => {
-    // getCategoryId();
+    getCategoryId();
     var start1 = moment(startDate).format('DD/MM/YYYY');
     var end1 = moment(endDate).format('DD/MM/YYYY');
     var diffDays = dayDiff(start1, end1);
@@ -216,7 +233,7 @@ export default function AddSaleOfferScreen({navigation}) {
         endDate: finalEndDate,
         imageData,
       });
-      //   return null;
+      // return null;
       setLoading(true);
       Auth.getLocalStorageData('bearer').then(token => {
         console.log(token, '<<<<< \n\n\n\n this is token');
@@ -518,6 +535,7 @@ export default function AddSaleOfferScreen({navigation}) {
               </View>
             )}
           </>
+          <View style={{marginTop: 30}} />
 
           <Custom_Auth_Btn btnText="Upload" onPress={handleSubmit} />
           <Text />

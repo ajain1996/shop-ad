@@ -6,6 +6,7 @@ import {
   TouchableHighlight,
   Share,
   ScrollView,
+  Alert,
 } from 'react-native';
 
 import React from 'react';
@@ -37,6 +38,7 @@ import HomeModal from '../home/HomeModal';
 import LinearGradient from 'react-native-linear-gradient';
 import {JobsDetails} from './JobsDetails';
 import moment from 'moment';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function JobsScreen({navigation}) {
   const dispatch = useDispatch();
@@ -141,12 +143,14 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
   const [likesCount, setLikesCount] = useState(0);
   const [isLike, setIsLike] = useState(false);
   const [commentsCount, setCommentsCount] = useState(0);
+  const [showMore, setShowMore] = useState(false);
 
   React.useEffect(() => {
     (async () => {
       const unsubscribe = navigation.addListener('focus', () => {
         getUserByIDPostAPI(item?.ownerId, bearerToken, response => {
-          if (response !== null) {
+          if (response.data) {
+            console.log(response, '<<<<responseerror');
             setUser(response?.data[0]);
           }
         });
@@ -212,7 +216,8 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
     })();
   }, [item]);
 
-  const handleLike = () => {
+  const handleLike = async () => {
+    // Alert.alert('like');
     if (isLike) {
       setLikesCount(prev => prev - 1);
       setIsLike(false);
@@ -223,6 +228,15 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
           }
         }
       });
+      const alllike = await AsyncStorage.getItem('LIKED_OFFER');
+      console.log(`${alllike}`, '<<<thisislike');
+      if (alllike == 'NaN') {
+        await AsyncStorage.setItem('LIKED_OFFER', `1`);
+      } else if (alllike && parseInt(alllike) > 0) {
+        const d = parseInt(alllike) - +1;
+        await AsyncStorage.setItem('LIKED_OFFER', `${d}`);
+        console.log(d);
+      }
     } else if (!isLike) {
       setLikesCount(prev => prev + 1);
       setIsLike(true);
@@ -240,6 +254,21 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
           }
         },
       );
+      const alllike = await AsyncStorage.getItem('LIKED_OFFER');
+      // console.log(alllike, 'plus');
+      console.log(`${alllike}`, '<<<thisislike');
+
+      if (alllike == 'NaN') {
+        await AsyncStorage.setItem('LIKED_OFFER', `1`);
+      }
+      if (alllike) {
+        const d = parseInt(alllike) + +1;
+        await AsyncStorage.setItem('LIKED_OFFER', `${d}`);
+        console.log(d, 'minus');
+      } else {
+        console.log(1);
+        await AsyncStorage.setItem('LIKED_OFFER', `1`);
+      }
     }
   };
 
@@ -320,8 +349,10 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
     <View
       style={{
         borderBottomColor: '#D8D8D8',
-        borderBottomWidth: 1,
+        borderBottomWidth: 2,
         backgroundColor: '#fff',
+        marginHorizontal: 10,
+        marginBottom: 20,
       }}>
       <View
         style={{
@@ -513,155 +544,178 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
                 fontSize: 13,
                 fontWeight: '500',
               }}>
-              Number: {item?.contactNumber}
-            </Text>
-          </View>
-          <View
-            style={{
-              marginHorizontal: 6,
-              marginVertical: 4,
-              backgroundColor: 'lightgrey',
-              alignSelf: 'center',
-              paddingHorizontal: 7,
-              borderRadius: 5,
-            }}>
-            <Text
-              style={{
-                color: 'rgba(0,0,0,0.7)',
-                fontSize: 13,
-                fontWeight: '500',
-              }}>
-              Mail: {item?.contactEmail}
-            </Text>
-          </View>
-          <View
-            style={{
-              marginHorizontal: 6,
-              marginVertical: 4,
-              backgroundColor: 'lightgrey',
-              alignSelf: 'center',
-              paddingHorizontal: 7,
-              borderRadius: 5,
-            }}>
-            <Text
-              style={{
-                color: 'rgba(0,0,0,0.7)',
-                fontSize: 13,
-                fontWeight: '500',
-              }}>
-              Incentive: {item?.incentiveOffered}
-            </Text>
-          </View>
-          <View
-            style={{
-              marginHorizontal: 6,
-              marginVertical: 4,
-              backgroundColor: 'lightgrey',
-              alignSelf: 'center',
-              paddingHorizontal: 7,
-              borderRadius: 5,
-            }}>
-            <Text
-              style={{
-                color: 'rgba(0,0,0,0.7)',
-                fontSize: 13,
-                fontWeight: '500',
-              }}>
-              Gender: {item?.gender}
-            </Text>
-          </View>
-          <View
-            style={{
-              marginHorizontal: 6,
-              marginVertical: 4,
-              backgroundColor: 'lightgrey',
-              alignSelf: 'center',
-              paddingHorizontal: 7,
-              borderRadius: 5,
-            }}>
-            <Text
-              style={{
-                color: 'rgba(0,0,0,0.7)',
-                fontSize: 13,
-                fontWeight: '500',
-              }}>
               Man Power: {item?.manpowerNumber}
             </Text>
           </View>
 
-          <View
-            style={{
-              marginHorizontal: 6,
-              marginVertical: 4,
-              backgroundColor: 'lightgrey',
-              alignSelf: 'center',
-              paddingHorizontal: 7,
-              borderRadius: 5,
-            }}>
-            <Text
-              style={{
-                color: 'rgba(0,0,0,0.7)',
-                fontSize: 13,
-                fontWeight: '500',
-              }}>
-              Area of Work: {item?.areaWork}
-            </Text>
-          </View>
+          {showMore && (
+            <>
+              <View
+                style={{
+                  marginHorizontal: 6,
+                  marginVertical: 4,
+                  backgroundColor: 'lightgrey',
+                  alignSelf: 'center',
+                  paddingHorizontal: 7,
+                  borderRadius: 5,
+                }}>
+                <Text
+                  style={{
+                    color: 'rgba(0,0,0,0.7)',
+                    fontSize: 13,
+                    fontWeight: '500',
+                  }}>
+                  Mail: {item?.contactEmail}
+                </Text>
+              </View>
+              <View
+                style={{
+                  marginHorizontal: 6,
+                  marginVertical: 4,
+                  backgroundColor: 'lightgrey',
+                  alignSelf: 'center',
+                  paddingHorizontal: 7,
+                  borderRadius: 5,
+                }}>
+                <Text
+                  style={{
+                    color: 'rgba(0,0,0,0.7)',
+                    fontSize: 13,
+                    fontWeight: '500',
+                  }}>
+                  Incentive: {item?.incentiveOffered}
+                </Text>
+              </View>
+              <View
+                style={{
+                  marginHorizontal: 6,
+                  marginVertical: 4,
+                  backgroundColor: 'lightgrey',
+                  alignSelf: 'center',
+                  paddingHorizontal: 7,
+                  borderRadius: 5,
+                }}>
+                <Text
+                  style={{
+                    color: 'rgba(0,0,0,0.7)',
+                    fontSize: 13,
+                    fontWeight: '500',
+                  }}>
+                  Gender: {item?.gender}
+                </Text>
+              </View>
+              <View
+                style={{
+                  marginHorizontal: 6,
+                  marginVertical: 4,
+                  backgroundColor: 'lightgrey',
+                  alignSelf: 'center',
+                  paddingHorizontal: 7,
+                  borderRadius: 5,
+                }}>
+                <Text
+                  style={{
+                    color: 'rgba(0,0,0,0.7)',
+                    fontSize: 13,
+                    fontWeight: '500',
+                  }}>
+                  Number: {item?.contactNumber}
+                </Text>
+              </View>
+              <View
+                style={{
+                  marginHorizontal: 6,
+                  marginVertical: 4,
+                  backgroundColor: 'lightgrey',
+                  alignSelf: 'center',
+                  paddingHorizontal: 7,
+                  borderRadius: 5,
+                }}>
+                <Text
+                  style={{
+                    color: 'rgba(0,0,0,0.7)',
+                    fontSize: 13,
+                    fontWeight: '500',
+                  }}>
+                  Area of Work: {item?.areaWork}
+                </Text>
+              </View>
+              <View
+                style={{
+                  marginHorizontal: 6,
+                  marginVertical: 4,
+                  backgroundColor: 'lightgrey',
+                  alignSelf: 'center',
+                  paddingHorizontal: 7,
+                  borderRadius: 5,
+                }}>
+                <Text
+                  style={{
+                    color: 'rgba(0,0,0,0.7)',
+                    fontSize: 13,
+                    fontWeight: '500',
+                  }}>
+                  Workers Required: {item?.numberWork}
+                </Text>
+              </View>
+              <View
+                style={{
+                  marginHorizontal: 6,
+                  marginVertical: 4,
+                  backgroundColor: 'lightgrey',
+                  alignSelf: 'center',
+                  paddingHorizontal: 7,
+                  borderRadius: 5,
+                }}>
+                <Text
+                  style={{
+                    color: 'rgba(0,0,0,0.7)',
+                    fontSize: 13,
+                    fontWeight: '500',
+                  }}>
+                  vechile Required: {item?.vechileRequired}
+                </Text>
+              </View>
+              <View
+                style={{
+                  marginHorizontal: 6,
+                  marginVertical: 4,
+                  backgroundColor: 'lightgrey',
+                  alignSelf: 'center',
+                  paddingHorizontal: 7,
+                  borderRadius: 5,
+                }}>
+                <Text
+                  style={{
+                    color: 'rgba(0,0,0,0.7)',
+                    fontSize: 13,
+                    fontWeight: '500',
+                  }}>
+                  Work Timing: {item?.workTiming}
+                </Text>
+              </View>
+            </>
+          )}
 
           <View
             style={{
               marginHorizontal: 6,
               marginVertical: 4,
-              backgroundColor: 'lightgrey',
+              // backgroundColor: 'lightgrey',
               alignSelf: 'center',
               paddingHorizontal: 7,
               borderRadius: 5,
             }}>
             <Text
               style={{
-                color: 'rgba(0,0,0,0.7)',
+                color: '#FF0000',
                 fontSize: 13,
                 fontWeight: '500',
+              }}
+              onPress={() => {
+                setShowMore(!showMore);
               }}>
-              Workers Required: {item?.numberWork}
-            </Text>
-          </View>
-
-          <View
-            style={{
-              marginHorizontal: 6,
-              marginVertical: 4,
-              backgroundColor: 'lightgrey',
-              alignSelf: 'center',
-              paddingHorizontal: 7,
-              borderRadius: 5,
-            }}>
-            <Text
-              style={{
-                color: 'rgba(0,0,0,0.7)',
-                fontSize: 13,
-                fontWeight: '500',
-              }}>
-              vechile Required: {item?.vechileRequired}
-            </Text>
-          </View>
-
-          <View
-            style={{
-              marginHorizontal: 6,
-              marginVertical: 4,
-              backgroundColor: 'lightgrey',
-              alignSelf: 'center',
-              paddingHorizontal: 7,
-              borderRadius: 5,
-            }}>
-            <Text
-              style={{
-                color: 'rgba(0,0,0,0.7)',
-                fontSize: 13,
-                fontWeight: '500',
-              }}>
-              Work Timing: {item?.workTiming}
+              {showMore ? 'Less' : 'More'}
             </Text>
           </View>
         </View>
@@ -729,7 +783,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
                   userId: item?.ownerId,
                 });
               }}>
-              <Text style={{...commonStyles.fs14_700}}>{user?.name}</Text>
+              <Text style={{...commonStyles.fs14_700}}>{item?.shopName}</Text>
             </TouchableHighlight>
             <View style={{...commonStyles.rowStart, alignItems: 'center'}}>
               <Text>Interview Timing: </Text>
@@ -754,13 +808,14 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
               alignItems: 'center',
               justifyContent: 'space-between',
             }}>
-            <Text style={{color: '#000', fontWeight: '900', fontSize: 15}}>
-              {item?.shopName}{' '}
-            </Text>
-            <Text>Last Date: {`${item?.startDate} to ${item.endDate}`}</Text>
+            <Text>Date: {`${item?.startDate} to ${item.endDate}`}</Text>
           </View>
-          <Text style={{color: '#000'}}>Description: {item?.description}</Text>
-          <Text style={{color: '#000'}}>Message: {item?.message}</Text>
+          <Text style={{color: '#000', width: '100%'}}>
+            Description: {item?.description}
+          </Text>
+          <Text style={{color: '#000', width: '100%'}}>
+            Message: {item?.message}
+          </Text>
         </View>
       </View>
       <View>
@@ -791,10 +846,12 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
             colors={['#EDAA26', '#E27127']}
             style={{
               width: 160,
-              height: 48,
+              height: 30,
               ...commonStyles.centerStyles,
               borderRadius: 5,
-              marginLeft: 20,
+              alignSelf: 'flex-end',
+              marginRight: 20,
+              // marginLeft: 20,
             }}>
             <TouchableHighlight
               onPress={handleApplyJob}

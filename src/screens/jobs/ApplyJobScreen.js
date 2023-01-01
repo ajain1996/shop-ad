@@ -323,11 +323,11 @@ export default function ApplyJobScreen({navigation, route}) {
               <></>
             )}
           </>
-          <View style={{marginTop: 20}} />
+          <View style={{marginTop: 10}} />
+          <Custom_Auth_Btn btnText="Submit" onPress={handleSubmit} />
         </View>
 
-        <Custom_Auth_Btn btnText="Submit" onPress={handleSubmit} />
-        <View style={{marginTop: 20}} />
+        <View style={{marginTop: 5}} />
       </View>
 
       <CustomPanel loading={loading} />

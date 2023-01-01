@@ -35,7 +35,8 @@ export default function Offerdetail({navigation, route}) {
       });
 
       getCategoryById(token, item.cateoryId, res => {
-        console.log(res, '<<<this is category');
+        console.log(res, item, '<<<this is category');
+        // setcategory(res.data[0].categoryName);
         setcategory(res.data[0].categoryName);
       });
     });

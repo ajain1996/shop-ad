@@ -44,7 +44,7 @@ export default function AddWorksScreen({navigation}) {
 
   const [name, setName] = React.useState('');
   const [desc, setDesc] = React.useState('');
-  const [location, setLocation] = React.useState(userData[0].pAddress);
+  const [location, setLocation] = React.useState();
   const [salary, setSalary] = React.useState(false);
   const [imageData, setImageData] = React.useState('');
   //   const [shift, setshift] = useState(second)
@@ -59,6 +59,23 @@ export default function AddWorksScreen({navigation}) {
   const [categories, setCategories] = useState([]);
   const [allCategory, setAllCategory] = useState([]);
   React.useEffect(() => {
+    if (
+      userData[0]?.pAddress == undefined ||
+      userData[0].pAddress == 'undefined' ||
+      userData[0].pAddress == null ||
+      userData[0].pAddress == 'null'
+    ) {
+      Alert.alert('Alert', 'Update your profile to add offer', [
+        {
+          text: 'Redirect',
+          onPress: () => {
+            navigation.navigate('UpdateProfileScreen', {});
+          },
+        },
+      ]);
+    } else {
+      setLocation(userData[0].pAddress);
+    }
     Auth.getLocalStorageData('bearer').then(token => {
       getAllCategoriesAPI(token, response => {
         if (response !== null) {

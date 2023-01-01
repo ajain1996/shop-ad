@@ -69,7 +69,7 @@ export default function UpdateProfileScreen({navigation}) {
     if (pAddress == '' || pAddress == null || pAddress == undefined) {
       setCanChangeAddress(true);
     } else {
-      if (pAddress.trim().length > 0) {
+      if (pAddress?.trim().length > 0) {
         setCanChangeAddress(false);
       }
     }
@@ -98,17 +98,17 @@ export default function UpdateProfileScreen({navigation}) {
       let allValid = true;
 
       const validArr = [
-        'fathername',
-        'mothername',
         'martialStatus',
+        'name',
+        'phone',
         'religion',
-        'experienceYears',
         'pAddress',
-        'eduction',
+        'rAddress',
+        // 'eduction',
       ];
 
       validArr.map(item => {
-        if (formData[item].trim() === '' && allValid) {
+        if (formData[item]?.trim() === '' && allValid) {
           // Alert.alert(item + ' is required');
           allValid = false;
         }
@@ -360,7 +360,7 @@ export default function UpdateProfileScreen({navigation}) {
               </>
             )}
 
-            {userType == 'user' && formData.mothername.trim() == '' ? (
+            {userType == 'user' && formData.mothername?.trim() == '' ? (
               <Text style={{...commonStyles.fs13_400, color: 'red'}}>
                 Mother name is required
               </Text>
@@ -384,7 +384,7 @@ export default function UpdateProfileScreen({navigation}) {
                     setPhoneError(false);
                   }}
                 />
-                {formData.fathername.trim() == '' ? (
+                {formData.fathername?.trim() == '' ? (
                   <Text style={{...commonStyles.fs13_400, color: 'red'}}>
                     Father name is required
                   </Text>
@@ -425,7 +425,7 @@ export default function UpdateProfileScreen({navigation}) {
               />
             )}
 
-            {formData.pAddress.trim() == '' ? (
+            {formData.pAddress?.trim() == '' ? (
               <Text style={{...commonStyles.fs13_400, color: 'red'}}>
                 Permanenet Address is required
               </Text>
@@ -459,7 +459,7 @@ export default function UpdateProfileScreen({navigation}) {
               <Text>{formData.rAddress}</Text>
             )}
 
-            {formData.rAddress.trim() == '' ? (
+            {formData.rAddress?.trim() == '' ? (
               <Text style={{...commonStyles.fs13_400, color: 'red'}}>
                 Redential Address is required
               </Text>
@@ -578,7 +578,7 @@ export default function UpdateProfileScreen({navigation}) {
                     setPhoneError(false);
                   }}
                 />
-                {formData.experienceYears.trim() == '' ? (
+                {formData.experienceYears?.trim() == '' ? (
                   <Text style={{...commonStyles.fs13_400, color: 'red'}}>
                     Experience Year is required
                   </Text>
@@ -603,7 +603,7 @@ export default function UpdateProfileScreen({navigation}) {
               }}
             />
 
-            {formData.religion.trim() == '' ? (
+            {formData.religion?.trim() == '' ? (
               <Text style={{...commonStyles.fs13_400, color: 'red'}}>
                 Religion is required
               </Text>
@@ -630,7 +630,7 @@ export default function UpdateProfileScreen({navigation}) {
                   }}
                 />
 
-                {formData.eduction.trim() == '' ? (
+                {formData.eduction?.trim() == '' ? (
                   <Text style={{...commonStyles.fs13_400, color: 'red'}}>
                     Education Details is required
                   </Text>
@@ -654,7 +654,7 @@ export default function UpdateProfileScreen({navigation}) {
             }}
           />
 
-          {formData.physicalDisablity.trim() == '' ? (
+          {formData.physicalDisablity?.trim() == '' ? (
             <Text style={{...commonStyles.fs13_400, color: 'red'}}>
               Physical Disablity is required
             </Text>
