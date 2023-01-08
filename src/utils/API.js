@@ -1003,6 +1003,7 @@ export const updateUserPostRequest = async (
     image,
     bearerToken,
     '\n\n\n data at sending to update',
+    imageChanged,
   );
 
   // const userImage = {
@@ -1010,6 +1011,7 @@ export const updateUserPostRequest = async (
   //   uri: image.assets[0].uri,
   //   type: image.assets[0].type,
   // };
+  // return null;
   var myHeaders = new Headers();
   myHeaders.append('Authorization', 'Bearer ' + bearerToken);
 
@@ -1021,7 +1023,7 @@ export const updateUserPostRequest = async (
   formdata.append('mobile', mobile);
   if (imageChanged == true) {
     console.log('data changed');
-    formdata.append('image', image, 'file_name123.jpg');
+    formdata.append('image', image, image.name);
   }
 
   formdata.append('eduction', formdata.education);
@@ -1059,7 +1061,13 @@ export const updateUserPostRequest = async (
       console.log(result, '<<<update image api');
       successCallBack(JSON.parse(result));
     })
-    .catch(error => console.log('error', error));
+
+    .catch(error => {
+      successCallBack({
+        status: false,
+        message: 'Please try uploading again !!!',
+      });
+    });
 };
 
 export const getUserDataById = async (uid, token, successCallBack) => {
@@ -1212,6 +1220,7 @@ export const applyJobPostAPI = async (
     '\n certificateLink: ',
     certificateLink,
   );
+
   // return null;
   let formData = new FormData();
 
@@ -1221,7 +1230,10 @@ export const applyJobPostAPI = async (
   formData.append('applicantName', applicantName);
   formData.append('applicantContact', applicantContact);
   formData.append('resumeLink', resumeLink);
-  formData.append('policeLink', policeLink);
+  if (policeLink != '') {
+    formData.append('policeLink', policeLink);
+  }
+
   formData.append('experienceLink', experienceLink);
   formData.append('certificateLink', certificateLink);
 

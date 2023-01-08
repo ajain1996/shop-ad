@@ -107,7 +107,7 @@ export default function AddWorksScreen({navigation}) {
 
   const handleSubmit = () => {
     if (!canApply) {
-      Toast.show('Please by membership to Add more Work!!');
+      Toast.show('Please buy membership to Add more Work!!');
       return null;
     }
 

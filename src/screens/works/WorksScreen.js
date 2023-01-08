@@ -21,7 +21,7 @@ import Auth from '../../services/Auth';
 import CustomLoader, {CustomPanel} from '../../components/CustomLoader';
 import PTRView from 'react-native-pull-to-refresh';
 import {useDispatch, useSelector} from 'react-redux';
-import {setWork} from '../../redux/reducer/work';
+import work, {setWork} from '../../redux/reducer/work';
 import HomeModal from '../home/HomeModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -106,7 +106,13 @@ export default function WorksScreen({navigation}) {
           })}
         </ScrollView>
         <View style={{height: 200}} />
-
+        {workData?.length == 0 && (
+          <View>
+            <Text style={{width: '100%', textAlign: 'center'}}>
+              No Data Found
+            </Text>
+          </View>
+        )}
         {/* <FlatList
                     data={workData}
                     renderItem={({ item }) => {

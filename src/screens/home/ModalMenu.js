@@ -110,14 +110,14 @@ const ModalMenu = ({modalVisible, callback, navigation}) => {
               <Text style={styles.textStyle}>Get Membership</Text>
             </TouchableHighlight>
 
-            <TouchableHighlight
+            {/* <TouchableHighlight
               style={[styles.button]}
               underlayColor="#dcdcdc"
               onPress={() => {
                 navigation.navigate('SavedScreen');
               }}>
               <Text style={styles.textStyle}>Saved</Text>
-            </TouchableHighlight>
+            </TouchableHighlight> */}
 
             <TouchableHighlight
               style={[styles.button]}

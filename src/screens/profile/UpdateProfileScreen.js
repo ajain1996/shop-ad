@@ -119,7 +119,7 @@ export default function UpdateProfileScreen({navigation}) {
         return null;
       }
 
-      console.log(formData, '<<<< this is formdata');
+      console.log(imageData, '<<<< this is formdata');
       // return null;
       Auth.getLocalStorageData('bearer').then(token => {
         updateUserPostRequest(
@@ -136,6 +136,10 @@ export default function UpdateProfileScreen({navigation}) {
           async response => {
             console.log(response, '<<<< this is response of image update');
             // return null;
+            if (response.status == false) {
+              setLoading(false);
+              return Alert.alert(response.message);
+            }
             setLoading(false);
             if (response !== null) {
               if (response?.message !== undefined) {
@@ -302,7 +306,9 @@ export default function UpdateProfileScreen({navigation}) {
                 />
               )}
             </TouchableHighlight>
-            <Text style={{color: '#000', fontSize: 17}}>Name</Text>
+            <Text style={{color: '#000', fontSize: 17}}>
+              Name <Text style={{color: '#FF0000'}}>*</Text>
+            </Text>
             <CustomTextInput
               placeholder="Name"
               value={name}
@@ -321,7 +327,9 @@ export default function UpdateProfileScreen({navigation}) {
               <></>
             )}
             <View style={{height: 14}} />
-            <Text style={{color: '#000', fontSize: 17}}>Phone</Text>
+            <Text style={{color: '#000', fontSize: 17}}>
+              Phone <Text style={{color: '#FF0000'}}>*</Text>
+            </Text>
             <CustomTextInput
               placeholder="Phone"
               value={phone}
@@ -396,7 +404,8 @@ export default function UpdateProfileScreen({navigation}) {
 
             <View style={{height: 14}} />
             <Text style={{color: '#000', fontSize: 17}}>
-              Permanent Address{' '}
+              {userType == 'user' ? 'Permanent Address' : 'Shop Address'}{' '}
+              <Text style={{color: '#FF0000'}}>*</Text>
               <Text style={{fontSize: 10, color: '#FF0000'}}>
                 {`${
                   !canChangeAddress ? '(Contact Admin To change Address)' : ''
@@ -408,7 +417,9 @@ export default function UpdateProfileScreen({navigation}) {
             )}
             {canChangeAddress && (
               <CustomTextInput
-                placeholder="Permanent Address"
+                placeholder={
+                  userType == 'user' ? 'Permanent Address' : 'Shop Address'
+                }
                 value={formData.pAddress}
                 // keyboardType="number-pad"
                 maxLength={30}
@@ -417,6 +428,7 @@ export default function UpdateProfileScreen({navigation}) {
                   // setPhone(val);
                   if (canChangeAddress) {
                     handleChange('pAddress', val);
+
                     // setPhoneError(false);
                   } else {
                     Toast.show('Please contact admin to change address');
@@ -435,7 +447,7 @@ export default function UpdateProfileScreen({navigation}) {
 
             <View style={{height: 14}} />
             <Text style={{color: '#000', fontSize: 17}}>
-              Residential Address{' '}
+              Residential Address <Text style={{color: '#FF0000'}}>*</Text>
               <Text style={{fontSize: 10, color: '#FF0000'}}>
                 {`${
                   !canChangeAddress ? '(Contact Admin To change Address)' : ''
@@ -467,10 +479,13 @@ export default function UpdateProfileScreen({navigation}) {
               <></>
             )}
             <View style={{height: 14}} />
-            <Text style={{color: '#000', fontSize: 17}}>Marital Status</Text>
-            {['Married', 'Not-Married'].map(item => {
+            <Text style={{color: '#000', fontSize: 17}}>
+              Marital Status <Text style={{color: '#FF0000'}}>*</Text>
+            </Text>
+            {['Married', 'Not-Married'].map((item, key) => {
               return (
                 <TouchableOpacity
+                  key={key}
                   style={[styles.checkboxWrapper]}
                   onPress={() => {
                     setFormData({
@@ -589,7 +604,9 @@ export default function UpdateProfileScreen({navigation}) {
             )}
 
             <View style={{height: 14}} />
-            <Text style={{color: '#000', fontSize: 17}}>Religion</Text>
+            <Text style={{color: '#000', fontSize: 17}}>
+              Religion <Text style={{color: '#FF0000'}}>*</Text>
+            </Text>
             <CustomTextInput
               placeholder="Religion"
               value={formData.religion}

@@ -74,13 +74,11 @@ export default function ApplyJobScreen({navigation, route}) {
 
   const handleSubmit = () => {
     if (cvFile.length === 0) {
-      // setCvFileError(true);
+      setCvFileError(true);
     } else if (educationCertificate.length === 0) {
       setEducationCertificateError(true);
     } else if (experienceCertificate.length === 0) {
       setExperienceCertificateError(true);
-    } else if (policyVerification.length === 0) {
-      setPolicyVerificationError(true);
     } else {
       setLoading(true);
       Auth.getAccount().then(userData => {
@@ -90,12 +88,15 @@ export default function ApplyJobScreen({navigation, route}) {
             uri: cvFile?.uri,
             type: cvFile?.type,
           };
+          let policy = '';
 
-          const policy = {
-            name: policyVerification?.name,
-            uri: policyVerification?.uri,
-            type: policyVerification?.type,
-          };
+          if (policyVerification != '') {
+            policy = {
+              name: policyVerification?.name,
+              uri: policyVerification?.uri,
+              type: policyVerification?.type,
+            };
+          }
 
           const experience = {
             name: experienceCertificate?.name,
@@ -164,7 +165,13 @@ export default function ApplyJobScreen({navigation, route}) {
           </Text>
           <>
             <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-              Attach CV
+              Attach CV{' '}
+              <Text
+                style={{
+                  color: '#FF0000',
+                }}>
+                *
+              </Text>
             </Text>
             {cvFile.length === 0 ? (
               <TouchableHighlight
@@ -181,7 +188,15 @@ export default function ApplyJobScreen({navigation, route}) {
               </TouchableHighlight>
             ) : (
               <View style={[styles.attachCV, commonStyles.rowBetween]}>
-                <Text style={{...commonStyles.fs14_500}}>{cvFile.name}</Text>
+                <Text style={{...commonStyles.fs14_500}}>
+                  {cvFile.name}{' '}
+                  <Text
+                    style={{
+                      color: '#FF0000',
+                    }}>
+                    *
+                  </Text>
+                </Text>
                 <TouchableHighlight
                   onPress={() => setCvFile('')}
                   underlayColor="#f7f8f9">
@@ -203,7 +218,13 @@ export default function ApplyJobScreen({navigation, route}) {
 
           <>
             <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-              Education Certificate
+              Education Certificate{' '}
+              <Text
+                style={{
+                  color: '#FF0000',
+                }}>
+                *
+              </Text>
             </Text>
             {educationCertificate.length === 0 ? (
               <TouchableHighlight
@@ -244,7 +265,13 @@ export default function ApplyJobScreen({navigation, route}) {
 
           <>
             <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-              Experience Certificate
+              Experience Certificate{' '}
+              <Text
+                style={{
+                  color: '#FF0000',
+                }}>
+                *
+              </Text>
             </Text>
             {experienceCertificate.length === 0 ? (
               <TouchableHighlight

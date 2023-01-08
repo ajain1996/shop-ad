@@ -189,7 +189,7 @@ export default function AddSaleOfferScreen({navigation}) {
     // console.log(diffDays, '<<<this is deiff');
     console.log(getCategoryId());
     if (!canApply) {
-      Toast.show('Please by membership to create more Offers!!');
+      Toast.show('Please buy membership to create more Offers!!');
       return null;
     }
     if (description.length === 0) {
