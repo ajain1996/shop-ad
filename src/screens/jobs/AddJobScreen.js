@@ -257,7 +257,8 @@ export default function AddJobScreen({navigation}) {
                     return true;
                   }
                   if (response.errors) {
-                    Alert.alert('Alert', response.errors.offerImage.message);
+                    console.log(response, '<<< this is response');
+                    Alert.alert('Alert', response.message);
                     return true;
                   }
                 }
@@ -435,7 +436,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Marital Status <ReqField />
+                Marital Status
               </Text>
               {['Married', 'Not-Married'].map(item => {
                 return (
@@ -471,18 +472,11 @@ export default function AddJobScreen({navigation}) {
                             onChangeText={(val) => { setMaritalStatus(val); setMaritalStatusError(false) }}
                             style={[styles.titleInput, { borderColor: maritalStatusError ? "red" : "#BDBDBD" }]}
                         /> */}
-              {maritalStatusError ? (
-                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
-                  Marital status is mandatory
-                </Text>
-              ) : (
-                <></>
-              )}
             </>
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Gender <ReqField />
+                Gender
               </Text>
               {['Men', 'Women', 'Others'].map(item => {
                 return (
@@ -518,13 +512,6 @@ export default function AddJobScreen({navigation}) {
                             onChangeText={(val) => { setGender(val); setGenderError(false) }}
                             style={[styles.titleInput, { borderColor: genderError ? "red" : "#BDBDBD" }]}
                         /> */}
-              {genderError ? (
-                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
-                  Gender is mandatory
-                </Text>
-              ) : (
-                <></>
-              )}
             </>
 
             <>
@@ -563,10 +550,6 @@ export default function AddJobScreen({navigation}) {
                   setShopNameError(true);
                 } else if (address.length === 0) {
                   setAddressError(true);
-                } else if (maritalStatus.length === 0) {
-                  setMaritalStatusError(true);
-                } else if (gender.length === 0) {
-                  setGenderError(true);
                 } else {
                   setShowNext({
                     next1: false,
@@ -617,7 +600,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Number of Workers <ReqField />
+                Number of Workers
               </Text>
               <TextInput
                 placeholder="Number of Workers"
@@ -633,18 +616,11 @@ export default function AddJobScreen({navigation}) {
                   {borderColor: numberOfWorksError ? 'red' : '#BDBDBD'},
                 ]}
               />
-              {numberOfWorksError ? (
-                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
-                  Number of Workers is mandatory
-                </Text>
-              ) : (
-                <></>
-              )}
             </>
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Experience Required (in years) <ReqField />
+                Experience Required (in years)
               </Text>
               <TextInput
                 placeholder="Experience Required"
@@ -660,13 +636,6 @@ export default function AddJobScreen({navigation}) {
                   {borderColor: experienceError ? 'red' : '#BDBDBD'},
                 ]}
               />
-              {experienceError ? (
-                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
-                  Experience Required is mandatory
-                </Text>
-              ) : (
-                <></>
-              )}
             </>
 
             <>
@@ -698,7 +667,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Work Start Timing <ReqField />
+                Work Start Timing
               </Text>
               <TextInput
                 placeholder="Start hour (ex 13 for 1 PM)"
@@ -724,7 +693,7 @@ export default function AddJobScreen({navigation}) {
             </>
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Work End Timing <ReqField />
+                Work End Timing
               </Text>
               <TextInput
                 placeholder="End hour (ex 20 for 8 PM)"
@@ -765,7 +734,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Vehicle Required <ReqField />
+                Vehicle Required
               </Text>
               <TextInput
                 placeholder="Vehicle Required"
@@ -849,7 +818,7 @@ export default function AddJobScreen({navigation}) {
                   marginBottom: 10,
                   marginTop: 10,
                 }}>
-                Facilities <ReqField />
+                Facilities
               </Text>
               <FlatList
                 data={[
@@ -928,7 +897,7 @@ export default function AddJobScreen({navigation}) {
             </>
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Min Salary Offered
+                Min Salary Offered <ReqField />
               </Text>
               <TextInput
                 placeholder="ex: Rs 10,000 "
@@ -955,7 +924,7 @@ export default function AddJobScreen({navigation}) {
             </>
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Max Salary Offered
+                Max Salary Offered <ReqField />
               </Text>
               <TextInput
                 placeholder="ex: Rs 20,000 "
@@ -1016,20 +985,8 @@ export default function AddJobScreen({navigation}) {
               onPress={() => {
                 if (areaOfWork.length === 0) {
                   setAreaOfWorkError(true);
-                } else if (numberOfWorks.length === 0) {
-                  setNumberOfWorkError(true);
-                } else if (experience.length === 0) {
-                  setExperienceError(true);
                 } else if (manPower.length === 0) {
                   setManPowerError(true);
-                } else if (workTiming.length === 0) {
-                  setWorkTimingError(true);
-                } else if (vehicleRequired.length === 0) {
-                  setVehicleRequiredError(true);
-                } else if (facilities.length === 0) {
-                  setFacilitiesError(true);
-                } else if (incentive.length === 0) {
-                  setIncentiveError(true);
                 } else if (description.length === 0) {
                   setDescriptionError(true);
                 }

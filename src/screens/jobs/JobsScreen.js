@@ -357,7 +357,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
       <View
         style={{
           ...commonStyles.rowBetween,
-          height: 62,
+          height: 80,
           width: '100%',
           padding: 20,
         }}>
@@ -437,6 +437,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
             </View>
           </View>
         </View> */}
+
         <View>
           <Text style={{fontSize: 20, fontWeight: 'bold', color: '#000'}}>
             {item?.title}
@@ -455,7 +456,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
               color: 'skyblue',
               fontSize: 14,
             }}>
-            Rs {item?.salary}
+            Salary: Rs {item?.salary}
           </Text>
           <TouchableHighlight
             onPress={() => setHomeModalVisible(true)}
@@ -526,7 +527,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
                 fontSize: 13,
                 fontWeight: '500',
               }}>
-              Designation: {item?.designationName}
+              Contact person: {item?.designationName}
             </Text>
           </View>
           <View

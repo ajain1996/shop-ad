@@ -129,7 +129,7 @@ export const GetAllCandidateScreen = ({item, index, navigation}) => {
   const [userData, setUserData] = useState({});
   useEffect(() => {
     Auth.getLocalStorageData('bearer').then(token => {
-      getUserByIDPostAPI('638c4deb0a101475c9cd2ae9', token, res => {
+      getUserByIDPostAPI(item.applicantId, token, res => {
         console.log('this is uer data', res);
         setUserData(res.data[0]);
       });
@@ -161,7 +161,7 @@ export const GetAllCandidateScreen = ({item, index, navigation}) => {
       <View style={styles.itemContent}>
         <Image
           source={{
-            uri: userData.userProfile,
+            uri: userData?.userProfile,
           }}
           style={styles.itemImg}
         />
@@ -229,7 +229,22 @@ export const GetAllCandidateScreen = ({item, index, navigation}) => {
               onPress={() => {
                 openBrowser(item?.certificateLink);
               }}>
-              Certificate
+              Educational Certificate
+            </Text>
+          )}
+          {item.experienceLink != '' && item.experienceLink != null && (
+            <Text
+              style={{
+                height: 20,
+                borderWidth: 1,
+                textAlign: 'center',
+                marginTop: 10,
+                color: '#000',
+              }}
+              onPress={() => {
+                openBrowser(item?.experienceLink);
+              }}>
+              Experience Certificate
             </Text>
           )}
           {item.policeLink != '' && item.policeLink != null && (
@@ -244,7 +259,7 @@ export const GetAllCandidateScreen = ({item, index, navigation}) => {
               onPress={() => {
                 openBrowser(item?.policeLink);
               }}>
-              Download Resume
+              Download Police Verification
             </Text>
           )}
         </View>

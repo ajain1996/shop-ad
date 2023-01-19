@@ -6,6 +6,7 @@ import {
   ImageBackground,
   TouchableHighlight,
   ScrollView,
+  Alert,
 } from 'react-native';
 import React from 'react';
 import MembershipHeader from './MembershipHeader';
@@ -134,7 +135,7 @@ export default function GetMembershipScreen({navigation}) {
           />
           <View />
         </View>
-          <View style={{height: 20}} />
+        <View style={{height: 20}} />
         <Custom_Auth_Btn btnText="Get Now" onPress={() => onPressButton()} />
       </View>
       <View style={{height: 100}} />

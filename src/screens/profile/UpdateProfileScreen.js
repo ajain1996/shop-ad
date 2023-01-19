@@ -13,10 +13,12 @@ import {SIZES} from '../../utils/theme';
 import {commonStyles} from '../../utils/styles';
 import Custom_Auth_Btn from '../../components/Custom_Auth_Btn';
 import CustomTextInput from '../../components/CustomTextInput';
+import {SelectList} from 'react-native-dropdown-select-list';
 import Auth from '../../services/Auth';
 import {useDispatch, useSelector} from 'react-redux';
 import CustomLoader, {CustomPanel} from '../../components/CustomLoader';
 import {launchImageLibrary} from 'react-native-image-picker';
+import {Linking} from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
 
 import {
@@ -41,8 +43,45 @@ const initialValues = {
   rAddress: '',
   fathername: '',
   mothername: '',
+  shopCategory: '',
   certificate: null,
 };
+
+const purposeData = [
+  {key: '1', value: 'Ads'},
+  {key: '2', value: 'Recruitment'},
+  {key: '3', value: 'Work'},
+  {key: '4', value: 'All'},
+];
+const shopCategoryData = [
+  {key: '1', value: 'Fast food'},
+  {key: '2', value: 'Groceries'},
+  {key: '3', value: 'Kirana Store'},
+  {key: '4', value: 'Sari  Shop'},
+  {key: '5', value: 'Readymade Garments'},
+  {key: '6', value: 'Stationery'},
+  {key: '8', value: 'Printing Shop'},
+  {key: '9', value: 'Shoes store  '},
+  {key: '10', value: 'Repairing Shop'},
+  {key: '11', value: 'Bakeries'},
+  {key: '12', value: 'Namkeen Shop'},
+  {key: '13', value: 'Restaurants'},
+  {key: '14', value: 'Sweets Shop'},
+  {key: '15', value: 'Purse Shop'},
+  {key: '16', value: 'Wedding Suit Shop'},
+  {key: '17', value: 'Hardware Shop'},
+  {key: '18', value: 'Crockery Shop'},
+  {key: '19', value: 'Fancy Item Shop'},
+  {key: '20', value: 'Bag Shop'},
+  {key: '21', value: 'Mens Accessories Shop'},
+  {key: '22', value: "Woman's Accessories Shop"},
+  {key: '23', value: 'Tailor Shop'},
+  {key: '24', value: 'Jewellery Shop'},
+  {key: '25', value: 'Novell Shop'},
+  {key: '26', value: 'Metal Shop'},
+  {key: '27', value: 'Paint Shop'},
+  {key: '28', value: 'Curtain Shop'},
+];
 export default function UpdateProfileScreen({navigation}) {
   const dispatch = useDispatch();
 
@@ -51,6 +90,9 @@ export default function UpdateProfileScreen({navigation}) {
   const [nameError, setNameError] = React.useState(false);
   const [phoneError, setPhoneError] = React.useState(false);
   const [isCertificateUploaded, setIsCertificateUploaded] = useState(false);
+  const [shopCategory, setShopCategory] = useState('');
+  const [emailId, setemailId] = useState(userData[0].email);
+  const [purposeOfRegistration, setpurposeOfRegistration] = useState('');
   const [loading, setLoading] = React.useState(false);
   const [name, setName] = React.useState('');
   const [phone, setPhone] = React.useState('');
@@ -96,16 +138,28 @@ export default function UpdateProfileScreen({navigation}) {
     } else {
       setLoading(true);
       let allValid = true;
-
-      const validArr = [
-        'martialStatus',
-        'name',
-        'phone',
-        'religion',
-        'pAddress',
-        'rAddress',
-        // 'eduction',
-      ];
+      let validArr = [];
+      if (userType == 'user') {
+        validArr = [
+          'martialStatus',
+          'name',
+          'phone',
+          'religion',
+          'pAddress',
+          'rAddress',
+          'eduction',
+        ];
+      } else {
+        validArr = [
+          // 'martialStatus',
+          'name',
+          'phone',
+          // 'religion',
+          'pAddress',
+          'rAddress',
+          // 'eduction',
+        ];
+      }
 
       validArr.map(item => {
         if (formData[item]?.trim() === '' && allValid) {
@@ -124,7 +178,7 @@ export default function UpdateProfileScreen({navigation}) {
       Auth.getLocalStorageData('bearer').then(token => {
         updateUserPostRequest(
           userData[0]?._id,
-          userData[0]?.email,
+          emailId,
           name,
           phone,
           userType,
@@ -133,6 +187,8 @@ export default function UpdateProfileScreen({navigation}) {
           imageChanged,
           formData,
           isCertificateUploaded,
+          shopCategory,
+          purposeOfRegistration,
           async response => {
             console.log(response, '<<<< this is response of image update');
             // return null;
@@ -189,7 +245,7 @@ export default function UpdateProfileScreen({navigation}) {
         copyTo: 'cachesDirectory',
       });
 
-      var realPath;
+      // var realPath;
       if (Platform.OS === 'ios') {
         var RNFS = require('react-native-fs');
         let url = res.uri;
@@ -350,6 +406,54 @@ export default function UpdateProfileScreen({navigation}) {
               <></>
             )}
             <View style={{height: 14}} />
+            <Text style={{color: '#000', fontSize: 17}}>
+              Email <Text style={{color: '#FF0000'}}>*</Text>
+            </Text>
+            <CustomTextInput
+              placeholder="Email"
+              value={emailId}
+              // maxLength={10}
+              // icon={require('../../assets/img/phone.png')}
+              onChange={val => {
+                setemailId(val);
+                // setPhoneError(false);
+              }}
+            />
+
+            <View style={{height: 14}} />
+            {userType == 'shop' && (
+              <>
+                <Text style={{color: '#000', fontSize: 17}}>
+                  Shop Category <Text style={{color: '#FF0000'}}>*</Text>
+                </Text>
+                <SelectList
+                  setSelected={val => {
+                    // console.log(val, '<<<< sdfcategory');
+                    setShopCategory(val);
+                  }}
+                  data={shopCategoryData}
+                  save="value"
+                />
+              </>
+            )}
+            <View style={{height: 14}} />
+            {userType == 'shop' && (
+              <>
+                <Text style={{color: '#000', fontSize: 17}}>
+                  Purpose of Registration
+                </Text>
+                <SelectList
+                  setSelected={val => {
+                    // console.log(val, '<<<< sdfcategory');
+                    setpurposeOfRegistration(val);
+                  }}
+                  data={purposeData}
+                  save="value"
+                />
+              </>
+            )}
+            <View style={{height: 14}} />
+
             {userType == 'user' && (
               <>
                 <Text style={{color: '#000', fontSize: 17}}>Mother name</Text>
@@ -404,7 +508,7 @@ export default function UpdateProfileScreen({navigation}) {
 
             <View style={{height: 14}} />
             <Text style={{color: '#000', fontSize: 17}}>
-              {userType == 'user' ? 'Permanent Address' : 'Shop Address'}{' '}
+              {userType == 'user' ? 'Permanent Address' : 'Shop Address'}
               <Text style={{color: '#FF0000'}}>*</Text>
               <Text style={{fontSize: 10, color: '#FF0000'}}>
                 {`${
@@ -418,7 +522,9 @@ export default function UpdateProfileScreen({navigation}) {
             {canChangeAddress && (
               <CustomTextInput
                 placeholder={
-                  userType == 'user' ? 'Permanent Address' : 'Shop Address'
+                  userType == 'user'
+                    ? 'Permanent Address'
+                    : 'shop no, area, city, state, country, pin code'
                 }
                 value={formData.pAddress}
                 // keyboardType="number-pad"
@@ -479,39 +585,43 @@ export default function UpdateProfileScreen({navigation}) {
               <></>
             )}
             <View style={{height: 14}} />
-            <Text style={{color: '#000', fontSize: 17}}>
-              Marital Status <Text style={{color: '#FF0000'}}>*</Text>
-            </Text>
-            {['Married', 'Not-Married'].map((item, key) => {
-              return (
-                <TouchableOpacity
-                  key={key}
-                  style={[styles.checkboxWrapper]}
-                  onPress={() => {
-                    setFormData({
-                      ...formData,
-                      martialStatus: item.toLocaleLowerCase(),
-                    });
-                  }}>
-                  <View style={[styles.checkbox]}>
-                    <View
-                      style={{
-                        width: 13,
-                        height: 13,
-                        borderRadius: 100,
-                        backgroundColor:
-                          formData.martialStatus == item.toLocaleLowerCase()
-                            ? '#000'
-                            : '#fff',
-                      }}
-                    />
-                  </View>
-                  <Text style={{...commonStyles.fs14_400, marginLeft: 10}}>
-                    {item}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
+            {userType == 'user' && (
+              <>
+                <Text style={{color: '#000', fontSize: 17}}>
+                  Marital Status <Text style={{color: '#FF0000'}}>*</Text>
+                </Text>
+                {['Married', 'Not-Married'].map((item, key) => {
+                  return (
+                    <TouchableOpacity
+                      key={key}
+                      style={[styles.checkboxWrapper]}
+                      onPress={() => {
+                        setFormData({
+                          ...formData,
+                          martialStatus: item.toLocaleLowerCase(),
+                        });
+                      }}>
+                      <View style={[styles.checkbox]}>
+                        <View
+                          style={{
+                            width: 13,
+                            height: 13,
+                            borderRadius: 100,
+                            backgroundColor:
+                              formData.martialStatus == item.toLocaleLowerCase()
+                                ? '#000'
+                                : '#fff',
+                          }}
+                        />
+                      </View>
+                      <Text style={{...commonStyles.fs14_400, marginLeft: 10}}>
+                        {item}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </>
+            )}
 
             {userType == 'user' && (
               <>
@@ -547,6 +657,7 @@ export default function UpdateProfileScreen({navigation}) {
                     style={[styles.attachCV]}
                     onPress={() => {
                       selectPdfFile('certificate');
+
                       // handleChange("certificate",)
                       // setCvFileError(false);
                     }}
@@ -558,7 +669,12 @@ export default function UpdateProfileScreen({navigation}) {
                   </TouchableHighlight>
                 ) : (
                   <View style={[styles.attachCV, commonStyles.rowBetween]}>
-                    <Text style={{...commonStyles.fs14_500}}>
+                    <Text
+                      style={{...commonStyles.fs14_500}}
+                      onPress={() => {
+                        // console.log(userData, '<<this is userdata');
+                        Linking.openURL(userData[0].certificate);
+                      }}>
                       {formData?.certificate?.name}
                     </Text>
                     <TouchableHighlight
@@ -604,28 +720,31 @@ export default function UpdateProfileScreen({navigation}) {
             )}
 
             <View style={{height: 14}} />
-            <Text style={{color: '#000', fontSize: 17}}>
-              Religion <Text style={{color: '#FF0000'}}>*</Text>
-            </Text>
-            <CustomTextInput
-              placeholder="Religion"
-              value={formData.religion}
-              // keyboardType="number-pad"
-              maxLength={30}
-              // icon={require('../../assets/img/phone.png')}
-              onChange={val => {
-                // setPhone(val);
-                handleChange('religion', val);
-                setPhoneError(false);
-              }}
-            />
-
-            {formData.religion?.trim() == '' ? (
-              <Text style={{...commonStyles.fs13_400, color: 'red'}}>
-                Religion is required
-              </Text>
-            ) : (
-              <></>
+            {userType == 'user' && (
+              <>
+                <Text style={{color: '#000', fontSize: 17}}>
+                  Religion <Text style={{color: '#FF0000'}}>*</Text>
+                </Text>
+                <CustomTextInput
+                  placeholder="Religion"
+                  value={formData.religion}
+                  // keyboardType="number-pad"
+                  maxLength={30}
+                  // icon={require('../../assets/img/phone.png')}
+                  onChange={val => {
+                    // setPhone(val);
+                    handleChange('religion', val);
+                    setPhoneError(false);
+                  }}
+                />
+                {formData.religion?.trim() == '' ? (
+                  <Text style={{...commonStyles.fs13_400, color: 'red'}}>
+                    Religion is required
+                  </Text>
+                ) : (
+                  <></>
+                )}
+              </>
             )}
 
             {userType == 'user' && (

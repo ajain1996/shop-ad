@@ -30,6 +30,7 @@ import {RenderUpload, ReqField} from '../offer/AddSaleOfferScreen';
 
 export default function AddWorksScreen({navigation}) {
   const [nameError, setNameError] = React.useState(false);
+  const [shopNameError, setshopNameError] = React.useState(false);
   const [descError, setDescError] = React.useState(false);
   const [locationError, setLocationError] = React.useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
@@ -43,6 +44,7 @@ export default function AddWorksScreen({navigation}) {
   const [categoryId, setCategoryId] = useState('day'); // day night values
 
   const [name, setName] = React.useState('');
+  const [shopName, setshopName] = React.useState('');
   const [desc, setDesc] = React.useState('');
   const [location, setLocation] = React.useState();
   const [salary, setSalary] = React.useState(false);
@@ -56,6 +58,10 @@ export default function AddWorksScreen({navigation}) {
   const [imageError, setImageError] = useState(false);
   const [canApply, setCanApply] = useState(true);
   const [category, setCategory] = React.useState('');
+  const [emailId, setemailId] = React.useState('');
+  const [instaId, setinstaId] = React.useState('');
+  const [facebookId, setfacebookId] = React.useState('');
+  const [websiteAddress, setwebsiteAddress] = React.useState('');
   const [categories, setCategories] = useState([]);
   const [allCategory, setAllCategory] = useState([]);
   React.useEffect(() => {
@@ -140,6 +146,11 @@ export default function AddWorksScreen({navigation}) {
             contact,
             userData[0].email,
             imageData,
+            instaId,
+            facebookId,
+            emailId,
+            websiteAddress,
+
             token,
             response => {
               setLoading(false);
@@ -238,7 +249,7 @@ export default function AddWorksScreen({navigation}) {
             )}
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Your Name <ReqField />
+                Owner Name <ReqField />
               </Text>
               <TextInput
                 placeholder="Your Name"
@@ -255,12 +266,55 @@ export default function AddWorksScreen({navigation}) {
               />
               {nameError ? (
                 <Text style={{...commonStyles.fs12_400, color: 'red'}}>
-                  Name is mandatory
+                  Owner Name is mandatory
                 </Text>
               ) : (
                 <></>
               )}
             </>
+            <>
+              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+                Shop Name <ReqField />
+              </Text>
+              <TextInput
+                placeholder="Shop Name"
+                placeholderTextColor="#999"
+                value={shopName}
+                onChangeText={val => {
+                  setshopNameError(val);
+                  setshopName(false);
+                }}
+                style={[
+                  styles.descriptionInput,
+                  {borderColor: nameError ? 'red' : '#BDBDBD'},
+                ]}
+              />
+              {shopNameError ? (
+                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+                  Shop Name is mandatory
+                </Text>
+              ) : (
+                <></>
+              )}
+            </>
+            {/* <>
+              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+                Shop Name
+              </Text>
+              <TextInput
+                placeholder="Shop Name"
+                placeholderTextColor="#999"
+                value={name}
+                onChangeText={val => {
+                  setshopName(val);
+                  // setNameError(false);
+                }}
+                style={[
+                  styles.descriptionInput,
+                  {borderColor: nameError ? 'red' : '#BDBDBD'},
+                ]}
+              />
+            </> */}
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
@@ -518,6 +572,82 @@ export default function AddWorksScreen({navigation}) {
               ) : (
                 <></>
               )}
+            </>
+            <>
+              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+                Email ID <ReqField />
+              </Text>
+              <TextInput
+                placeholder="Contact"
+                placeholderTextColor="#999"
+                value={emailId}
+                // keyboardType="number-pad"
+                maxLength={10}
+                onChangeText={val => {
+                  setemailId(val);
+                }}
+                style={[
+                  styles.descriptionInput,
+                  {borderColor: contactError ? 'red' : '#BDBDBD'},
+                ]}
+              />
+            </>
+            <>
+              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+                Facebook Id
+              </Text>
+              <TextInput
+                placeholder="Contact"
+                placeholderTextColor="#999"
+                value={facebookId}
+                // keyboardType="number-pad"
+                maxLength={10}
+                onChangeText={val => {
+                  setfacebookId(val);
+                }}
+                style={[
+                  styles.descriptionInput,
+                  {borderColor: contactError ? 'red' : '#BDBDBD'},
+                ]}
+              />
+            </>
+            <>
+              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+                Instagram Id
+              </Text>
+              <TextInput
+                placeholder="Contact"
+                placeholderTextColor="#999"
+                value={instaId}
+                // keyboardType="number-pad"
+                maxLength={10}
+                onChangeText={val => {
+                  setinstaId(val);
+                }}
+                style={[
+                  styles.descriptionInput,
+                  {borderColor: contactError ? 'red' : '#BDBDBD'},
+                ]}
+              />
+            </>
+            <>
+              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+                Website address
+              </Text>
+              <TextInput
+                placeholder="Contact"
+                placeholderTextColor="#999"
+                value={websiteAddress}
+                // keyboardType="number-pad"
+                maxLength={10}
+                onChangeText={val => {
+                  setwebsiteAddress(val);
+                }}
+                style={[
+                  styles.descriptionInput,
+                  {borderColor: contactError ? 'red' : '#BDBDBD'},
+                ]}
+              />
             </>
           </View>
           <Text />

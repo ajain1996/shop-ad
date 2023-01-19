@@ -214,14 +214,14 @@ export default function HomeScreen({navigation}) {
         /> */}
       </View>
 
-      <HomeSearchData
+      {/* <HomeSearchData
         showSuggestion={showSuggestion}
         loading={loading2}
         suggestionTitleData={suggestionTitleData}
         setSuggestionTitleData={setSuggestionTitleData}
         setShowSuggestion={setShowSuggestion}
         setLocationTitle={setLocationTitle}
-      />
+      /> */}
 
       <PTRView onRefresh={_refresh}>
         <ScrollView>
@@ -475,74 +475,36 @@ const RenderSingleOffer = ({
   var startDate = moment(item?.startDate).format('DD/MM/YYYY');
   var endDate = moment(item?.endDate).format('DD/MM/YYYY');
   var diffDays = dayDiff(startDate, endDate, item.description, item._id);
+  const d = new Date();
+  const checkDaysFromCurrDate = dayDiff(
+    `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`,
+    endDate,
+    'des',
+    'id',
+  );
+  console.log(checkDaysFromCurrDate, '<<<<current date');
   // if (diffDays > 4) {
   //   return null;
   // }
-  if (diffDays < 0) {
+  // if (diffDays < 0) {
+  if (checkDaysFromCurrDate < 0) {
     return null;
-  }
-  return (
-    <View
-      style={{
-        borderBottomColor: '#D8D8D8',
-        borderBottomWidth: 1,
-        backgroundColor: '#fff',
-      }}>
+  } else {
+    return (
       <View
         style={{
-          ...commonStyles.rowBetween,
-          height: 62,
-          width: '100%',
-          padding: 20,
+          borderBottomColor: '#D8D8D8',
+          borderBottomWidth: 1,
+          backgroundColor: '#fff',
         }}>
-        <View style={{...commonStyles.rowStart, alignItems: 'center'}}>
-          <TouchableHighlight
-            underlayColor="#f7f8f9"
-            onPress={() => {
-              navigation.navigate('UserDetailsScreen', {
-                userId: item?.ownerId,
-                user: user,
-              });
-            }}>
-            {user?.userProfile !== undefined ? (
-              <Image
-                source={{uri: user?.userProfile}}
-                resizeMode="contain"
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 100,
-                  marginTop: 6,
-                  borderWidth: 2,
-                  borderColor: '#E27127',
-                }}
-              />
-            ) : (
-              <View
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 100,
-                  marginTop: 6,
-                  borderWidth: 2,
-                  borderColor: '#E27127',
-                }}>
-                <Image
-                  source={require('../../assets/img/profile-tab.png')}
-                  resizeMode="contain"
-                  style={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: 100,
-                    marginHorizontal: 4,
-                    marginVertical: 3,
-                  }}
-                />
-              </View>
-            )}
-          </TouchableHighlight>
-
-          <View style={{marginLeft: 6}}>
+        <View
+          style={{
+            ...commonStyles.rowBetween,
+            height: 62,
+            width: '100%',
+            padding: 20,
+          }}>
+          <View style={{...commonStyles.rowStart, alignItems: 'center'}}>
             <TouchableHighlight
               underlayColor="#f7f8f9"
               onPress={() => {
@@ -551,152 +513,180 @@ const RenderSingleOffer = ({
                   user: user,
                 });
               }}>
-              <Text style={{...commonStyles.fs14_700}}>{user?.name}</Text>
+              {user?.userProfile !== undefined ? (
+                <Image
+                  source={{uri: user?.userProfile}}
+                  resizeMode="contain"
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 100,
+                    marginTop: 6,
+                    borderWidth: 2,
+                    borderColor: '#E27127',
+                  }}
+                />
+              ) : (
+                <View
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 100,
+                    marginTop: 6,
+                    borderWidth: 2,
+                    borderColor: '#E27127',
+                  }}>
+                  <Image
+                    source={require('../../assets/img/profile-tab.png')}
+                    resizeMode="contain"
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: 100,
+                      marginHorizontal: 4,
+                      marginVertical: 3,
+                    }}
+                  />
+                </View>
+              )}
             </TouchableHighlight>
-            <View style={{...commonStyles.rowStart, alignItems: 'center'}}>
-              <Image
-                source={require('../../assets/img/location.png')}
-                resizeMode="contain"
-                style={{width: 18, height: 16}}
-              />
+
+            <View style={{marginLeft: 6}}>
               <TouchableHighlight
+                underlayColor="#f7f8f9"
                 onPress={() => {
-                  navigation.navigate('LocationScreen');
-                }}
-                underlayColor="#f7f8f9">
-                <Text style={{...commonStyles.fs12_400, marginLeft: 2}}>
-                  {item?.location}
-                </Text>
+                  navigation.navigate('UserDetailsScreen', {
+                    userId: item?.ownerId,
+                    user: user,
+                  });
+                }}>
+                <Text style={{...commonStyles.fs14_700}}>{user?.name}</Text>
               </TouchableHighlight>
+              <View style={{...commonStyles.rowStart, alignItems: 'center'}}>
+                <Image
+                  source={require('../../assets/img/location.png')}
+                  resizeMode="contain"
+                  style={{width: 18, height: 16}}
+                />
+                <TouchableHighlight
+                  onPress={() => {
+                    navigation.navigate('LocationScreen');
+                  }}
+                  underlayColor="#f7f8f9">
+                  <Text style={{...commonStyles.fs12_400, marginLeft: 2}}>
+                    {item?.location}
+                  </Text>
+                </TouchableHighlight>
+              </View>
             </View>
           </View>
-        </View>
 
+          <TouchableHighlight
+            onPress={() => setHomeModalVisible(true)}
+            underlayColor="#f7f8f9">
+            <Image
+              source={require('../../assets/img/3dots.png')}
+              resizeMode="contain"
+              style={{width: 24, height: 24, borderRadius: 100}}
+            />
+          </TouchableHighlight>
+        </View>
         <TouchableHighlight
-          onPress={() => setHomeModalVisible(true)}
-          underlayColor="#f7f8f9">
-          <Image
-            source={require('../../assets/img/3dots.png')}
-            resizeMode="contain"
-            style={{width: 24, height: 24, borderRadius: 100}}
-          />
+          onPress={() => {
+            // Alert.alert('ok');
+            navigation.navigate('OfferDetail', {
+              item,
+            });
+          }}>
+          <ScrollView horizontal={true}>
+            {item?.offerImage && (
+              <Image
+                source={{uri: item?.offerImage}}
+                style={{width: SIZES.width, height: 311}}
+              />
+            )}
+            {/* {item?.offerImage && (
+              <Image
+                source={{uri: item?.offerImage}}
+                style={{width: SIZES.width, height: 311}}
+              />
+            )} */}
+            {item?.offerImage1 && (
+              <Image
+                source={{uri: item?.offerImage1}}
+                style={{width: SIZES.width, height: 311}}
+              />
+            )}
+            {item?.offerImage2 && (
+              <Image
+                source={{uri: item?.offerImage2}}
+                style={{width: SIZES.width, height: 311}}
+              />
+            )}
+            {item?.offerImage3 && (
+              <Image
+                source={{uri: item?.offerImage3}}
+                style={{width: SIZES.width, height: 311}}
+              />
+            )}
+            {item?.offerImage34 && (
+              <Image
+                source={{uri: item?.offerImage4}}
+                style={{width: SIZES.width, height: 311}}
+              />
+            )}
+          </ScrollView>
         </TouchableHighlight>
-      </View>
-      <TouchableHighlight
-        onPress={() => {
-          // Alert.alert('ok');
-          navigation.navigate('OfferDetail', {
-            item,
-          });
-        }}>
-        <ScrollView horizontal={true}>
-          {item?.offerImage && (
-            <Image
-              source={{uri: item?.offerImage}}
-              style={{width: SIZES.width, height: 311}}
-            />
-          )}
-          {/* {item?.offerImage && (
-            <Image
-              source={{uri: item?.offerImage}}
-              style={{width: SIZES.width, height: 311}}
-            />
-          )} */}
-          {item?.offerImage1 && (
-            <Image
-              source={{uri: item?.offerImage1}}
-              style={{width: SIZES.width, height: 311}}
-            />
-          )}
-          {item?.offerImage2 && (
-            <Image
-              source={{uri: item?.offerImage2}}
-              style={{width: SIZES.width, height: 311}}
-            />
-          )}
-          {item?.offerImage3 && (
-            <Image
-              source={{uri: item?.offerImage3}}
-              style={{width: SIZES.width, height: 311}}
-            />
-          )}
-          {item?.offerImage34 && (
-            <Image
-              source={{uri: item?.offerImage4}}
-              style={{width: SIZES.width, height: 311}}
-            />
-          )}
-        </ScrollView>
-      </TouchableHighlight>
 
-      <View style={{...commonStyles.rowBetween, padding: 15}}>
-        <View style={{...commonStyles.rowStart}}>
-          <TouchableHighlight
-            onPress={handleLike}
-            underlayColor="#eee"
-            style={{padding: 5}}>
-            <View style={{...commonStyles.row}}>
-              <Image
-                source={
-                  isLike
-                    ? require('../../assets/img/heart.png')
-                    : require('../../assets/img/hearto.png')
-                }
-                style={{
-                  width: 24,
-                  height: 24,
-                  tintColor: isLike ? '#FF0000' : '#000',
-                }}
-              />
-              <Text style={{...commonStyles.fs14_500, marginLeft: 9}}>
-                {likesCount} Likes
-              </Text>
-            </View>
-          </TouchableHighlight>
+        <View style={{...commonStyles.rowBetween, padding: 15}}>
+          <View style={{...commonStyles.rowStart}}>
+            <TouchableHighlight
+              onPress={handleLike}
+              underlayColor="#eee"
+              style={{padding: 5}}>
+              <View style={{...commonStyles.row}}>
+                <Image
+                  source={
+                    isLike
+                      ? require('../../assets/img/heart.png')
+                      : require('../../assets/img/hearto.png')
+                  }
+                  style={{
+                    width: 24,
+                    height: 24,
+                    tintColor: isLike ? '#FF0000' : '#000',
+                  }}
+                />
+                <Text style={{...commonStyles.fs14_500, marginLeft: 9}}>
+                  {likesCount} Likes
+                </Text>
+              </View>
+            </TouchableHighlight>
 
-          <TouchableHighlight
-            onPress={handleComment}
-            underlayColor="#eee"
-            style={{padding: 5, marginLeft: 34}}>
-            <View style={{...commonStyles.row}}>
-              <Image
-                source={require('../../assets/img/comment.png')}
-                style={{width: 26, height: 26, tintColor: '#000000'}}
-              />
-              <Text style={{...commonStyles.fs14_500, marginLeft: 9}}>
-                {commentsCount} Comments
-              </Text>
-            </View>
+            <TouchableHighlight
+              onPress={handleComment}
+              underlayColor="#eee"
+              style={{padding: 5, marginLeft: 34}}>
+              <View style={{...commonStyles.row}}>
+                <Image
+                  source={require('../../assets/img/comment.png')}
+                  style={{width: 26, height: 26, tintColor: '#000000'}}
+                />
+                <Text style={{...commonStyles.fs14_500, marginLeft: 9}}>
+                  {commentsCount} Comments
+                </Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+          <TouchableHighlight onPress={handleShare} underlayColor="#fff">
+            <Image
+              source={require('../../assets/img/share.png')}
+              style={{width: 22, height: 22, tintColor: '#000000'}}
+            />
           </TouchableHighlight>
         </View>
-        <TouchableHighlight onPress={handleShare} underlayColor="#fff">
-          <Image
-            source={require('../../assets/img/share.png')}
-            style={{width: 22, height: 22, tintColor: '#000000'}}
-          />
-        </TouchableHighlight>
-      </View>
-      <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -16}}>
-        <Text style={{...commonStyles.fs14_500, marginBottom: 12}}>
-          @{email}
-        </Text>
-        <Text
-          style={{
-            ...commonStyles.fs12_400,
-            marginLeft: 8,
-            marginBottom: 10,
-            marginTop: 2,
-            color: '#E27127',
-          }}>
-          {item?.description}
-        </Text>
-      </View>
-      {item?.price && (
         <View
           style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -16}}>
-          <Text style={{...commonStyles.fs14_500, marginBottom: 12}}>
-            Price
-          </Text>
           <Text
             style={{
               ...commonStyles.fs12_400,
@@ -705,48 +695,71 @@ const RenderSingleOffer = ({
               marginTop: 2,
               color: '#E27127',
             }}>
-            Rs {item?.price}
+            {item?.description}
           </Text>
         </View>
-      )}
-      <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -10}}>
-        <Text style={{...commonStyles.fs13_500, marginBottom: 12}}>
-          Days left:
-        </Text>
-        {diffDays.toString().toLocaleLowerCase() !== 'nan' ? (
-          <Text
-            style={{...commonStyles.fs12_400, marginLeft: 8, marginBottom: 12}}>
-            {diffDays} Day(s)
-          </Text>
-        ) : (
-          <></>
+        {item?.price && (
+          <View
+            style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -5}}>
+            <Text style={{...commonStyles.fs14_500, marginBottom: 12}}>
+              Price
+            </Text>
+            <Text
+              style={{
+                ...commonStyles.fs12_400,
+                marginLeft: 8,
+                marginBottom: 10,
+                marginTop: 2,
+                color: '#E27127',
+              }}>
+              Rs {item?.price}
+            </Text>
+          </View>
         )}
+        <View
+          style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -10}}>
+          <Text style={{...commonStyles.fs13_500, marginBottom: 12}}>
+            Days left:
+          </Text>
+          {diffDays.toString().toLocaleLowerCase() !== 'nan' ? (
+            <Text
+              style={{
+                ...commonStyles.fs12_400,
+                marginLeft: 8,
+                marginBottom: 12,
+              }}>
+              {diffDays} Day(s)
+            </Text>
+          ) : (
+            <></>
+          )}
+        </View>
+
+        <HomeModal
+          modalVisible={homeModalVisible}
+          setModalVisible={setHomeModalVisible}
+          feedbackFor="offer"
+          feedbackNumber={item?.ownerId}
+          callback={() => setHomeModalVisible(!homeModalVisible)}
+          savedCallback={async () => {
+            // setSavedItems(oldArray => [...oldArray, item]);
+            const oldData = await AsyncStorage.getItem('SAVED_OFFER');
+            // console.log(parseIT, '<<<this is od');
+            console.log(oldData, '<<<this is old data');
+
+            if (oldData == null) {
+              await AsyncStorage.setItem('SAVED_OFFER', JSON.stringify([item]));
+            } else {
+              const parseIT = JSON.parse(oldData);
+              console.log(parseIT, '<<<<<this is parseddata', item);
+              await AsyncStorage.setItem(
+                'SAVED_OFFER',
+                JSON.stringify([...parseIT, item]),
+              );
+            }
+          }}
+        />
       </View>
-
-      <HomeModal
-        modalVisible={homeModalVisible}
-        setModalVisible={setHomeModalVisible}
-        feedbackFor="offer"
-        feedbackNumber={item?.ownerId}
-        callback={() => setHomeModalVisible(!homeModalVisible)}
-        savedCallback={async () => {
-          // setSavedItems(oldArray => [...oldArray, item]);
-          const oldData = await AsyncStorage.getItem('SAVED_OFFER');
-          // console.log(parseIT, '<<<this is od');
-          console.log(oldData, '<<<this is old data');
-
-          if (oldData == null) {
-            await AsyncStorage.setItem('SAVED_OFFER', JSON.stringify([item]));
-          } else {
-            const parseIT = JSON.parse(oldData);
-            console.log(parseIT, '<<<<<this is parseddata', item);
-            await AsyncStorage.setItem(
-              'SAVED_OFFER',
-              JSON.stringify([...parseIT, item]),
-            );
-          }
-        }}
-      />
-    </View>
-  );
+    );
+  }
 };

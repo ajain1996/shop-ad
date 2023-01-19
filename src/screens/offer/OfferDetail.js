@@ -198,6 +198,7 @@ export const GetAllCandidateScreen = ({item, index, navigation, category}) => {
           <Text style={styles.conpanyName}>End date: {item.endDate}</Text>
         </View>
       </View>
+      
     </View>
   );
 };

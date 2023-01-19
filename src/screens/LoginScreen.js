@@ -107,7 +107,7 @@ export default function LoginScreen({navigation}) {
               marginTop: 8,
               marginBottom: 20,
             }}>
-            Login now to track all your expenses and income at a place!
+            {/* Login now to track all your expenses and income at a place! */}
           </Text>
 
           <CustomTextInput

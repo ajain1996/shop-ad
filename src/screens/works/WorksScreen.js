@@ -5,6 +5,7 @@ import {
   FlatList,
   TouchableHighlight,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import React from 'react';
 import HomeHeader from '../home/HomeHeader';
@@ -100,7 +101,7 @@ export default function WorksScreen({navigation}) {
           {[...workData]?.reverse().map((item, index) => {
             return (
               <View key={index}>
-                <RenderSingleWork item={item} />
+                <RenderSingleWork item={item} navigation={navigation} />
               </View>
             );
           })}
@@ -134,7 +135,7 @@ export default function WorksScreen({navigation}) {
   );
 }
 
-export const RenderSingleWork = ({item, showDot}) => {
+export const RenderSingleWork = ({item, showDot, navigation}) => {
   const [homeModalVisible, setHomeModalVisible] = useState(false);
 
   return (
@@ -147,41 +148,55 @@ export const RenderSingleWork = ({item, showDot}) => {
         borderColor: '#D8D8D8',
         borderRadius: 4,
       }}>
-      <View style={{...commonStyles.rowBetween, alignItems: 'flex-start'}}>
-        {item?.image && (
-          <Image source={{uri: item?.image}} style={{width: 101, height: 61}} />
-        )}
-        <View style={{width: SIZES.width / 1.85, marginHorizontal: 10}}>
-          <Text style={{...commonStyles.fs18_700}}>{item?.description}</Text>
-
-          <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
-            Shop Name:{' '}
-          </Text>
-          <Text style={{...commonStyles.fs14_400}}>{item?.shopName}</Text>
-          <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
-            Designation:{' '}
-          </Text>
-          <Text style={{...commonStyles.fs14_400}}>
-            {item?.designationName}
-          </Text>
-
-          <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
-            Contact Info:{' '}
-          </Text>
-          <Text style={{...commonStyles.fs14_400}}>{item?.contactNumber}</Text>
-        </View>
-        {showDot && (
-          <TouchableHighlight
-            onPress={() => setHomeModalVisible(true)}
-            underlayColor="#f7f8f9">
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('workDetail', {
+            data: {
+              ...item,
+            },
+          });
+        }}>
+        <View style={{...commonStyles.rowBetween, alignItems: 'flex-start'}}>
+          {item?.image && (
             <Image
-              source={require('../../assets/img/3dots.png')}
-              resizeMode="contain"
-              style={{width: 24, height: 24, borderRadius: 100}}
+              source={{uri: item?.image}}
+              style={{width: 101, height: 61}}
             />
-          </TouchableHighlight>
-        )}
-      </View>
+          )}
+          <View style={{width: SIZES.width / 1.85, marginHorizontal: 10}}>
+            <Text style={{...commonStyles.fs18_700}}>{item?.description}</Text>
+
+            <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+              Shop Name:{' '}
+            </Text>
+            <Text style={{...commonStyles.fs14_400}}>{item?.shopName}</Text>
+            <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+              Service provider:{' '}
+            </Text>
+            <Text style={{...commonStyles.fs14_400}}>
+              {item?.designationName}
+            </Text>
+
+            <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+              Contact Info:{' '}
+            </Text>
+            <Text style={{...commonStyles.fs14_400}}>
+              {item?.contactNumber}
+            </Text>
+          </View>
+          {showDot && (
+            <TouchableHighlight
+              onPress={() => setHomeModalVisible(true)}
+              underlayColor="#f7f8f9">
+              <Image
+                source={require('../../assets/img/3dots.png')}
+                resizeMode="contain"
+                style={{width: 24, height: 24, borderRadius: 100}}
+              />
+            </TouchableHighlight>
+          )}
+        </View>
+      </TouchableOpacity>
 
       <HomeModal
         modalVisible={homeModalVisible}

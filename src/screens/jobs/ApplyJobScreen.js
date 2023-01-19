@@ -75,11 +75,13 @@ export default function ApplyJobScreen({navigation, route}) {
   const handleSubmit = () => {
     if (cvFile.length === 0) {
       setCvFileError(true);
-    } else if (educationCertificate.length === 0) {
-      setEducationCertificateError(true);
-    } else if (experienceCertificate.length === 0) {
-      setExperienceCertificateError(true);
-    } else {
+    }
+    // else if (educationCertificate.length === 0) {
+    //   setEducationCertificateError(true);
+    // } else if (experienceCertificate.length === 0) {
+    //   setExperienceCertificateError(true);
+    // }
+    else {
       setLoading(true);
       Auth.getAccount().then(userData => {
         Auth.getLocalStorageData('bearer').then(token => {
@@ -89,6 +91,8 @@ export default function ApplyJobScreen({navigation, route}) {
             type: cvFile?.type,
           };
           let policy = '';
+          let experience = '';
+          let education = '';
 
           if (policyVerification != '') {
             policy = {
@@ -97,18 +101,20 @@ export default function ApplyJobScreen({navigation, route}) {
               type: policyVerification?.type,
             };
           }
-
-          const experience = {
-            name: experienceCertificate?.name,
-            uri: experienceCertificate?.uri,
-            type: experienceCertificate?.type,
-          };
-
-          const education = {
-            name: educationCertificate?.name,
-            uri: educationCertificate?.uri,
-            type: educationCertificate?.type,
-          };
+          if (experienceCertificate != '') {
+            experience = {
+              name: experienceCertificate?.name,
+              uri: experienceCertificate?.uri,
+              type: experienceCertificate?.type,
+            };
+          }
+          if (educationCertificate != '') {
+            education = {
+              name: educationCertificate?.name,
+              uri: educationCertificate?.uri,
+              type: educationCertificate?.type,
+            };
+          }
           applyJobPostAPI(
             jobId,
             userData[0]?._id,
@@ -219,12 +225,12 @@ export default function ApplyJobScreen({navigation, route}) {
           <>
             <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
               Education Certificate{' '}
-              <Text
+              {/* <Text
                 style={{
                   color: '#FF0000',
                 }}>
                 *
-              </Text>
+              </Text> */}
             </Text>
             {educationCertificate.length === 0 ? (
               <TouchableHighlight
@@ -266,12 +272,12 @@ export default function ApplyJobScreen({navigation, route}) {
           <>
             <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
               Experience Certificate{' '}
-              <Text
+              {/* <Text
                 style={{
                   color: '#FF0000',
                 }}>
                 *
-              </Text>
+              </Text> */}
             </Text>
             {experienceCertificate.length === 0 ? (
               <TouchableHighlight

@@ -281,6 +281,13 @@ export default function AddSaleOfferScreen({navigation}) {
       });
     }
   };
+  const handlePreview = () => {
+    navigation.navigate('PreviewOffer', {
+      imageData,
+      userData,
+      description,
+    });
+  };
 
   return (
     <>
@@ -354,11 +361,9 @@ export default function AddSaleOfferScreen({navigation}) {
             )}
           </>
           <>
-            <Text style={{...commonStyles.fs16_500, marginTop: 10}}>
-              Discount Code
-            </Text>
+            <Text style={{...commonStyles.fs16_500, marginTop: 10}}>Offer</Text>
             <TextInput
-              placeholder="Discount"
+              placeholder="Offer"
               placeholderTextColor="#999"
               value={code}
               onChangeText={val => {
@@ -537,6 +542,7 @@ export default function AddSaleOfferScreen({navigation}) {
           </>
           <View style={{marginTop: 30}} />
 
+          <Custom_Auth_Btn btnText="Preview" onPress={handlePreview} />
           <Custom_Auth_Btn btnText="Upload" onPress={handleSubmit} />
           <Text />
         </View>

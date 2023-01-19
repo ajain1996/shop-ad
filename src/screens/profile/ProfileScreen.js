@@ -347,7 +347,7 @@ export default function ProfileScreen({navigation, route}) {
 
         <View style={{padding: 9, paddingHorizontal: 12}}>
           <Text style={{...commonStyles.fs18_500, marginBottom: 5}}>
-            All Offers
+            {userType == 'user' ? 'Saved Offers' : 'All Offers'}
           </Text>
 
           {offerData?.length !== 0 ? (
@@ -403,7 +403,7 @@ export default function ProfileScreen({navigation, route}) {
         <View style={{padding: 9, paddingHorizontal: 12}}>
           <Text
             style={{...commonStyles.fs18_500, marginBottom: 5, marginTop: 8}}>
-            All Jobs
+            {userType == 'user' ? 'Applied Jobs' : 'All Jobs'}
           </Text>
           {jobsData.length !== 0 ? (
             <ScrollView horizontal>

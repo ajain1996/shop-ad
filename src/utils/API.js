@@ -499,6 +499,10 @@ export const addNewWorkPostRequest = async (
   contactNumber,
   contactEmail,
   imageData,
+  insta,
+  facebookId,
+  emailId,
+  websiteAddress,
   bearerToken,
   successCallBack,
 ) => {
@@ -512,6 +516,10 @@ export const addNewWorkPostRequest = async (
   formData.append('location', location);
   formData.append('ownerId', ownerId);
   formData.append('salary', salary);
+  formData.append('instaId', instaId);
+  formData.append('facebookId', facebookId);
+  formData.append('emailId', emailId);
+  formData.append('websiteAddress', websiteAddress);
   formData.append('designationName', designationName);
   formData.append('shiftTime', shiftTime);
   formData.append('contactNumber', contactNumber);
@@ -991,6 +999,8 @@ export const updateUserPostRequest = async (
   imageChanged,
   formData,
   isCertificateUploaded,
+  categoryOfShop,
+  purposeOfRegistration,
   successCallBack,
 ) => {
   console.log(
@@ -1004,6 +1014,7 @@ export const updateUserPostRequest = async (
     bearerToken,
     '\n\n\n data at sending to update',
     imageChanged,
+    categoryOfShop,
   );
 
   // const userImage = {
@@ -1019,6 +1030,7 @@ export const updateUserPostRequest = async (
   formdata.append('uid', uid);
   formdata.append('email', email);
   formdata.append('name', name);
+  // formdata.append('categoryOfShop', categoryOfShop);
   // formdata.append('userType', userType);
   formdata.append('mobile', mobile);
   if (imageChanged == true) {
@@ -1033,6 +1045,7 @@ export const updateUserPostRequest = async (
   formdata.append('religion', formData?.religion);
   formdata.append('experienceYears', formData?.experienceYears);
   formdata.append('certifiedCourse', formData?.certifiedCourse);
+  formdata.append('purposeOfRegistration', formData?.purposeOfRegistration);
   formdata.append('pAddress', formData?.pAddress);
   formdata.append('rAddress', formData?.rAddress);
   formdata.append('fathername', formdata?.fathername);
@@ -1233,16 +1246,17 @@ export const applyJobPostAPI = async (
   if (policeLink != '') {
     formData.append('policeLink', policeLink);
   }
-
-  formData.append('experienceLink', experienceLink);
-  formData.append('certificateLink', certificateLink);
+  if (experienceLink != '') {
+    formData.append('experienceLink', experienceLink);
+  }
+  if (certificateLink != '') {
+    formData.append('certificateLink', certificateLink);
+  }
 
   try {
     let response = await fetch(BASE_URL2 + 'jobapply', {
       method: 'POST',
       headers: {
-        // "Accept": 'application/json',
-        // "Content-Type": "application/json",
         Authorization: `Bearer ${bearerToken}`,
       },
       body: formData,
@@ -1251,7 +1265,7 @@ export const applyJobPostAPI = async (
     console.log(json, '<<<< \n\n\n json');
     successCallBack(json);
   } catch (error) {
-    console.error('error', error);
+    console.error('error', error.message);
     successCallBack(null);
   }
 };
