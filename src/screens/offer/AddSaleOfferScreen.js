@@ -53,6 +53,7 @@ export default function AddSaleOfferScreen({navigation}) {
   // const [, set] = useState(second)
   const [loading, setLoading] = React.useState(false);
   const [canApply, setCanApply] = useState(true);
+
   const getImage = () => {
     ImagePicker.openPicker({
       width: 200,
@@ -543,6 +544,8 @@ export default function AddSaleOfferScreen({navigation}) {
           <View style={{marginTop: 30}} />
 
           <Custom_Auth_Btn btnText="Preview" onPress={handlePreview} />
+          <View style={{marginTop: 10}} />
+
           <Custom_Auth_Btn btnText="Upload" onPress={handleSubmit} />
           <Text />
         </View>
@@ -624,6 +627,7 @@ export const RenderUpload = ({
   imageError,
   setImageError,
   setImageData,
+  showCross = true,
 }) => {
   return (
     <View>
@@ -672,20 +676,22 @@ export const RenderUpload = ({
                 );
               })}
             </ScrollView>
-            <TouchableHighlight
-              onPress={() => setImageData('')}
-              style={{
-                position: 'absolute',
-                top: 6,
-                right: 6,
-                borderRadius: 100,
-              }}
-              underlayColor="#f7f8f9">
-              <Image
-                source={require('../../assets/img/cross.png')}
-                style={{width: 25, height: 25, tintColor: '#fff'}}
-              />
-            </TouchableHighlight>
+            {showCross && (
+              <TouchableHighlight
+                onPress={() => setImageData('')}
+                style={{
+                  position: 'absolute',
+                  top: 6,
+                  right: 6,
+                  borderRadius: 100,
+                }}
+                underlayColor="#f7f8f9">
+                <Image
+                  source={require('../../assets/img/cross.png')}
+                  style={{width: 25, height: 25, tintColor: '#fff'}}
+                />
+              </TouchableHighlight>
+            )}
           </View>
         )}
       </View>

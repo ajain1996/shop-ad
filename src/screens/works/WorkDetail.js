@@ -30,6 +30,7 @@ import PTRView from 'react-native-pull-to-refresh';
 import {useDispatch, useSelector} from 'react-redux';
 import {setJob} from '../../redux/reducer/jobs';
 import {SIZES} from '../../utils/theme';
+import {RenderUpload} from '../offer/AddSaleOfferScreen';
 
 export default function WorkDetail({navigation, route}) {
   const dispatch = useDispatch();
@@ -126,6 +127,7 @@ export default function WorkDetail({navigation, route}) {
             bearerToken={bearerToken}
             navigation={navigation}
           />
+
           {/* {jobsData.map((item, index) => {
               return (
                 <View key={index}>
@@ -150,6 +152,45 @@ export default function WorkDetail({navigation, route}) {
 const RenderSingleWork = ({item, showDot}) => {
   const [homeModalVisible, setHomeModalVisible] = useState(false);
   console.log(item, '<<<<< thisispreviewitem');
+  const converIageArray = () => {
+    let imageData = [];
+    if (item.image) {
+      imageData = [
+        {
+          uri: item.image,
+        },
+      ];
+    }
+    if (item.image2) {
+      imageData = [
+        {
+          uri: item.image2,
+        },
+      ];
+    }
+    if (item.image3) {
+      imageData = [
+        {
+          uri: item.image3,
+        },
+      ];
+    }
+    if (item.image4) {
+      imageData = [
+        {
+          uri: item.image4,
+        },
+      ];
+    }
+    if (item.image5) {
+      imageData = [
+        {
+          uri: item.image5,
+        },
+      ];
+    }
+    return imageData;
+  };
   return (
     <View
       style={{
@@ -160,10 +201,21 @@ const RenderSingleWork = ({item, showDot}) => {
         borderColor: '#D8D8D8',
         borderRadius: 4,
       }}>
+      <RenderUpload
+        image={converIageArray()}
+        showCross={false}
+        // getImage={getImage}
+        // imageError={false}
+        // setImageError={setImageError}
+        // setImageData={setImageData}
+      />
+      <View>
+        <Text> {converIageArray().length} Image (s)</Text>
+      </View>
       <View style={{...commonStyles.rowBetween, alignItems: 'flex-start'}}>
-        {item?.image && (
+        {/* {item?.image && (
           <Image source={{uri: item?.image}} style={{width: 101, height: 61}} />
-        )}
+        )} */}
         <View style={{width: SIZES.width / 1.85, marginHorizontal: 10}}>
           <Text style={{...commonStyles.fs18_700}}>{item?.description}</Text>
 

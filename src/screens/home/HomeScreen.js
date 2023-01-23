@@ -695,7 +695,7 @@ const RenderSingleOffer = ({
               marginTop: 2,
               color: '#E27127',
             }}>
-            {item?.description}
+            {item?.code}
           </Text>
         </View>
         {item?.price && (

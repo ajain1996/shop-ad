@@ -137,7 +137,46 @@ export default function WorksScreen({navigation}) {
 
 export const RenderSingleWork = ({item, showDot, navigation}) => {
   const [homeModalVisible, setHomeModalVisible] = useState(false);
-
+  console.log(item, '<<one job');
+  const converIageArray = () => {
+    let imageData = [];
+    if (item.image) {
+      imageData = [
+        {
+          uri: item.image,
+        },
+      ];
+    }
+    if (item.image2) {
+      imageData = [
+        {
+          uri: item.image2,
+        },
+      ];
+    }
+    if (item.image3) {
+      imageData = [
+        {
+          uri: item.image3,
+        },
+      ];
+    }
+    if (item.image4) {
+      imageData = [
+        {
+          uri: item.image4,
+        },
+      ];
+    }
+    if (item.image5) {
+      imageData = [
+        {
+          uri: item.image5,
+        },
+      ];
+    }
+    return imageData;
+  };
   return (
     <View
       style={{
@@ -158,16 +197,19 @@ export const RenderSingleWork = ({item, showDot, navigation}) => {
         }}>
         <View style={{...commonStyles.rowBetween, alignItems: 'flex-start'}}>
           {item?.image && (
-            <Image
-              source={{uri: item?.image}}
-              style={{width: 101, height: 61}}
-            />
+            <View>
+              <Image
+                source={{uri: item?.image}}
+                style={{width: 101, height: 61}}
+              />
+              <Text>{converIageArray().length} Image(s)</Text>
+            </View>
           )}
           <View style={{width: SIZES.width / 1.85, marginHorizontal: 10}}>
             <Text style={{...commonStyles.fs18_700}}>{item?.description}</Text>
 
             <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
-              Shop Name:{' '}
+              Owner:{' '}
             </Text>
             <Text style={{...commonStyles.fs14_400}}>{item?.shopName}</Text>
             <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
@@ -183,6 +225,42 @@ export const RenderSingleWork = ({item, showDot, navigation}) => {
             <Text style={{...commonStyles.fs14_400}}>
               {item?.contactNumber}
             </Text>
+            {item?.instaId && (
+              <>
+                <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+                  Instagram:{' '}
+                </Text>
+                <Text style={{...commonStyles.fs14_400}}>{item?.instaId}</Text>
+              </>
+            )}
+            {item?.facebookId && (
+              <>
+                <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+                  Facebook:{' '}
+                </Text>
+                <Text style={{...commonStyles.fs14_400}}>
+                  {item?.facebookId}
+                </Text>
+              </>
+            )}
+            {item?.emailId && (
+              <>
+                <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+                  Email:{' '}
+                </Text>
+                <Text style={{...commonStyles.fs14_400}}>{item?.emailId}</Text>
+              </>
+            )}
+            {item?.websiteAddress && (
+              <>
+                <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+                  Email:{' '}
+                </Text>
+                <Text style={{...commonStyles.fs14_400}}>
+                  {item?.websiteAddress}
+                </Text>
+              </>
+            )}
           </View>
           {showDot && (
             <TouchableHighlight

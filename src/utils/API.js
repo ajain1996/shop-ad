@@ -210,7 +210,6 @@ export const getOffersByLocationPostRequest = async (
   var body = {
     location: location.toString(),
   };
-
   try {
     let response = await fetch(
       'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/salesoffer/location',
@@ -491,6 +490,7 @@ export const getJobsByLocationPostRequest = async (
 export const addNewWorkPostRequest = async (
   description,
   shopName,
+  name,
   location,
   salary,
   shiftTime,
@@ -499,7 +499,7 @@ export const addNewWorkPostRequest = async (
   contactNumber,
   contactEmail,
   imageData,
-  insta,
+  instaId,
   facebookId,
   emailId,
   websiteAddress,
@@ -508,12 +508,31 @@ export const addNewWorkPostRequest = async (
 ) => {
   let formData = new FormData();
   // return null;
+  console.log(
+    'adding work',
+    description,
+    shopName,
+    name, // here this is owner name
+    location,
+    salary,
+    shiftTime,
+    designationName,
+    ownerId,
+    contactNumber,
+    contactEmail,
+    imageData,
+    instaId,
+    facebookId,
+    emailId,
+    websiteAddress,
+  );
   var myHeaders = new Headers();
   myHeaders.append('Authorization', 'Bearer ' + bearerToken);
   console.log(imageData, '<<<this is imagedata');
   formData.append('description', description);
   formData.append('shopName', shopName);
   formData.append('location', location);
+  formData.append('name', name);
   formData.append('ownerId', ownerId);
   formData.append('salary', salary);
   formData.append('instaId', instaId);
@@ -525,22 +544,21 @@ export const addNewWorkPostRequest = async (
   formData.append('contactNumber', contactNumber);
   formData.append('contactEmail', contactEmail);
   // formdata.append("image", imageData, "/C:/Users/dell/Pictures/Screenshots/1.png");
-
   if (imageData.length > 0) {
-    formData.append('image1', imageData[0], imageData[0].name);
+    formData.append('image', imageData[0], imageData[0].name);
   }
-  if (imageData.length > 1) {
-    formData.append('image2', imageData[1], imageData[1].name);
-  }
-  if (imageData.length > 2) {
-    formData.append('image3', imageData[2], imageData[2].name);
-  }
-  if (imageData.length > 3) {
-    formData.append('image4', imageData[3], imageData[3].name);
-  }
-  if (imageData.length > 4) {
-    formData.append('image5', imageData[4], imageData[4].name);
-  }
+  // if (imageData.length > 1) {
+  //   formData.append('image2', imageData[1], imageData[1].name);
+  // }
+  // if (imageData.length > 2) {
+  //   formData.append('image3', imageData[2], imageData[2].name);
+  // }
+  // if (imageData.length > 3) {
+  //   formData.append('image4', imageData[3], imageData[3].name);
+  // }
+  // if (imageData.length > 4) {
+  //   formData.append('image5', imageData[4], imageData[4].name);
+  // }
 
   // var body = {
   //   description: description,
@@ -560,10 +578,12 @@ export const addNewWorkPostRequest = async (
     body: formData,
     redirect: 'follow',
   };
-
   fetch(BASE_URL2 + 'work', requestOptions)
     .then(response => response.text())
-    .then(result => successCallBack(JSON.parse(result)))
+    .then(result => {
+      console.log('success');
+      successCallBack(JSON.parse(result));
+    })
     .catch(error => console.log('error', error));
 };
 

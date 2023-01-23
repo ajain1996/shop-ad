@@ -59,6 +59,7 @@ export default function AddWorksScreen({navigation}) {
   const [canApply, setCanApply] = useState(true);
   const [category, setCategory] = React.useState('');
   const [emailId, setemailId] = React.useState('');
+  const [emailIDError, setemailIDError] = React.useState(false);
   const [instaId, setinstaId] = React.useState('');
   const [facebookId, setfacebookId] = React.useState('');
   const [websiteAddress, setwebsiteAddress] = React.useState('');
@@ -112,31 +113,51 @@ export default function AddWorksScreen({navigation}) {
   }, []);
 
   const handleSubmit = () => {
-    if (!canApply) {
-      Toast.show('Please buy membership to Add more Work!!');
-      return null;
-    }
-
+    // if (!canApply) {
+    //   Toast.show('Please buy membership to Add more Work!!');
+    //   return null;
+    // }
     // console.log(imageData, '<<<<<');
     // return null;
-    if (desc.length === 0) {
+    if (desc.length < 3) {
+      console.log('description');
       setDescError(true);
-    } else if (name.length === 0) {
+    } else if (name.length < 3) {
+      console.log('name');
       setNameError(true);
-    } else if (location.length === 0) {
+    } else if (shopName.length < 3) {
+      console.log('shop');
+      setshopNameError(true);
+    } else if (location.length < 3) {
+      console.log('location');
       setLocationError(true);
-    } else if (designation.length === 0) {
+    } else if (designation.length < 3) {
+      console.log('designation');
       setDesignationError(true);
-    } else if (contact.length === 0) {
+    } else if (contact.length != 10) {
+      console.log('contact');
       setContactError(true);
     } else if (imageData.length == 0) {
+      console.log('image');
       setImageError(true);
       return true;
+    } else if (emailId.length > 0) {
+      var emailRegex =
+        /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
+      const isCorrectEmailFormat = emailRegex.test(emailId);
+      if (!isCorrectEmailFormat) {
+        setemailIDError(true);
+        return true;
+      }
     } else {
+      console.log('callin gapi');
+      // return null;
+      setLoading(true);
       Auth.getAccount().then(userData => {
         Auth.getLocalStorageData('bearer').then(token => {
           addNewWorkPostRequest(
             desc,
+            shopName,
             name,
             location,
             salary,
@@ -238,7 +259,7 @@ export default function AddWorksScreen({navigation}) {
             image={imageData}
             getImage={getImage}
             imageError={false}
-            setImageError={() => {}}
+            setImageError={setImageError}
             setImageData={setImageData}
           />
           {/*  */}
@@ -281,8 +302,8 @@ export default function AddWorksScreen({navigation}) {
                 placeholderTextColor="#999"
                 value={shopName}
                 onChangeText={val => {
-                  setshopNameError(val);
-                  setshopName(false);
+                  setshopNameError(false);
+                  setshopName(val);
                 }}
                 style={[
                   styles.descriptionInput,
@@ -567,7 +588,7 @@ export default function AddWorksScreen({navigation}) {
               />
               {contactError ? (
                 <Text style={{...commonStyles.fs12_400, color: 'red'}}>
-                  Contact is mandatory
+                  Please enter correct contact number (10 digit)
                 </Text>
               ) : (
                 <></>
@@ -582,15 +603,23 @@ export default function AddWorksScreen({navigation}) {
                 placeholderTextColor="#999"
                 value={emailId}
                 // keyboardType="number-pad"
-                maxLength={10}
+                // maxLength={10}
                 onChangeText={val => {
                   setemailId(val);
+                  setemailIDError(false);
                 }}
                 style={[
                   styles.descriptionInput,
                   {borderColor: contactError ? 'red' : '#BDBDBD'},
                 ]}
               />
+              {emailIDError ? (
+                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+                  Please enter correct email address
+                </Text>
+              ) : (
+                <></>
+              )}
             </>
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
@@ -669,7 +698,7 @@ export default function AddWorksScreen({navigation}) {
             style={{
               marginTop: 20,
             }}></View>
-          <Custom_Auth_Btn btnText="Sumbit" onPress={handleSubmit} />
+          <Custom_Auth_Btn btnText="Submit" onPress={handleSubmit} />
           <Text />
         </View>
 

@@ -20,6 +20,7 @@ import {
 } from '../../utils/API';
 import Auth from '../../services/Auth';
 import {RFC_2822} from 'moment';
+import {RenderUpload} from './AddSaleOfferScreen';
 
 export default function Offerdetail({navigation, route}) {
   const {item} = route.params;
@@ -116,6 +117,45 @@ export const GetAllCandidateScreen = ({item, index, navigation, category}) => {
       return false;
     });
   };
+  const converIageArray = () => {
+    let imageData = [];
+    if (item.offerImage) {
+      imageData = [
+        {
+          uri: item.offerImage,
+        },
+      ];
+    }
+    if (item.offerImage2) {
+      imageData = [
+        {
+          uri: item.offerImage2,
+        },
+      ];
+    }
+    if (item.offerImage3) {
+      imageData = [
+        {
+          uri: item.offerImage3,
+        },
+      ];
+    }
+    if (item.offerImage4) {
+      imageData = [
+        {
+          uri: item.offerImage4,
+        },
+      ];
+    }
+    if (item.offerImage5) {
+      imageData = [
+        {
+          uri: item.offerImage5,
+        },
+      ];
+    }
+    return imageData;
+  };
 
   return (
     <View
@@ -129,7 +169,7 @@ export const GetAllCandidateScreen = ({item, index, navigation, category}) => {
       // }}
     >
       <View>
-        <ScrollView horizontal={true}>
+        {/* <ScrollView horizontal={true}>
           {item?.offerImage && (
             <Image
               source={{uri: item?.offerImage}}
@@ -161,7 +201,15 @@ export const GetAllCandidateScreen = ({item, index, navigation, category}) => {
               style={{width: SIZES.width, height: 311}}
             />
           )}
-        </ScrollView>
+        </ScrollView> */}
+        <RenderUpload
+          image={converIageArray()}
+          showCross={false}
+          // getImage={getImage}
+          // imageError={false}
+          // setImageError={setImageError}
+          // setImageData={setImageData}
+        />
       </View>
 
       <View style={styles.itemContent}>
@@ -198,7 +246,6 @@ export const GetAllCandidateScreen = ({item, index, navigation, category}) => {
           <Text style={styles.conpanyName}>End date: {item.endDate}</Text>
         </View>
       </View>
-      
     </View>
   );
 };
