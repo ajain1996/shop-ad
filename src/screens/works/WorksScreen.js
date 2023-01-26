@@ -25,6 +25,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import work, {setWork} from '../../redux/reducer/work';
 import HomeModal from '../home/HomeModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {RenderUpload} from '../offer/AddSaleOfferScreen';
 
 export default function WorksScreen({navigation}) {
   const dispatch = useDispatch();
@@ -142,13 +143,24 @@ export const RenderSingleWork = ({item, showDot, navigation}) => {
     let imageData = [];
     if (item.image) {
       imageData = [
+        ...imageData,
         {
           uri: item.image,
         },
       ];
     }
+    if (item.image1) {
+      imageData = [
+        ...imageData,
+        {
+          uri: item.image1,
+        },
+      ];
+    }
+
     if (item.image2) {
       imageData = [
+        ...imageData,
         {
           uri: item.image2,
         },
@@ -156,6 +168,7 @@ export const RenderSingleWork = ({item, showDot, navigation}) => {
     }
     if (item.image3) {
       imageData = [
+        ...imageData,
         {
           uri: item.image3,
         },
@@ -163,6 +176,7 @@ export const RenderSingleWork = ({item, showDot, navigation}) => {
     }
     if (item.image4) {
       imageData = [
+        ...imageData,
         {
           uri: item.image4,
         },
@@ -170,6 +184,7 @@ export const RenderSingleWork = ({item, showDot, navigation}) => {
     }
     if (item.image5) {
       imageData = [
+        ...imageData,
         {
           uri: item.image5,
         },
@@ -189,17 +204,27 @@ export const RenderSingleWork = ({item, showDot, navigation}) => {
       }}>
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate('workDetail', {
+          navigation?.navigate('workDetail', {
             data: {
               ...item,
             },
           });
         }}>
         <View style={{...commonStyles.rowBetween, alignItems: 'flex-start'}}>
-          {item?.image && (
+          {/* {converIageArray().length > 0 && (
+            <RenderUpload
+              image={converIageArray()}
+              showCross={false}
+              // getImage={getImage}
+              // imageError={false}
+              // setImageError={setImageError}
+              // setImageData={setImageData}
+            />
+          )} */}
+          {item?.image1 && (
             <View>
               <Image
-                source={{uri: item?.image}}
+                source={{uri: item?.image1}}
                 style={{width: 101, height: 61}}
               />
               <Text>{converIageArray().length} Image(s)</Text>

@@ -542,7 +542,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         </TouchableHighlight>
       </View>
 
-      <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -16}}>
+      {/* <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -16}}>
         <Text style={{...commonStyles.fs14_500, marginBottom: 12}}>
           @{email}
         </Text>
@@ -555,8 +555,8 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
           }}>
           {item?.description}
         </Text>
-      </View>
-      <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -10}}>
+      </View> */}
+      {/* <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -10}}>
         <Text style={{...commonStyles.fs13_500, marginBottom: 12}}>
           Days left: {diffDays} Day(s)
         </Text>
@@ -564,7 +564,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
           style={{...commonStyles.fs12_400, marginLeft: 8, marginBottom: 12}}>
           {item?.date}
         </Text>
-      </View>
+      </View> */}
 
       <HomeModal
         modalVisible={homeModalVisible}

@@ -156,13 +156,24 @@ const RenderSingleWork = ({item, showDot}) => {
     let imageData = [];
     if (item.image) {
       imageData = [
+        ...imageData,
         {
           uri: item.image,
         },
       ];
     }
+    if (item.image1) {
+      imageData = [
+        ...imageData,
+        {
+          uri: item.image1,
+        },
+      ];
+    }
+
     if (item.image2) {
       imageData = [
+        ...imageData,
         {
           uri: item.image2,
         },
@@ -170,6 +181,7 @@ const RenderSingleWork = ({item, showDot}) => {
     }
     if (item.image3) {
       imageData = [
+        ...imageData,
         {
           uri: item.image3,
         },
@@ -177,6 +189,7 @@ const RenderSingleWork = ({item, showDot}) => {
     }
     if (item.image4) {
       imageData = [
+        ...imageData,
         {
           uri: item.image4,
         },
@@ -184,6 +197,7 @@ const RenderSingleWork = ({item, showDot}) => {
     }
     if (item.image5) {
       imageData = [
+        ...imageData,
         {
           uri: item.image5,
         },
@@ -201,16 +215,23 @@ const RenderSingleWork = ({item, showDot}) => {
         borderColor: '#D8D8D8',
         borderRadius: 4,
       }}>
-      <RenderUpload
-        image={converIageArray()}
-        showCross={false}
-        // getImage={getImage}
-        // imageError={false}
-        // setImageError={setImageError}
-        // setImageData={setImageData}
-      />
+      {converIageArray().length > 0 && (
+        <RenderUpload
+          image={converIageArray()}
+          showCross={false}
+          // getImage={getImage}
+          // imageError={false}
+          // setImageError={setImageError}
+          // setImageData={setImageData}
+        />
+      )}
       <View>
-        <Text> {converIageArray().length} Image (s)</Text>
+        <Text>
+          {' '}
+          {converIageArray().length > 0
+            ? converIageArray().length + 'Image(s)'
+            : 'Image Not Found'}
+        </Text>
       </View>
       <View style={{...commonStyles.rowBetween, alignItems: 'flex-start'}}>
         {/* {item?.image && (

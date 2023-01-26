@@ -18,6 +18,7 @@ import {
   followUserPostAPI,
   getJobsByOwnerIdPostRequest,
   getOffersByOwnerIdPostRequest,
+  getUserByIDPostAPI,
   getWorksByOwnerIdPostRequest,
   unFollowPostAPI,
 } from '../../../utils/API';
@@ -26,6 +27,7 @@ import {RenderSingleWork} from '../../works/WorksScreen';
 import Toast from 'react-native-simple-toast';
 import {JobsDetails} from '../../jobs/JobsDetails';
 import {LinearGradient} from 'react-native-svg';
+import {useState} from 'react';
 
 export default function UserDetailsScreen({navigation, route}) {
   const [offerData, setOfferData] = React.useState([]);
@@ -33,12 +35,13 @@ export default function UserDetailsScreen({navigation, route}) {
   const [workData, setWorkData] = React.useState([]);
 
   const {userId, user} = route.params;
+  const [profileUserData, setProfileUserData] = useState({});
   const {userData} = useSelector(state => state.User);
   const [followerCount, setFollowerCount] = React.useState(0);
   const [followingCount, setFollowingCount] = React.useState(0);
   const [isFollowed, setIsFollowed] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-
+  console.log(user, '<<< this is user');
   React.useEffect(() => {
     (async () => {
       const unsubscribe = navigation.addListener('focus', () => {
@@ -71,6 +74,10 @@ export default function UserDetailsScreen({navigation, route}) {
   React.useEffect(() => {
     setLoading(true);
     Auth.getLocalStorageData('bearer').then(token => {
+      getUserByIDPostAPI(userId, token, res => {
+        console.log(res, '<<this is res');
+        setProfileUserData(res?.data[0]);
+      });
       getOffersByOwnerIdPostRequest(userId, token, response => {
         setLoading(false);
         if (response !== null) {
@@ -186,7 +193,7 @@ export default function UserDetailsScreen({navigation, route}) {
             }}>
             {user?.userProfile !== undefined ? (
               <Image
-                source={{uri: user?.userProfile}}
+                source={{uri: profileUserData?.userProfile}}
                 resizeMode="contain"
                 style={{width: 75, height: 75, borderRadius: 100}}
               />
@@ -239,7 +246,7 @@ export default function UserDetailsScreen({navigation, route}) {
             marginTop: 5,
           }}>
           <Text style={{...commonStyles.fs16_700, textAlign: 'center'}}>
-            {user?.name}
+            {profileUserData?.name}
           </Text>
           <TouchableHighlight
             underlayColor="#dcdcdc"
@@ -296,7 +303,7 @@ export default function UserDetailsScreen({navigation, route}) {
                       navigation.navigate('UserPostScreen', {
                         item: item,
                         userId: userId,
-                        user: user,
+                        user: profileUserData,
                       });
                     }}
                     style={{
@@ -525,7 +532,7 @@ export default function UserDetailsScreen({navigation, route}) {
             {workData.map((item, index) => {
               return (
                 <View key={index} style={{marginTop: -4}}>
-                  <RenderSingleWork item={item} />
+                  <RenderSingleWork item={item} navigation={navigation} />
                 </View>
               );
             })}

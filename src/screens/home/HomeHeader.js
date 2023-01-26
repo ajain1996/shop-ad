@@ -44,7 +44,7 @@ export default function HomeHeader({navigation, onPress}) {
         />
 
         {userType === 'shop' ? (
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={() => {
               if (onPress) {
                 onPress();
@@ -55,8 +55,8 @@ export default function HomeHeader({navigation, onPress}) {
               source={require('../../assets/img/plus.png')}
               resizeMode="contain"
               style={{width: 28, height: 28, alignSelf: 'flex-end'}}
-              />
-              <Text style={{textAlign: "center"}}>{userData[0]?.name}</Text>
+            />
+            <Text style={{textAlign: 'center'}}>{userData[0]?.name}</Text>
           </TouchableOpacity>
         ) : (
           <TouchableHighlight

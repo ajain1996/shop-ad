@@ -405,7 +405,7 @@ export default function ProfileScreen({navigation, route}) {
             style={{...commonStyles.fs18_500, marginBottom: 5, marginTop: 8}}>
             {userType == 'user' ? 'Applied Jobs' : 'All Jobs'}
           </Text>
-          {jobsData.length !== 0 ? (
+          {jobsData?.length !== 0 ? (
             <ScrollView horizontal>
               {jobsData.map((item, index) => {
                 return (
@@ -599,7 +599,11 @@ export default function ProfileScreen({navigation, route}) {
                 {workData.map((item, index) => {
                   return (
                     <View key={index} style={{marginTop: -4}}>
-                      <RenderSingleWork item={item} showDot={false} />
+                      <RenderSingleWork
+                        item={item}
+                        showDot={false}
+                        navigation={navigation}
+                      />
                     </View>
                   );
                 })}

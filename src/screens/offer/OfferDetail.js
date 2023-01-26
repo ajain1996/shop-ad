@@ -121,13 +121,23 @@ export const GetAllCandidateScreen = ({item, index, navigation, category}) => {
     let imageData = [];
     if (item.offerImage) {
       imageData = [
+        ...imageData,
         {
           uri: item.offerImage,
         },
       ];
     }
+    if (item.offerImage1) {
+      imageData = [
+        ...imageData,
+        {
+          uri: item.offerImage1,
+        },
+      ];
+    }
     if (item.offerImage2) {
       imageData = [
+        ...imageData,
         {
           uri: item.offerImage2,
         },
@@ -135,6 +145,7 @@ export const GetAllCandidateScreen = ({item, index, navigation, category}) => {
     }
     if (item.offerImage3) {
       imageData = [
+        ...imageData,
         {
           uri: item.offerImage3,
         },
@@ -142,6 +153,7 @@ export const GetAllCandidateScreen = ({item, index, navigation, category}) => {
     }
     if (item.offerImage4) {
       imageData = [
+        ...imageData,
         {
           uri: item.offerImage4,
         },
@@ -149,6 +161,7 @@ export const GetAllCandidateScreen = ({item, index, navigation, category}) => {
     }
     if (item.offerImage5) {
       imageData = [
+        ...imageData,
         {
           uri: item.offerImage5,
         },
@@ -229,7 +242,7 @@ export const GetAllCandidateScreen = ({item, index, navigation, category}) => {
         <View style={styles.memberNameBlock}>
           <Text style={[styles.memberName, {color: '#000'}]}>
             {/* {item.applicantName} */}
-            {userData.name} ddd
+            {userData.name ? userData.name : '(loading...)'}
           </Text>
           <Text style={styles.conpanyName}>location: {item?.location}</Text>
           <View
@@ -238,12 +251,15 @@ export const GetAllCandidateScreen = ({item, index, navigation, category}) => {
             }}
           />
 
-          <Text style={styles.conpanyName}>Category: {category}</Text>
+          <Text style={styles.conpanyName}>Code: {item?.code}</Text>
           <Text style={styles.conpanyName}>
             Description: {item?.description}
           </Text>
-          <Text style={styles.conpanyName}>start date: {item.startDate}</Text>
-          <Text style={styles.conpanyName}>End date: {item.endDate}</Text>
+          <Text style={styles.conpanyName}>start date: {item?.startDate}</Text>
+          <Text style={styles.conpanyName}>End date: {item?.endDate}</Text>
+          <Text style={{fontWeight: 'bold', marginTop: 10}}>
+            Price: Rs {item?.price}
+          </Text>
         </View>
       </View>
     </View>

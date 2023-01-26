@@ -357,117 +357,47 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
       <View
         style={{
           ...commonStyles.rowBetween,
-          height: 80,
+          height: 60,
           width: '100%',
-          padding: 20,
+          // padding: 20,
+          paddingHorizontal: 20,
+
+          paddingTop: 5,
         }}>
-        {/* <View style={{...commonStyles.rowStart, alignItems: 'center'}}>
-          <TouchableHighlight
-            underlayColor="#f7f8f9"
-            onPress={() => {
-              navigation.navigate('UserDetailsScreen', {
-                user: user,
-                userId: item?.ownerId,
-              });
-            }}>
-            {user?.userProfile !== undefined ? (
-              <Image
-                source={{uri: user?.userProfile}}
-                resizeMode="contain"
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 100,
-                  marginTop: 6,
-                  borderWidth: 2,
-                  borderColor: '#E27127',
-                }}
-              />
-            ) : (
-              <View
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 100,
-                  marginTop: 6,
-                  borderWidth: 2,
-                  borderColor: '#E27127',
-                }}>
-                <Image
-                  source={require('../../assets/img/profile-tab.png')}
-                  resizeMode="contain"
-                  style={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: 100,
-                    marginHorizontal: 4,
-                    marginVertical: 3,
-                  }}
-                />
-              </View>
-            )}
-          </TouchableHighlight>
-
-          <View style={{marginLeft: 6}}>
-            <TouchableHighlight
-              underlayColor="#f7f8f9"
-              onPress={() => {
-                navigation.navigate('UserDetailsScreen', {
-                  user: user,
-                  userId: item?.ownerId,
-                });
-              }}>
-              <Text style={{...commonStyles.fs14_700}}>{user?.name}</Text>
-            </TouchableHighlight>
-            <View style={{...commonStyles.rowStart, alignItems: 'center'}}>
-              <Image
-                source={require('../../assets/img/location.png')}
-                resizeMode="contain"
-                style={{width: 18, height: 16}}
-              />
-              <TouchableHighlight
-                onPress={() => {
-                  navigation.navigate('LocationScreen');
-                }}
-                underlayColor="#f7f8f9">
-                <Text style={{...commonStyles.fs12_400, marginLeft: 2}}>
-                  {item?.location}
-                </Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        </View> */}
-
-        <View>
-          <Text style={{fontSize: 20, fontWeight: 'bold', color: '#000'}}>
-            {item?.title}
+        <View style={{borderWidth: 0}}>
+          <Text style={{fontSize: 15, fontWeight: 'bold', color: '#000'}}>
+            Required {item?.title}
           </Text>
         </View>
-        <View
+      </View>
+      <View
+        style={{
+          width: '100%',
+          flexDirection: 'row',
+          justifyContent: 'flex-end',
+          // borderWidth: 2,
+          marginTop: -10,
+          // height
+          // alignItems: 'center',
+        }}>
+        <Text
           style={{
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-            alignItems: 'center',
+            // marginRight: 15,
+            fontWeight: '800',
+            color: 'skyblue',
+            fontSize: 14,
           }}>
-          <Text
-            style={{
-              marginRight: 15,
-              fontWeight: '800',
-              color: 'skyblue',
-              fontSize: 14,
-            }}>
-            Salary: Rs {item?.salary}
-          </Text>
-          <TouchableHighlight
-            onPress={() => setHomeModalVisible(true)}
-            underlayColor="#f7f8f9">
-            <Image
-              source={require('../../assets/img/3dots.png')}
-              resizeMode="contain"
-              style={{width: 24, height: 24, borderRadius: 100}}
-            />
-          </TouchableHighlight>
-        </View>
+          Salary: Rs {item?.salary}
+        </Text>
+        <TouchableHighlight
+          onPress={() => setHomeModalVisible(true)}
+          underlayColor="#f7f8f9">
+          <Image
+            source={require('../../assets/img/3dots.png')}
+            resizeMode="contain"
+            style={{width: 24, height: 20, borderRadius: 100}}
+          />
+        </TouchableHighlight>
       </View>
 
       <View style={{paddingHorizontal: 12}}>

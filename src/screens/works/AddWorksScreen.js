@@ -119,6 +119,7 @@ export default function AddWorksScreen({navigation}) {
     // }
     // console.log(imageData, '<<<<<');
     // return null;
+    console.log('handle submit');
     if (desc.length < 3) {
       console.log('description');
       setDescError(true);
@@ -141,17 +142,17 @@ export default function AddWorksScreen({navigation}) {
       console.log('image');
       setImageError(true);
       return true;
-    } else if (emailId.length > 0) {
-      var emailRegex =
-        /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
-      const isCorrectEmailFormat = emailRegex.test(emailId);
-      if (!isCorrectEmailFormat) {
-        setemailIDError(true);
-        return true;
-      }
+    }
+
+    var emailRegex =
+      /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
+    const isCorrectEmailFormat = emailRegex.test(emailId);
+    if (!isCorrectEmailFormat && emailId.length > 0) {
+      setemailIDError(true);
+      console.log('email error');
+      return true;
     } else {
       console.log('callin gapi');
-      // return null;
       setLoading(true);
       Auth.getAccount().then(userData => {
         Auth.getLocalStorageData('bearer').then(token => {
@@ -171,7 +172,6 @@ export default function AddWorksScreen({navigation}) {
             facebookId,
             emailId,
             websiteAddress,
-
             token,
             response => {
               setLoading(false);
@@ -199,6 +199,7 @@ export default function AddWorksScreen({navigation}) {
           );
         });
       });
+      // return null;
     }
   };
 
@@ -630,7 +631,7 @@ export default function AddWorksScreen({navigation}) {
                 placeholderTextColor="#999"
                 value={facebookId}
                 // keyboardType="number-pad"
-                maxLength={10}
+                // maxLength={10}
                 onChangeText={val => {
                   setfacebookId(val);
                 }}
@@ -649,7 +650,7 @@ export default function AddWorksScreen({navigation}) {
                 placeholderTextColor="#999"
                 value={instaId}
                 // keyboardType="number-pad"
-                maxLength={10}
+                // maxLength={10}
                 onChangeText={val => {
                   setinstaId(val);
                 }}
@@ -668,7 +669,7 @@ export default function AddWorksScreen({navigation}) {
                 placeholderTextColor="#999"
                 value={websiteAddress}
                 // keyboardType="number-pad"
-                maxLength={10}
+                // maxLength={10}
                 onChangeText={val => {
                   setwebsiteAddress(val);
                 }}

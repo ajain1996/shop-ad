@@ -17,11 +17,14 @@ import {SIZES} from '../../../utils/theme';
 import {
   addLikesByIDPostAPI,
   getLikesCountByIDPostAPI,
+  getUserByIDPostAPI,
+  monthsArray,
   unLikesByIDPostAPI,
 } from '../../../utils/API';
 import Auth from '../../../services/Auth';
 import Toast from 'react-native-simple-toast';
 import {useSelector} from 'react-redux';
+import moment from 'moment';
 
 export default function UserPostScreen({navigation, route}) {
   const {item, user, userId} = route.params;
@@ -117,7 +120,37 @@ const RenderSingleOffer = ({item, navigation, user, userId}) => {
   };
 
   var email = user?.email?.split('@')[0];
+  console.log(user, '<<< this is user');
+  function dayDiff(startDate, endDate, des, id) {
+    const convertArr = d => {
+      const a = d.replace('/', '-');
+      const b = a.replace('/', '-');
+      return b.split('-');
+    };
 
+    // const diffInMs = moment(`12-Dec-2022`) - moment(`10-Dec-2022`);
+    const diffInMs =
+      moment(
+        `${parseInt(convertArr(endDate)[0])}-${
+          monthsArray[parseInt(convertArr(endDate)[1])]
+        }-${parseInt(convertArr(endDate)[2])}`,
+      ) -
+      moment(
+        `${parseInt(convertArr(startDate)[0])}-${
+          monthsArray[parseInt(convertArr(startDate)[1])]
+        }-${parseInt(convertArr(startDate)[2])}`,
+      );
+
+    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+    return diffInDays + 1;
+  }
+  const d = new Date();
+  let today = d.getDate() + '-' + +d.getMonth() + 1 + '-' + d.getFullYear();
+
+  var startDate = moment(item?.startDate).format('DD/MM/YYYY');
+  var endDate = moment(item?.endDate).format('DD/MM/YYYY');
+  var diffDays = dayDiff(today, endDate, item.description, item._id);
   return (
     <View
       style={{
@@ -262,7 +295,10 @@ const RenderSingleOffer = ({item, navigation, user, userId}) => {
       </View>
       <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -10}}>
         <Text style={{...commonStyles.fs13_500, marginBottom: 12}}>
-          Days left:
+          Start Date: {item.startDate}
+        </Text>
+        <Text style={{...commonStyles.fs13_500, marginBottom: 12}}>
+          End Date: {item.endDate}
         </Text>
         <Text
           style={{...commonStyles.fs12_400, marginLeft: 8, marginBottom: 12}}>

@@ -189,10 +189,10 @@ export default function AddSaleOfferScreen({navigation}) {
     var diffDays = dayDiff(start1, end1);
     // console.log(diffDays, '<<<this is deiff');
     console.log(getCategoryId());
-    if (!canApply) {
-      Toast.show('Please buy membership to create more Offers!!');
-      return null;
-    }
+    // if (!canApply) {
+    //   Toast.show('Please buy membership to create more Offers!!');
+    //   return null;
+    // }
     if (description.length === 0) {
       setDescriptionError(true);
     } else if (location.length === 0) {
@@ -635,8 +635,10 @@ export const RenderUpload = ({
         {image.length === 0 ? (
           <TouchableHighlight
             onPress={() => {
-              getImage();
-              setImageError(false);
+              if (showCross) {
+                getImage();
+                setImageError(false);
+              }
             }}
             style={{paddingVertical: 16}}>
             <View style={{alignItems: 'center', justifyContent: 'center'}}>
@@ -649,13 +651,15 @@ export const RenderUpload = ({
                   opacity: 0.8,
                 }}
               />
-              <View style={[styles.upload]}>
-                <Image
-                  source={require('../../assets/img/upload.png')}
-                  resizeMode="contain"
-                  style={{width: 23, height: 23, tintColor: '#000'}}
-                />
-              </View>
+              {showCross && (
+                <View style={[styles.upload]}>
+                  <Image
+                    source={require('../../assets/img/upload.png')}
+                    resizeMode="contain"
+                    style={{width: 23, height: 23, tintColor: '#000'}}
+                  />
+                </View>
+              )}
             </View>
           </TouchableHighlight>
         ) : (

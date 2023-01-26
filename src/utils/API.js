@@ -3,10 +3,10 @@ import Auth from '../services/Auth';
 
 // const BASE_URL = 'https://shop-ad-strix.herokuapp.com/user/';
 // const BASE_URL2 = 'https://shop-ad-strix.herokuapp.com/';
+
 const BASE_URL2 =
   'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/';
-const BASE_URL =
-  'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/user/';
+const BASE_URL = BASE_URL2 + 'user/';
 // const BASE_URL = 'https://shop-ad-strix.herokuapp.com/user/';
 
 export const mobileRegisterPostRequest = async (
@@ -211,18 +211,15 @@ export const getOffersByLocationPostRequest = async (
     location: location.toString(),
   };
   try {
-    let response = await fetch(
-      'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/salesoffer/location',
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${bearerToken}`,
-        },
-        body: JSON.stringify(body),
+    let response = await fetch(BASE_URL2 + 'salesoffer/location', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${bearerToken}`,
       },
-    );
+      body: JSON.stringify(body),
+    });
     let json = await response.json();
     successCallBack(json);
   } catch (error) {
@@ -232,6 +229,32 @@ export const getOffersByLocationPostRequest = async (
 };
 
 export const commonSearch = async (location, ask, token, callBack) => {
+  var myHeaders = new Headers();
+  myHeaders.append('Authorization', 'Bearer ' + token);
+  myHeaders.append('Content-Type', 'application/json');
+
+  var raw = JSON.stringify({
+    location: location,
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow',
+  };
+
+  // fetch(BASE_URL2 + 'shop/location', requestOptions)
+  fetch(BASE_URL2 + 'salesoffer/location', requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      callBack(JSON.parse(result));
+      console.log(result);
+    })
+    .catch(error => console.log('error', error));
+};
+
+export const searchWork = async (location, ask, token, callBack) => {
   var myHeaders = new Headers();
   myHeaders.append('Authorization', 'Bearer ' + token);
   myHeaders.append('Content-Type', 'application/json');
@@ -248,10 +271,34 @@ export const commonSearch = async (location, ask, token, callBack) => {
     redirect: 'follow',
   };
 
-  fetch(
-    'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/shop/location',
-    requestOptions,
-  )
+  // fetch(BASE_URL2 + 'shop/location', requestOptions)
+  fetch(BASE_URL2 + 'work/location', requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      callBack(JSON.parse(result));
+      console.log(result);
+    })
+    .catch(error => console.log('error', error));
+};
+export const searchJobs = async (location, ask, token, callBack) => {
+  var myHeaders = new Headers();
+  myHeaders.append('Authorization', 'Bearer ' + token);
+  myHeaders.append('Content-Type', 'application/json');
+
+  var raw = JSON.stringify({
+    location: location,
+    ask: ask,
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow',
+  };
+
+  // fetch(BASE_URL2 + 'shop/location', requestOptions)
+  fetch(BASE_URL2 + 'job/location', requestOptions)
     .then(response => response.text())
     .then(result => {
       callBack(JSON.parse(result));
@@ -418,10 +465,7 @@ export const getAppliedCandidate = async (token, jobId, successCallBack) => {
     redirect: 'follow',
   };
 
-  fetch(
-    'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/jobapply/jobId',
-    requestOptions,
-  )
+  fetch(BASE_URL2 + 'jobapply/jobId', requestOptions)
     .then(response => response.text())
     .then(result => {
       console.log(JSON.parse(result));
@@ -544,21 +588,22 @@ export const addNewWorkPostRequest = async (
   formData.append('contactNumber', contactNumber);
   formData.append('contactEmail', contactEmail);
   // formdata.append("image", imageData, "/C:/Users/dell/Pictures/Screenshots/1.png");
+  // return null;
   if (imageData.length > 0) {
     formData.append('image', imageData[0], imageData[0].name);
   }
-  // if (imageData.length > 1) {
-  //   formData.append('image2', imageData[1], imageData[1].name);
-  // }
-  // if (imageData.length > 2) {
-  //   formData.append('image3', imageData[2], imageData[2].name);
-  // }
-  // if (imageData.length > 3) {
-  //   formData.append('image4', imageData[3], imageData[3].name);
-  // }
-  // if (imageData.length > 4) {
-  //   formData.append('image5', imageData[4], imageData[4].name);
-  // }
+  if (imageData.length > 1) {
+    formData.append('image1', imageData[1], imageData[1].name);
+  }
+  if (imageData.length > 2) {
+    formData.append('image2', imageData[2], imageData[2].name);
+  }
+  if (imageData.length > 3) {
+    formData.append('image3', imageData[3], imageData[3].name);
+  }
+  if (imageData.length > 4) {
+    formData.append('image4', imageData[4], imageData[4].name);
+  }
 
   // var body = {
   //   description: description,
@@ -581,7 +626,7 @@ export const addNewWorkPostRequest = async (
   fetch(BASE_URL2 + 'work', requestOptions)
     .then(response => response.text())
     .then(result => {
-      console.log('success');
+      console.log('success', result);
       successCallBack(JSON.parse(result));
     })
     .catch(error => console.log('error', error));
@@ -589,13 +634,10 @@ export const addNewWorkPostRequest = async (
 
 export const getAllWorksPostRequest = async (bearerToken, successCallBack) => {
   try {
-    let response = await fetch(
-      'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/work',
-      {
-        method: 'GET',
-        headers: {Authorization: `Bearer ${bearerToken}`},
-      },
-    );
+    let response = await fetch(BASE_URL2 + 'work', {
+      method: 'GET',
+      headers: {Authorization: `Bearer ${bearerToken}`},
+    });
 
     let json = await response.json();
     successCallBack(json);
@@ -643,18 +685,15 @@ export const getWorksByLocationPostAPI = async (
   };
 
   try {
-    let response = await fetch(
-      'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/work/location',
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${bearerToken}`,
-        },
-        body: JSON.stringify(body),
+    let response = await fetch(BASE_URL2 + 'work/location', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${bearerToken}`,
       },
-    );
+      body: JSON.stringify(body),
+    });
     let json = await response.json();
     successCallBack(json);
   } catch (error) {
@@ -703,10 +742,7 @@ export const getJobDetailByID = (token, id, callBack) => {
     redirect: 'follow',
   };
 
-  fetch(
-    'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/job/uid',
-    requestOptions,
-  )
+  fetch(BASE_URL2 + 'job/uid', requestOptions)
     .then(response => response.text())
     .then(result => {
       console.log(result);
@@ -732,10 +768,7 @@ export const getJobByApplicantId = (token, id, callBAck) => {
     redirect: 'follow',
   };
 
-  fetch(
-    'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/jobapply/applicantId',
-    requestOptions,
-  )
+  fetch(BASE_URL2 + 'jobapply/applicantId', requestOptions)
     .then(response => response.text())
     .then(result => callBAck(JSON.parse(result)))
     .catch(error => console.log('error', error));
@@ -1098,10 +1131,7 @@ export const updateUserPostRequest = async (
     redirect: 'follow',
   };
 
-  fetch(
-    'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/user/update',
-    requestOptions,
-  )
+  fetch(BASE_URL2 + 'user/update', requestOptions)
     .then(response => response.text())
     .then(result => {
       console.log(result, '<<<update image api');

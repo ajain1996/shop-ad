@@ -189,7 +189,7 @@ export default function AddJobScreen({navigation}) {
     if (userType === 'shop') {
       if (interviewTiming.length === 0) {
         setInterviewTimingError(true);
-      } else if (contactNumber.length === 0) {
+      } else if (contactNumber.length < 10) {
         setContactNumberError(true);
       } else if (contactPersonName.length === 0) {
         setContactPersonNameError(true);
@@ -305,6 +305,7 @@ export default function AddJobScreen({navigation}) {
       }
     }
   };
+  console.log(endDate, '<<<<< Enddate');
 
   const {userType} = useSelector(state => state.UserType);
 
@@ -675,8 +676,12 @@ export default function AddJobScreen({navigation}) {
                 value={workTiming}
                 keyboardType="number-pad"
                 onChangeText={val => {
-                  setWorkTiming(val);
-                  setWorkTimingError(false);
+                  if (val > 24) {
+                    Toast.show('Valid time is 00:00 to 24:00');
+                  } else {
+                    setWorkTiming(val);
+                    setWorkTimingError(false);
+                  }
                 }}
                 style={[
                   styles.titleInput,
@@ -701,8 +706,12 @@ export default function AddJobScreen({navigation}) {
                 value={workTiming2}
                 keyboardType="number-pad"
                 onChangeText={val => {
-                  setWorkTiming2(val);
-                  setWorkTimingError2(false);
+                  if (val > 24) {
+                    Toast.show('Valid time is 00:00 to 24:00');
+                  } else {
+                    setWorkTiming2(val);
+                    setWorkTimingError2(false);
+                  }
                 }}
                 style={[
                   styles.titleInput,
@@ -1008,8 +1017,9 @@ export default function AddJobScreen({navigation}) {
                 if (
                   MinSalary == null ||
                   MaxSalatry == null ||
-                  MinSalary > MaxSalatry
+                  +MinSalary > +MaxSalatry
                 ) {
+                  console.log(MinSalary, MaxSalatry, MinSalary > MaxSalatry);
                   return Toast.show('Please enter valid salary range');
                 } else {
                   setShowNext({
@@ -1218,14 +1228,18 @@ export default function AddJobScreen({navigation}) {
                 Interview Timing
               </Text>
               <TextInput
-                placeholder="Interview Timing"
+                placeholder="ex: 13:00 for 1PM"
                 placeholderTextColor="#999"
                 value={interviewTiming}
                 keyboardType="default"
                 maxLength={10}
                 onChangeText={val => {
-                  setInterviewTiming(val);
-                  setInterviewTimingError(false);
+                  if (val > 24) {
+                    Toast.show('Please enter valid timing (00:00 to 24:00)');
+                  } else {
+                    setInterviewTiming(val);
+                    setInterviewTimingError(false);
+                  }
                 }}
                 style={[
                   styles.titleInput,
@@ -1268,7 +1282,7 @@ export default function AddJobScreen({navigation}) {
               />
               {contactNumberError ? (
                 <Text style={{...commonStyles.fs12_400, color: 'red'}}>
-                  Contact number is mandatory
+                  Please enter valid contact number
                 </Text>
               ) : (
                 <></>
@@ -1303,7 +1317,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Message
+                Message <ReqField />
               </Text>
               <TextInput
                 placeholder="Message"

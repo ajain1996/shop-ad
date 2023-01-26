@@ -149,6 +149,7 @@ export default function HomeScreen({navigation}) {
           navigation.navigate('AddSaleOfferScreen');
         }}
       />
+
       <View style={{...commonStyles.rowBetween}}>
         <HomeSearch
           width={'86%'}
@@ -471,23 +472,27 @@ const RenderSingleOffer = ({
 
     return diffInDays + 1;
   }
+  const d = new Date();
+  let today = d.getDate() + '-' + +d.getMonth() + 1 + '-' + d.getFullYear();
 
   var startDate = moment(item?.startDate).format('DD/MM/YYYY');
   var endDate = moment(item?.endDate).format('DD/MM/YYYY');
-  var diffDays = dayDiff(startDate, endDate, item.description, item._id);
-  const d = new Date();
+  var diffDays = dayDiff(today, endDate, item.description, item._id);
+
   const checkDaysFromCurrDate = dayDiff(
     `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`,
     endDate,
     'des',
     'id',
   );
-  console.log(checkDaysFromCurrDate, '<<<<current date');
+
+  console.log(diffDays, item.endDate, today, '<<<<current date');
   // if (diffDays > 4) {
   //   return null;
   // }
   // if (diffDays < 0) {
-  if (checkDaysFromCurrDate < 0) {
+
+  if (diffDays <= 0 || isNaN(diffDays)) {
     return null;
   } else {
     return (
@@ -550,7 +555,6 @@ const RenderSingleOffer = ({
                 </View>
               )}
             </TouchableHighlight>
-
             <View style={{marginLeft: 6}}>
               <TouchableHighlight
                 underlayColor="#f7f8f9"
@@ -580,7 +584,6 @@ const RenderSingleOffer = ({
               </View>
             </View>
           </View>
-
           <TouchableHighlight
             onPress={() => setHomeModalVisible(true)}
             underlayColor="#f7f8f9">
@@ -593,12 +596,17 @@ const RenderSingleOffer = ({
         </View>
         <TouchableHighlight
           onPress={() => {
-            // Alert.alert('ok');
             navigation.navigate('OfferDetail', {
               item,
             });
           }}>
           <ScrollView horizontal={true}>
+            {item?.image && (
+              <Image
+                source={{uri: item?.image}}
+                style={{width: SIZES.width, height: 311}}
+              />
+            )}
             {item?.offerImage && (
               <Image
                 source={{uri: item?.offerImage}}
@@ -637,7 +645,6 @@ const RenderSingleOffer = ({
             )}
           </ScrollView>
         </TouchableHighlight>
-
         <View style={{...commonStyles.rowBetween, padding: 15}}>
           <View style={{...commonStyles.rowStart}}>
             <TouchableHighlight
@@ -662,7 +669,6 @@ const RenderSingleOffer = ({
                 </Text>
               </View>
             </TouchableHighlight>
-
             <TouchableHighlight
               onPress={handleComment}
               underlayColor="#eee"
@@ -695,7 +701,7 @@ const RenderSingleOffer = ({
               marginTop: 2,
               color: '#E27127',
             }}>
-            {item?.code}
+            Offer Code: {item?.code}
           </Text>
         </View>
         {item?.price && (
@@ -719,22 +725,21 @@ const RenderSingleOffer = ({
         <View
           style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -10}}>
           <Text style={{...commonStyles.fs13_500, marginBottom: 12}}>
-            Days left:
+            Days left: {`${diffDays}`} Day(s)
           </Text>
-          {diffDays.toString().toLocaleLowerCase() !== 'nan' ? (
+          {/* {diffDays.toString().toLocaleLowerCase() !== 'nan' ? (
             <Text
               style={{
                 ...commonStyles.fs12_400,
                 marginLeft: 8,
                 marginBottom: 12,
               }}>
-              {diffDays} Day(s)
+              {`${diffDays}`} Day(s)
             </Text>
           ) : (
             <></>
-          )}
+          )} */}
         </View>
-
         <HomeModal
           modalVisible={homeModalVisible}
           setModalVisible={setHomeModalVisible}
@@ -746,16 +751,21 @@ const RenderSingleOffer = ({
             const oldData = await AsyncStorage.getItem('SAVED_OFFER');
             // console.log(parseIT, '<<<this is od');
             console.log(oldData, '<<<this is old data');
-
             if (oldData == null) {
               await AsyncStorage.setItem('SAVED_OFFER', JSON.stringify([item]));
             } else {
               const parseIT = JSON.parse(oldData);
               console.log(parseIT, '<<<<<this is parseddata', item);
-              await AsyncStorage.setItem(
-                'SAVED_OFFER',
-                JSON.stringify([...parseIT, item]),
-              );
+              const checkIfPresent = parseIT.filter(off => off._id == item._id);
+              if (checkIfPresent?.lengt) {
+                Toast.show('Already saved');
+                // Toast.show('Please buy membership to Add more Work!!');
+              } else {
+                await AsyncStorage.setItem(
+                  'SAVED_OFFER',
+                  JSON.stringify([...parseIT, item]),
+                );
+              }
             }
           }}
         />
