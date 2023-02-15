@@ -108,6 +108,7 @@ export default function WorksScreen({navigation}) {
           })}
         </ScrollView>
         <View style={{height: 200}} />
+
         {workData?.length == 0 && (
           <View>
             <Text style={{width: '100%', textAlign: 'center'}}>
@@ -115,6 +116,7 @@ export default function WorksScreen({navigation}) {
             </Text>
           </View>
         )}
+
         {/* <FlatList
                     data={workData}
                     renderItem={({ item }) => {
@@ -233,12 +235,16 @@ export const RenderSingleWork = ({item, showDot, navigation}) => {
           <View style={{width: SIZES.width / 1.85, marginHorizontal: 10}}>
             <Text style={{...commonStyles.fs18_700}}>{item?.description}</Text>
 
+            {/* <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+              Service Provider:{' '}
+            </Text>
+            <Text style={{...commonStyles.fs14_400}}>{item?.name}</Text> */}
             <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
-              Owner:{' '}
+              Shop Name:{' '}
             </Text>
             <Text style={{...commonStyles.fs14_400}}>{item?.shopName}</Text>
             <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
-              Service provider:{' '}
+              Relationship:{' '}
             </Text>
             <Text style={{...commonStyles.fs14_400}}>
               {item?.designationName}

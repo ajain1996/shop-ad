@@ -32,7 +32,7 @@ import {setJob} from '../../redux/reducer/jobs';
 import {SIZES} from '../../utils/theme';
 import {RenderUpload} from '../offer/AddSaleOfferScreen';
 
-export default function WorkDetail({navigation, route}) {
+export default function WorkDetailPreview({navigation, route}) {
   const dispatch = useDispatch();
   const {data} = route.params;
   console.log(data, '<<<<this is preview data');
@@ -103,23 +103,23 @@ export default function WorkDetail({navigation, route}) {
         Go Back
       </Text>
       {/* <HomeHeader
-            navigation={navigation}
-            // onPress={() => navigation.navigate('AddJobScreen')}
-          /> */}
+              navigation={navigation}
+              // onPress={() => navigation.navigate('AddJobScreen')}
+            /> */}
       {/* 
-          <HomeSearch
-            onChange={val => {
-              setLoading(true);
-              Auth.getLocalStorageData('bearer').then(token => {
-                setLoading(false);
-                getJobsByLocationPostRequest(val, token, response => {
-                  if (response !== null) {
-                    dispatch(setJob(response?.data));
-                  }
+            <HomeSearch
+              onChange={val => {
+                setLoading(true);
+                Auth.getLocalStorageData('bearer').then(token => {
+                  setLoading(false);
+                  getJobsByLocationPostRequest(val, token, response => {
+                    if (response !== null) {
+                      dispatch(setJob(response?.data));
+                    }
+                  });
                 });
-              });
-            }}
-          /> */}
+              }}
+            /> */}
       <PTRView onRefresh={_refresh}>
         <ScrollView style={{marginTop: 20}}>
           <RenderSingleWork
@@ -129,16 +129,16 @@ export default function WorkDetail({navigation, route}) {
           />
 
           {/* {jobsData.map((item, index) => {
-              return (
-                <View key={index}>
-                  <RenderSingleWork
-                    item={item}
-                    bearerToken={bearerToken}
-                    navigation={navigation}
-                  />
-                </View>
-              );
-            })} */}
+                return (
+                  <View key={index}>
+                    <RenderSingleWork
+                      item={item}
+                      bearerToken={bearerToken}
+                      navigation={navigation}
+                    />
+                  </View>
+                );
+              })} */}
         </ScrollView>
 
         <View style={{height: 64}} />
@@ -235,38 +235,34 @@ const RenderSingleWork = ({item, showDot}) => {
       </View>
       <View style={{...commonStyles.rowBetween, alignItems: 'flex-start'}}>
         {/* {item?.image && (
-          <Image source={{uri: item?.image}} style={{width: 101, height: 61}} />
-        )} */}
+            <Image source={{uri: item?.image}} style={{width: 101, height: 61}} />
+          )} */}
         <View style={{width: SIZES.width / 1.85, marginHorizontal: 10}}>
           <Text style={{...commonStyles.fs18_700}}>{item?.description}</Text>
           <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
-            Service Provider Name:{' '}
-          </Text>
-          <Text style={{...commonStyles.fs14_400}}>{item?.name}</Text>
-          <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
-            Shop name:{' '}
+            Shop Name:
           </Text>
           <Text style={{...commonStyles.fs14_400}}>{item?.shopName}</Text>
           <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+            Service Provider Name:
+          </Text>
+          <Text style={{...commonStyles.fs14_400}}>{item?.name}</Text>
+          <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
             Relationship:{' '}
           </Text>
-          <Text style={{...commonStyles.fs14_400}}>
-            {item?.designationName}
-          </Text>
+          <Text style={{...commonStyles.fs14_400}}>{item?.designation}</Text>
           <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
             Contact Info:{' '}
           </Text>
-          <Text style={{...commonStyles.fs14_400}}>{item?.contactNumber}</Text>
-          <Text style={{...commonStyles.fs14_400}}>{item?.contactEmail}</Text>
-
-          <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
-            Shift Time:{' '}
-          </Text>
-          <Text style={{...commonStyles.fs14_400}}>{item?.shiftTime}</Text>
           <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
             Location:{' '}
           </Text>
           <Text style={{...commonStyles.fs14_400}}>{item?.location}</Text>
+          {/* <Text style={{...commonStyles.fs14_400}}>{item?.contactEmail}</Text> */}
+
+          {/* <Text style={{...commonStyles.fs14_400}}>{item?.salary}</Text> */}
+
+          {/* <Text style={{...commonStyles.fs14_400}}>{item?.location}</Text> */}
 
           {item?.instaId && (
             <>
@@ -307,30 +303,30 @@ const RenderSingleWork = ({item, showDot}) => {
       </View>
 
       {/* <HomeModal
-          modalVisible={homeModalVisible}
-          setModalVisible={setHomeModalVisible}
-          feedbackFor="work"
-          onSaveIT={async () => {
-            const prev = await AsyncStorage.getItem('SAVED_WORK');
-            console.log(prev);
-          }}
-          feedbackNumber={item?.ownerId}
-          savedCallback={async () => {
-            // setSavedItems(oldArray => [...oldArray, item]);
-            const oldData = await AsyncStorage.getItem('SAVED_WORK');
-            // console.log(parseIT, '<<<this is od');
-            if (oldData == null) {
-              await AsyncStorage.setItem('SAVED_WORK', JSON.stringify([item]));
-            } else {
-              const parseIT = JSON.parse(oldData);
-              await AsyncStorage.setItem(
-                'Saved_Item',
-                JSON.stringify([...parseIT, item]),
-              );
-            }
-            setHomeModalVisible(false);
-          }}
-        /> */}
+            modalVisible={homeModalVisible}
+            setModalVisible={setHomeModalVisible}
+            feedbackFor="work"
+            onSaveIT={async () => {
+              const prev = await AsyncStorage.getItem('SAVED_WORK');
+              console.log(prev);
+            }}
+            feedbackNumber={item?.ownerId}
+            savedCallback={async () => {
+              // setSavedItems(oldArray => [...oldArray, item]);
+              const oldData = await AsyncStorage.getItem('SAVED_WORK');
+              // console.log(parseIT, '<<<this is od');
+              if (oldData == null) {
+                await AsyncStorage.setItem('SAVED_WORK', JSON.stringify([item]));
+              } else {
+                const parseIT = JSON.parse(oldData);
+                await AsyncStorage.setItem(
+                  'Saved_Item',
+                  JSON.stringify([...parseIT, item]),
+                );
+              }
+              setHomeModalVisible(false);
+            }}
+          /> */}
     </View>
   );
 };

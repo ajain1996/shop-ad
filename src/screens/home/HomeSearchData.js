@@ -23,7 +23,12 @@ export default function HomeSearchData({
 }) {
   const dispatch = useDispatch();
   const {offerData} = useSelector(state => state.Offer);
-
+  console.log(
+    suggestionTitleData,
+    '<<< suggestion title data',
+    loading,
+    '<<< loading',
+  );
   return showSuggestion ? (
     <ScrollView style={{width: SIZES.width, backgroundColor: '#fff'}}>
       {loading ? (
@@ -57,7 +62,7 @@ export default function HomeSearchData({
                     response => {
                       if (response !== null) {
                         dispatch(setOffer(response?.data));
-                        setSuggestionTitleData(response?.data);
+                        // setSuggestionTitleData(response?.data);
                         setShowSuggestion(false);
                         setLocationTitle(suggTitles?.location);
                       }

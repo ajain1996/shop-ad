@@ -33,6 +33,7 @@ export default function AppNavigation() {
         setLoginChk(false);
         return null;
       }
+      console.log(data, '<<<< this is data at async 2');
       getUserDataById(data[0]?._id, token, res => {
         console.log(res.data, '<<<<< \n\n\n\n res at user get at navigation');
         console.log('\n\n\n\n\ndata fetched: ', data);

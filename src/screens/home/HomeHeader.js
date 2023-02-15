@@ -13,10 +13,11 @@ import {useState} from 'react';
 import {useSelector} from 'react-redux';
 
 export default function HomeHeader({navigation, onPress}) {
+  // const userData = [{}];
   const {userType} = useSelector(state => state.UserType);
   const {userData} = useSelector(state => state.User);
   const [modalVisible, setModalVisible] = useState(false);
-
+  console.log(userData, '<< this is at homeheader');
   return (
     <>
       <View
@@ -51,12 +52,12 @@ export default function HomeHeader({navigation, onPress}) {
               }
             }}
             underlayColor="#f7f8f9">
+            <Text style={{textAlign: 'center'}}>{userData[0]?.name}</Text>
             <Image
               source={require('../../assets/img/plus.png')}
               resizeMode="contain"
               style={{width: 28, height: 28, alignSelf: 'flex-end'}}
             />
-            <Text style={{textAlign: 'center'}}>{userData[0]?.name}</Text>
           </TouchableOpacity>
         ) : (
           <TouchableHighlight

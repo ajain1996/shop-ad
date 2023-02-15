@@ -46,6 +46,7 @@ export default function JobsScreen({navigation}) {
 
   const [bearerToken, setBearerToken] = useState('');
   const [loading, setLoading] = React.useState(false);
+  const [allJobs, setAllJobs] = useState([]);
 
   React.useEffect(() => {
     (async () => {
@@ -53,8 +54,10 @@ export default function JobsScreen({navigation}) {
         Auth.getLocalStorageData('bearer').then(token => {
           setBearerToken(token);
           getAllJobsPostRequest(token, response => {
+            console.log(response.data, '<<<<this is dataofjobs');
             if (response !== null) {
               dispatch(setJob([...response?.data].reverse()));
+              setAllJobs([...response?.data].reverse());
             }
           });
         });
@@ -90,6 +93,39 @@ export default function JobsScreen({navigation}) {
     });
   }
 
+  const filterIt = val => {
+    console.log('val', val);
+    const smallVal = val.toLocaleLowerCase();
+    if (val.trim() == '') {
+      dispatch(setOffer(allOffers));
+    }
+    // let data = [];
+    const data = allJobs.filter(item => {
+      const smallLoc = item.location.toLowerCase();
+      const matchLoc = smallLoc.match(smallVal);
+      if (matchLoc != null) {
+        console.log(matchLoc, '<<<thisisdata');
+
+        return true;
+      }
+      if (item.ownerId) {
+        const smallname = item.ownerId.name.toLocaleLowerCase();
+        const matchLoc = smallname.match(smallVal);
+        if (matchLoc != null) {
+          console.log(matchLoc, '<<<thisisdata');
+
+          return true;
+        }
+      }
+      // const matchName = smallname.match(smallVal);
+      // console.log(matchLoc, smallLoc, smallVal, '<<<<checkmatch');
+    });
+    dispatch(setJob(data));
+    // return data;
+    // console.log(data, '<<filterit');
+    // relativeTimeRounding
+  };
+
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
@@ -102,9 +138,11 @@ export default function JobsScreen({navigation}) {
         showSwitchText={true}
         onChange={val => {
           setLoading(true);
+
           Auth.getLocalStorageData('bearer').then(token => {
             setLoading(false);
             getJobsByLocationPostRequest(val, token, response => {
+              console.log('thisissearch', response.data);
               if (response !== null) {
                 dispatch(setJob(response?.data));
               }
@@ -115,6 +153,39 @@ export default function JobsScreen({navigation}) {
       <PTRView onRefresh={_refresh}>
         <ScrollView>
           {jobsData.map((item, index) => {
+            function dayDiff(startDate, endDate, des, id) {
+              const convertArr = d => {
+                const a = d.replace('/', '-');
+                const b = a.replace('/', '-');
+                return b.split('-');
+              };
+
+              // const diffInMs = moment(`12-Dec-2022`) - moment(`10-Dec-2022`);
+              const diffInMs =
+                moment(
+                  `${parseInt(convertArr(endDate)[0])}-${
+                    monthsArray[parseInt(convertArr(endDate)[1])]
+                  }-${parseInt(convertArr(endDate)[2])}`,
+                ) -
+                moment(
+                  `${parseInt(convertArr(startDate)[0])}-${
+                    monthsArray[parseInt(convertArr(startDate)[1])]
+                  }-${parseInt(convertArr(startDate)[2])}`,
+                );
+
+              const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+              return diffInDays + 1;
+            }
+
+            var startDate = moment(item?.startDate).format('DD/MM/YYYY');
+            var endDate = moment(item?.endDate).format('DD/MM/YYYY');
+            const d = new Date();
+            let today =
+              d.getDate() + '-' + +d.getMonth() + 1 + '-' + d.getFullYear();
+            var diffDays = dayDiff(today, endDate, item.description, item._id);
+            console.log(diffDays, '<<<this is diffdays');
+            if (diffDays < 0) return null;
             return (
               <View key={index}>
                 <RenderSingleJob
@@ -306,44 +377,6 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
       alert(error.message);
     }
   };
-  function dayDiff(startDate, endDate, des, id) {
-    const convertArr = d => {
-      const a = d.replace('/', '-');
-      const b = a.replace('/', '-');
-      return b.split('-');
-    };
-    const today = new Date();
-    const inlocal = today.toLocaleDateString();
-    var currDate = moment(inlocal).format('DD/MM/YYYY');
-
-    // const diffInMs = moment(`12-Dec-2022`) - moment(`10-Dec-2022`);
-    // console.log(
-    //   startDate,
-    //   inlocal,
-    //   moment(startDate).format('DD/MM/YYYY'),
-    //   moment('10/1/22').format('DD/MM/YYYY'),
-    //   '<<<< this is inlocal',
-    // );
-    const diffInMs =
-      moment(
-        `${parseInt(convertArr(endDate)[0])}-${
-          monthsArray[parseInt(convertArr(endDate)[1])]
-        }-${parseInt(convertArr(endDate)[2])}`,
-      ) -
-      moment(
-        `${parseInt(convertArr(currDate)[0])}-${
-          monthsArray[parseInt(convertArr(currDate)[1])]
-        }-${parseInt(convertArr(currDate)[2])}`,
-      );
-
-    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-
-    return diffInDays + 1;
-  }
-
-  var startDate = moment(item?.startDate).format('DD/MM/YYYY');
-  var endDate = moment(item?.endDate).format('DD/MM/YYYY');
-  var diffDays = dayDiff(startDate, endDate, item.description, item._id);
 
   return (
     <View
@@ -880,7 +913,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         setModalVisible={setHomeModalVisible}
         feedbackFor="job"
         feedbackNumber={item?.ownerId}
-        showSave={false}
+        showSave={true}
         savedCallback={async () => {
           const oldData = await AsyncStorage.getItem('SAVED_JOBS');
           if (oldData == null) {

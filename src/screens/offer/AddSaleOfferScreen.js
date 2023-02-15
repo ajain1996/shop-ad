@@ -189,10 +189,10 @@ export default function AddSaleOfferScreen({navigation}) {
     var diffDays = dayDiff(start1, end1);
     // console.log(diffDays, '<<<this is deiff');
     console.log(getCategoryId());
-    // if (!canApply) {
-    //   Toast.show('Please buy membership to create more Offers!!');
-    //   return null;
-    // }
+    if (!canApply) {
+      Toast.show('Please buy membership to create more Offers!!');
+      return null;
+    }
     if (description.length === 0) {
       setDescriptionError(true);
     } else if (location.length === 0) {
@@ -521,7 +521,7 @@ export default function AddSaleOfferScreen({navigation}) {
             {/* </TouchableOpacity> */}
             {category != '' && (
               <View>
-                {categories.map(item => {
+                {categories?.map(item => {
                   return (
                     <Text
                       style={{

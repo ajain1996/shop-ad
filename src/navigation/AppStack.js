@@ -24,6 +24,7 @@ import PreviewJobScreen, {PreviewJob} from '../screens/jobs/PreviewJob';
 import PreviewWork from '../screens/works/PreviewWork';
 import PreviewOffer from '../screens/offer/PreviewOffer';
 import WorkDetail from '../screens/works/WorkDetail';
+import WorkDetailPreview from '../screens/works/WorkDetailPreview';
 
 export default function AppStack() {
   const Stack = createStackNavigator();
@@ -55,6 +56,7 @@ export default function AppStack() {
         <Stack.Screen name="UserDetailsScreen" component={UserDetailsScreen} />
         <Stack.Screen name="PreviewWork" component={PreviewWork} />
         <Stack.Screen name="workDetail" component={WorkDetail} />
+        <Stack.Screen name="workDetailPreview" component={WorkDetailPreview} />
         <Stack.Screen name="PreviewOffer" component={PreviewOffer} />
         <Stack.Screen name="UserPostScreen" component={UserPostScreen} />
         <Stack.Screen name="CommentScreen" component={CommentScreen} />

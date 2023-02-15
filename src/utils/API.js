@@ -4,8 +4,9 @@ import Auth from '../services/Auth';
 // const BASE_URL = 'https://shop-ad-strix.herokuapp.com/user/';
 // const BASE_URL2 = 'https://shop-ad-strix.herokuapp.com/';
 
-const BASE_URL2 =
-  'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/';
+const BASE_URL2 = 'https://shopback-kht7.onrender.com/';
+// const BASE_URL2 =
+//   'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/';
 const BASE_URL = BASE_URL2 + 'user/';
 // const BASE_URL = 'https://shop-ad-strix.herokuapp.com/user/';
 
@@ -379,6 +380,7 @@ export const addNewJobPostRequest = async (
   isPolice,
   isCertificate,
   isExperience,
+  jobVerification,
   bearerToken,
   successCallBack,
 ) => {
@@ -523,8 +525,9 @@ export const getJobsByLocationPostRequest = async (
         body: JSON.stringify(body),
       },
     );
-    let json = await response.json();
-    successCallBack(json);
+    // let json = await response.json();
+    console.log(response.json(), '<<< searchlocation');
+    // successCallBack(json);
   } catch (error) {
     console.error('error', error);
     successCallBack(null);
@@ -1148,6 +1151,7 @@ export const updateUserPostRequest = async (
 
 export const getUserDataById = async (uid, token, successCallBack) => {
   try {
+    console.log('userbyid', uid);
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('Authorization', `Bearer ${token}`);
@@ -1368,5 +1372,30 @@ export const getCategoryById = (token, id, callBack) => {
   fetch(BASE_URL2 + 'category/byId', requestOptions)
     .then(response => response.text())
     .then(result => callBack(JSON.parse(result)))
+    .catch(error => console.log('error', error));
+};
+
+export const GetCategoryName = (id, token, callBack) => {
+  var myHeaders = new Headers();
+  myHeaders.append('Authorization', 'Bearer ' + token);
+  myHeaders.append('Content-Type', 'application/json');
+
+  var raw = JSON.stringify({
+    id: id,
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow',
+  };
+
+  fetch(BASE_URL2 + 'category/byId', requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      console.log('categoryitem calling', JSON.parse(result), id);
+      callBack(JSON.parse(result));
+    })
     .catch(error => console.log('error', error));
 };

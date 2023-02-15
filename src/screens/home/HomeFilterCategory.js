@@ -53,7 +53,7 @@ const HomeFilterCategory = ({
           underlayColor="transparent">
           <View style={styles.modalView}>
             <ScrollView>
-              {categories.map((item, index) => {
+              {categories?.map((item, index) => {
                 return (
                   <TouchableHighlight
                     key={index}

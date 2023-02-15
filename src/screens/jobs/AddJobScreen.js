@@ -110,6 +110,7 @@ export default function AddJobScreen({navigation}) {
   const [contactNumber, setContactNumber] = React.useState('');
   const [contactPersonName, setContactPersonName] = React.useState('');
   const [message, setMessage] = React.useState('');
+  const [jobVerification, setJobVerification] = useState(false);
 
   const [loading, setLoading] = React.useState(false);
   const [startDate, setStartDate] = React.useState('');
@@ -226,6 +227,7 @@ export default function AddJobScreen({navigation}) {
               policyVerification,
               educationCertificate,
               experienceCertificate,
+              jobVerification,
               token,
               response => {
                 setLoading(false);
@@ -1280,6 +1282,45 @@ export default function AddJobScreen({navigation}) {
                   {borderColor: contactNumberError ? 'red' : '#BDBDBD'},
                 ]}
               />
+              {contactNumberError ? (
+                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+                  Please enter valid contact number
+                </Text>
+              ) : (
+                <></>
+              )}
+            </>
+            <>
+              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+                Job Verification
+              </Text>
+              {['Required', 'Not Required'].map(item => {
+                return (
+                  <TouchableOpacity
+                    style={[styles.checkboxWrapper]}
+                    onPress={() => {
+                      if (item == 'Required') setJobVerification(true);
+                      else setJobVerification(false);
+                    }}>
+                    <View style={[styles.checkbox]}>
+                      <View
+                        style={{
+                          width: 13,
+                          height: 13,
+                          borderRadius: 100,
+                          backgroundColor:
+                            maritalStatus === item.toLocaleLowerCase()
+                              ? '#000'
+                              : '#fff',
+                        }}
+                      />
+                    </View>
+                    <Text style={{...commonStyles.fs14_400, marginLeft: 10}}>
+                      {item}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
               {contactNumberError ? (
                 <Text style={{...commonStyles.fs12_400, color: 'red'}}>
                   Please enter valid contact number

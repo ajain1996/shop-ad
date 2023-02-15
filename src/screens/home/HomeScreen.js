@@ -13,13 +13,14 @@ import React from 'react';
 import {commonStyles} from '../../utils/styles';
 import HomeHeader from './HomeHeader';
 import HomeSearch from './HomeSearch';
-import {SIZES} from '../../utils/theme';
+import {COLORS, SIZES} from '../../utils/theme';
 import {
   addLikesByIDPostAPI,
   commonSearch,
   getAllJobsPostRequest,
   getAllOffersPostRequest,
   getAllWorksPostRequest,
+  GetCategoryName,
   getCommentsCountByIDPostAPI,
   getLikesCountByIDPostAPI,
   getOffersByLocationPostRequest,
@@ -37,7 +38,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setOffer} from '../../redux/reducer/offer';
 import {setJob} from '../../redux/reducer/jobs';
 import {setWork} from '../../redux/reducer/work';
-import moment from 'moment';
+import moment, {relativeTimeRounding} from 'moment';
 import HomeFilterCategory from './HomeFilterCategory';
 import HomeSearchData from './HomeSearchData';
 import HomeCarousel from './HomeCarousel';
@@ -45,7 +46,20 @@ import {useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HomeFilterCategory2 from './FilterCategoryHome2';
 import {parse} from '@babel/core';
-
+const initialValue = [
+  {
+    location: 'Mumbai',
+  },
+  {
+    location: 'Delhi',
+  },
+  {
+    location: 'Kolkata',
+  },
+  {
+    location: 'Indore',
+  },
+];
 export default function HomeScreen({navigation}) {
   const dispatch = useDispatch();
 
@@ -59,25 +73,6 @@ export default function HomeScreen({navigation}) {
   const {userData} = useSelector(state => state.User);
 
   console.log(userData, '<<<< this is user Data \n\n\n\n');
-
-  // console.log(userData, '<<<<\n\n\n this is filer data');
-
-  //   React.useEffect(() => {
-  //     (async () => {
-  //       const unsubscribe = navigation.addListener('focus', () => {
-  //         Auth.getLocalStorageData('bearer').then(token => {
-  //           setBearerToken(token);
-  //           getAllOffersPostRequest(token, response => {
-  //             setLoading(false);
-  //             if (response !== null) {
-  //               dispatch(setOffer(response?.data));
-  //             }
-  //           });
-  //         });
-  //       });
-  //       return unsubscribe;
-  //     })();
-  //   }, [onFocus]);
 
   React.useEffect(() => {
     setLoading(true);
@@ -123,7 +118,7 @@ export default function HomeScreen({navigation}) {
   }
 
   const [showSuggestion, setShowSuggestion] = useState(false);
-  const [suggestionTitleData, setSuggestionTitleData] = useState([]);
+  const [suggestionTitleData, setSuggestionTitleData] = useState(initialValue);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [locationTitle, setLocationTitle] = useState('');
 
@@ -133,13 +128,51 @@ export default function HomeScreen({navigation}) {
   const filterData = val => {
     console.log(val);
     let searchField = val.toLocaleLowerCase();
-    allOffers.filter(item => {
+
+    const filteredDAta = suggestionTitleData.filter(item => {
       console.log(item, '<<<this is item');
+      const loc = item.location.toLocaleLowerCase();
+      if (loc.match(searchField)) {
+        return true;
+      } else return false;
       // const location=item.
     });
+    setSuggestionTitleData(filteredDAta);
     setLoading2(false);
   };
 
+  const filterIt = val => {
+    console.log('val', val);
+    const smallVal = val.toLocaleLowerCase();
+    if (val.trim() == '') {
+      dispatch(setOffer(allOffers));
+    }
+    // let data = [];
+    const data = allOffers.filter(item => {
+      const smallLoc = item.location.toLowerCase();
+      const matchLoc = smallLoc.match(smallVal);
+      if (matchLoc != null) {
+        console.log(matchLoc, '<<<thisisdata');
+
+        return true;
+      }
+      if (item.ownerId) {
+        const smallname = item.ownerId.name.toLocaleLowerCase();
+        const matchLoc = smallname.match(smallVal);
+        if (matchLoc != null) {
+          console.log(matchLoc, '<<<thisisdata');
+
+          return true;
+        }
+      }
+      // const matchName = smallname.match(smallVal);
+      // console.log(matchLoc, smallLoc, smallVal, '<<<<checkmatch');
+    });
+    dispatch(setOffer(data));
+    // return data;
+    // console.log(data, '<<filterit');
+    // relativeTimeRounding
+  };
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
@@ -156,26 +189,30 @@ export default function HomeScreen({navigation}) {
           defaultValue={locationTitle}
           onChange={val => {
             setLoading2(true);
-            // filterData(val);
+
+            filterData(val);
             // return null;
             Auth.getLocalStorageData('bearer').then(token => {
               setLoading2(false);
               setShowSuggestion(true);
               setBearerToken(token);
               if (val?.length === 0) {
-                setSuggestionTitleData([]);
+                // setSuggestionTitleData([]);
+                setSuggestionTitleData(initialValue);
                 dispatch(setOffer(offerData));
                 return true;
               }
+              filterIt(val);
+              // console.log(filterIt(val), '<<<< this is filtered data');
               // getOffersByLocationPostRequest(val,2,token, response => {
-              commonSearch(val, 2, token, response => {
-                console.log(response, '<<<<this is search response');
-                if (response !== null) {
-                  dispatch(setOffer(response?.data));
-                  setSuggestionTitleData(response?.data);
-                  return true;
-                }
-              });
+              // commonSearch(val, 2, token, response => {
+              //   console.log(response, '<<<<this is search response');
+              //   if (response !== null) {
+              //     dispatch(setOffer(response?.data));
+              //     // setSuggestionTitleData(response?.data);
+              //     return true;
+              //   }
+              // });
             });
           }}
         />
@@ -205,24 +242,24 @@ export default function HomeScreen({navigation}) {
             setShowCategoryModal(!showCategoryModal);
           }}
         />
-        {/* <HomeFilterCategory
+        <HomeFilterCategory
           modalVisible={showCategoryModal}
           navigation={navigation}
           setCategoryId={setCategoryId}
           callback={() => {
             setShowCategoryModal(!showCategoryModal);
           }}
-        /> */}
+        />
       </View>
 
-      {/* <HomeSearchData
+      <HomeSearchData
         showSuggestion={showSuggestion}
         loading={loading2}
         suggestionTitleData={suggestionTitleData}
         setSuggestionTitleData={setSuggestionTitleData}
         setShowSuggestion={setShowSuggestion}
         setLocationTitle={setLocationTitle}
-      /> */}
+      />
 
       <PTRView onRefresh={_refresh}>
         <ScrollView>
@@ -277,18 +314,23 @@ const RenderSingleOffer = ({
   const [user, setUser] = useState([]);
   const [likesCount, setLikesCount] = useState(0);
   const [isLike, setIsLike] = useState(false);
+  const [cateogyrName, setCateogyrName] = useState('');
   const [commentsCount, setCommentsCount] = useState(0);
-  console.log(item, '<<<thisisitem');
+  // console.log(item, '<<<thisisitem');
   React.useEffect(() => {
+    GetCategoryName(item.cateoryId, bearerToken, res => {
+      // console.log('categoryitem1', res.data[0]);
+      setCateogyrName(res.data[0].categoryName);
+    });
     (async () => {
       const unsubscribe = navigation.addListener('focus', () => {
-        getUserByIDPostAPI(item?.ownerId, bearerToken, response => {
-          console.log(response, '<<<<<userDAta1');
-          if (response !== null) {
-            setUser(response?.data[0]);
-            console.log(response?.data[0], '<<<<thisisitemofsingleoffer');
-          }
-        });
+        setUser(item.ownerId);
+        // getUserByIDPostAPI(item?.ownerId, bearerToken, response => {
+        //   console.log(response, '<<<<<userDAta1');
+        //   if (response !== null) {
+        //     console.log(response?.data[0], '<<<<thisisitemofsingleoffer');
+        //   }
+        // });
 
         getLikesCountByIDPostAPI(item?._id, bearerToken, response => {
           if (response !== null) {
@@ -472,11 +514,11 @@ const RenderSingleOffer = ({
 
     return diffInDays + 1;
   }
-  const d = new Date();
-  let today = d.getDate() + '-' + +d.getMonth() + 1 + '-' + d.getFullYear();
 
   var startDate = moment(item?.startDate).format('DD/MM/YYYY');
   var endDate = moment(item?.endDate).format('DD/MM/YYYY');
+  const d = new Date();
+  let today = d.getDate() + '-' + +d.getMonth() + 1 + '-' + d.getFullYear();
   var diffDays = dayDiff(today, endDate, item.description, item._id);
 
   const checkDaysFromCurrDate = dayDiff(
@@ -486,13 +528,14 @@ const RenderSingleOffer = ({
     'id',
   );
 
-  console.log(diffDays, item.endDate, today, '<<<<current date');
+  // console.log(diffDays, item.endDate, today, '<<<<current date');
   // if (diffDays > 4) {
   //   return null;
   // }
   // if (diffDays < 0) {
 
-  if (diffDays <= 0 || isNaN(diffDays)) {
+  // if (diffDays <= 0 || isNaN(diffDays)) {
+  if (false) {
     return null;
   } else {
     return (
@@ -572,6 +615,7 @@ const RenderSingleOffer = ({
                   resizeMode="contain"
                   style={{width: 18, height: 16}}
                 />
+
                 <TouchableHighlight
                   onPress={() => {
                     navigation.navigate('LocationScreen');
@@ -600,50 +644,81 @@ const RenderSingleOffer = ({
               item,
             });
           }}>
-          <ScrollView horizontal={true}>
-            {item?.image && (
-              <Image
-                source={{uri: item?.image}}
-                style={{width: SIZES.width, height: 311}}
-              />
-            )}
-            {item?.offerImage && (
-              <Image
-                source={{uri: item?.offerImage}}
-                style={{width: SIZES.width, height: 311}}
-              />
-            )}
-            {/* {item?.offerImage && (
+          <>
+            <ScrollView horizontal={true}>
+              {item?.image && (
+                <Image
+                  source={{uri: item?.image}}
+                  style={{width: SIZES.width, height: 311}}
+                />
+              )}
+              {item?.offerImage && (
+                <Image
+                  source={{uri: item?.offerImage}}
+                  style={{width: SIZES.width, height: 311}}
+                />
+              )}
+              {/* {item?.offerImage && (
               <Image
                 source={{uri: item?.offerImage}}
                 style={{width: SIZES.width, height: 311}}
               />
             )} */}
-            {item?.offerImage1 && (
-              <Image
-                source={{uri: item?.offerImage1}}
-                style={{width: SIZES.width, height: 311}}
-              />
-            )}
-            {item?.offerImage2 && (
-              <Image
-                source={{uri: item?.offerImage2}}
-                style={{width: SIZES.width, height: 311}}
-              />
-            )}
-            {item?.offerImage3 && (
-              <Image
-                source={{uri: item?.offerImage3}}
-                style={{width: SIZES.width, height: 311}}
-              />
-            )}
-            {item?.offerImage34 && (
-              <Image
-                source={{uri: item?.offerImage4}}
-                style={{width: SIZES.width, height: 311}}
-              />
-            )}
-          </ScrollView>
+              {item?.offerImage1 && (
+                <Image
+                  source={{uri: item?.offerImage1}}
+                  style={{width: SIZES.width, height: 311}}
+                />
+              )}
+              {item?.offerImage2 && (
+                <Image
+                  source={{uri: item?.offerImage2}}
+                  style={{width: SIZES.width, height: 311}}
+                />
+              )}
+              {item?.offerImage3 && (
+                <Image
+                  source={{uri: item?.offerImage3}}
+                  style={{width: SIZES.width, height: 311}}
+                />
+              )}
+              {item?.offerImage34 && (
+                <Image
+                  source={{uri: item?.offerImage4}}
+                  style={{width: SIZES.width, height: 311}}
+                />
+              )}
+            </ScrollView>
+            <View
+              style={{
+                position: 'absolute',
+                borderWidth: 2,
+                borderColor: '#000',
+                bottom: 10,
+                right: 10,
+                backgroundColor: COLORS.primary,
+                borderRadius: 50,
+                width: 70,
+                height: 70,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderColor: '#fff',
+                color: '#fff',
+                fontWeight: 'bold',
+                padding: 5,
+              }}>
+              <Text
+                style={{
+                  color: '#fff',
+                  fontWeight: 'bold',
+                  width: '100%',
+                  textAlign: 'center',
+                }}>
+                {item?.code}
+              </Text>
+            </View>
+          </>
         </TouchableHighlight>
         <View style={{...commonStyles.rowBetween, padding: 15}}>
           <View style={{...commonStyles.rowStart}}>
@@ -691,7 +766,7 @@ const RenderSingleOffer = ({
             />
           </TouchableHighlight>
         </View>
-        <View
+        {/* <View
           style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -16}}>
           <Text
             style={{
@@ -701,9 +776,9 @@ const RenderSingleOffer = ({
               marginTop: 2,
               color: '#E27127',
             }}>
-            Offer Code: {item?.code}
+            Offer: {item?.code}
           </Text>
-        </View>
+        </View> */}
         {item?.price && (
           <View
             style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -5}}>
@@ -722,6 +797,21 @@ const RenderSingleOffer = ({
             </Text>
           </View>
         )}
+        <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -5}}>
+          <Text style={{...commonStyles.fs14_500, marginBottom: 12}}>
+            Category
+          </Text>
+          <Text
+            style={{
+              ...commonStyles.fs12_400,
+              marginLeft: 8,
+              marginBottom: 10,
+              marginTop: 2,
+              color: '#E27127',
+            }}>
+            {cateogyrName}
+          </Text>
+        </View>
         <View
           style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -10}}>
           <Text style={{...commonStyles.fs13_500, marginBottom: 12}}>

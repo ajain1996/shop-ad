@@ -113,10 +113,10 @@ export default function AddWorksScreen({navigation}) {
   }, []);
 
   const handleSubmit = () => {
-    // if (!canApply) {
-    //   Toast.show('Please buy membership to Add more Work!!');
-    //   return null;
-    // }
+    if (!canApply) {
+      Toast.show('Please buy membership to Add more Work!!');
+      return null;
+    }
     // console.log(imageData, '<<<<<');
     // return null;
     console.log('handle submit');
@@ -271,7 +271,7 @@ export default function AddWorksScreen({navigation}) {
             )}
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Owner Name <ReqField />
+                Service Provider <ReqField />
               </Text>
               <TextInput
                 placeholder="Your Name"
@@ -464,7 +464,7 @@ export default function AddWorksScreen({navigation}) {
               {/* </TouchableOpacity> */}
               {category != '' && (
                 <View>
-                  {categories.map(item => {
+                  {categories?.map(item => {
                     return (
                       <Text
                         style={{
@@ -687,10 +687,16 @@ export default function AddWorksScreen({navigation}) {
             // style={{width: '50%'}}
             onPress={() => {
               navigation.navigate('PreviewWork', {
+                shopName,
                 name,
                 desc,
                 contact,
                 designation,
+                shift,
+                location,
+                instaId,
+                facebookId,
+                emailId,
                 image: imageData[0]?.uri,
               });
             }}

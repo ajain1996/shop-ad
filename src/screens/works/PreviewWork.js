@@ -6,6 +6,7 @@ import {
   TouchableHighlight,
   Share,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 
 import React from 'react';
@@ -146,7 +147,7 @@ export default function PreviewWork({navigation, route}) {
   );
 }
 
-const RenderSingleWork = ({item, showDot}) => {
+const RenderSingleWork = ({item, showDot, navigation}) => {
   const [homeModalVisible, setHomeModalVisible] = useState(false);
   console.log(item, '<<<<< thisispreviewitem');
   return (
@@ -159,28 +160,42 @@ const RenderSingleWork = ({item, showDot}) => {
         borderColor: '#D8D8D8',
         borderRadius: 4,
       }}>
-      <View style={{...commonStyles.rowBetween, alignItems: 'flex-start'}}>
-        {item?.image && (
-          <Image source={{uri: item?.image}} style={{width: 101, height: 61}} />
-        )}
-        <View style={{width: SIZES.width / 1.85, marginHorizontal: 10}}>
-          <Text style={{...commonStyles.fs18_700}}>{item?.desc}</Text>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('workDetailPreview', {
+            data: item,
+          });
+        }}>
+        <View style={{...commonStyles.rowBetween, alignItems: 'flex-start'}}>
+          {item?.image && (
+            <Image
+              source={{uri: item?.image}}
+              style={{width: 101, height: 61}}
+            />
+          )}
+          <View style={{width: SIZES.width / 1.85, marginHorizontal: 10}}>
+            <Text style={{...commonStyles.fs18_700}}>{item?.desc}</Text>
 
-          <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
-            Shop Name:{' '}
-          </Text>
-          <Text style={{...commonStyles.fs14_400}}>{item?.name}</Text>
-          <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
-            Designation:{' '}
-          </Text>
-          <Text style={{...commonStyles.fs14_400}}>{item?.designation}</Text>
+            <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+              Service Provider Name:{' '}
+            </Text>
+            <Text style={{...commonStyles.fs14_400}}>{item?.name}</Text>
+            <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+              Shop Name:{' '}
+            </Text>
+            <Text style={{...commonStyles.fs14_400}}>{item?.shopName}</Text>
+            <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+              Designation:{' '}
+            </Text>
+            <Text style={{...commonStyles.fs14_400}}>{item?.designation}</Text>
 
-          <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
-            Contact Info:{' '}
-          </Text>
-          <Text style={{...commonStyles.fs14_400}}>{item?.contact}</Text>
+            <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+              Contact Info:{' '}
+            </Text>
+            <Text style={{...commonStyles.fs14_400}}>{item?.contact}</Text>
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
 
       {/* <HomeModal
         modalVisible={homeModalVisible}
