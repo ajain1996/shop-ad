@@ -95,11 +95,14 @@ export default function JobsScreen({navigation}) {
 
   const filterIt = val => {
     console.log('val', val);
+    setLoading(true);
     const smallVal = val.toLocaleLowerCase();
     if (val.trim() == '') {
-      dispatch(setOffer(allOffers));
+      dispatch(setJob(allJobs));
+      return setLoading(false);
     }
     // let data = [];
+    setLoading(true);
     const data = allJobs.filter(item => {
       const smallLoc = item.location.toLowerCase();
       const matchLoc = smallLoc.match(smallVal);
@@ -117,10 +120,29 @@ export default function JobsScreen({navigation}) {
           return true;
         }
       }
+      if (item.designationName) {
+        const smallname = item.designationName.toLocaleLowerCase();
+        const matchLoc = smallname.match(smallVal);
+        if (matchLoc != null) {
+          console.log(matchLoc, '<<<thisisdata');
+
+          return true;
+        }
+      }
+      if (item.shopName) {
+        const smallname = item.shopName.toLocaleLowerCase();
+        const matchLoc = smallname.match(smallVal);
+        if (matchLoc != null) {
+          console.log(matchLoc, '<<<thisisdata');
+
+          return true;
+        }
+      }
       // const matchName = smallname.match(smallVal);
       // console.log(matchLoc, smallLoc, smallVal, '<<<<checkmatch');
     });
     dispatch(setJob(data));
+    setLoading(false);
     // return data;
     // console.log(data, '<<filterit');
     // relativeTimeRounding
@@ -137,17 +159,18 @@ export default function JobsScreen({navigation}) {
       <HomeSearch
         showSwitchText={true}
         onChange={val => {
-          setLoading(true);
+          // setLoading(true);
+          filterIt(val);
 
-          Auth.getLocalStorageData('bearer').then(token => {
-            setLoading(false);
-            getJobsByLocationPostRequest(val, token, response => {
-              console.log('thisissearch', response.data);
-              if (response !== null) {
-                dispatch(setJob(response?.data));
-              }
-            });
-          });
+          // Auth.getLocalStorageData('bearer').then(token => {
+          // setLoading(false);
+          // getJobsByLocationPostRequest(val, token, response => {
+          //   console.log('thisissearch', response.data);
+          //   if (response !== null) {
+          //     dispatch(setJob(response?.data));
+          //   }
+          // });
+          // });
         }}
       />
       <PTRView onRefresh={_refresh}>

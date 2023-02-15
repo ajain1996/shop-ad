@@ -33,6 +33,7 @@ export default function WorksScreen({navigation}) {
 
   const [bearerToken, setBearerToken] = useState('');
   const [loading, setLoading] = React.useState(false);
+  const [allWork, setAllWork] = useState([]);
 
   React.useEffect(() => {
     (async () => {
@@ -40,8 +41,10 @@ export default function WorksScreen({navigation}) {
         Auth.getLocalStorageData('bearer').then(token => {
           setBearerToken(token);
           getAllWorksPostRequest(token, response => {
+            console.log(response, '<<<< allworks');
             if (response !== null) {
               dispatch(setWork(response?.data));
+              setAllWork(response?.data);
             }
           });
         });
@@ -75,6 +78,60 @@ export default function WorksScreen({navigation}) {
       });
     });
   }
+  const filterIt = val => {
+    console.log('val', val);
+    setLoading(true);
+    const smallVal = val.toLocaleLowerCase();
+    if (val.trim() == '') {
+      dispatch(setWork(allWork));
+      return setLoading(false);
+    }
+    // let data = [];
+    setLoading(true);
+    const data = allWork.filter(item => {
+      const smallLoc = item.location.toLowerCase();
+      const matchLoc = smallLoc.match(smallVal);
+      if (matchLoc != null) {
+        console.log(matchLoc, '<<<thisisdata');
+
+        return true;
+      }
+      if (item.ownerId) {
+        const smallname = item.ownerId.name.toLocaleLowerCase();
+        const matchLoc = smallname.match(smallVal);
+        if (matchLoc != null) {
+          console.log(matchLoc, '<<<thisisdata');
+
+          return true;
+        }
+      }
+      if (item.designationName) {
+        const smallname = item.designationName.toLocaleLowerCase();
+        const matchLoc = smallname.match(smallVal);
+        if (matchLoc != null) {
+          console.log(matchLoc, '<<<thisisdata');
+
+          return true;
+        }
+      }
+      if (item.shopName) {
+        const smallname = item.shopName.toLocaleLowerCase();
+        const matchLoc = smallname.match(smallVal);
+        if (matchLoc != null) {
+          console.log(matchLoc, '<<<thisisdata');
+
+          return true;
+        }
+      }
+      // const matchName = smallname.match(smallVal);
+      // console.log(matchLoc, smallLoc, smallVal, '<<<<checkmatch');
+    });
+    dispatch(setWork(data));
+    setLoading(false);
+    // return data;
+    // console.log(data, '<<filterit');
+    // relativeTimeRounding
+  };
 
   return (
     <View style={{backgroundColor: '#f7f8f9'}}>
@@ -86,15 +143,16 @@ export default function WorksScreen({navigation}) {
       />
       <HomeSearch
         onChange={val => {
-          setLoading(true);
-          Auth.getLocalStorageData('bearer').then(token => {
-            setLoading(false);
-            getWorksByLocationPostAPI(val, token, response => {
-              if (response !== null) {
-                dispatch(setWork(response?.data));
-              }
-            });
-          });
+          // setLoading(true);
+          filterIt(val);
+          // Auth.getLocalStorageData('bearer').then(token => {
+          //   setLoading(false);
+          //   getWorksByLocationPostAPI(val, token, response => {
+          //     if (response !== null) {
+          //       dispatch(setWork(response?.data));
+          //     }
+          //   });
+          // });
         }}
       />
       <PTRView onRefresh={_refresh}>
@@ -254,7 +312,7 @@ export const RenderSingleWork = ({item, showDot, navigation}) => {
               Contact Info:{' '}
             </Text>
             <Text style={{...commonStyles.fs14_400}}>
-              {item?.contactNumber}
+              {item?.contactNumber}, ( {item?.location} )
             </Text>
             {item?.instaId && (
               <>
