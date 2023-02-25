@@ -127,7 +127,7 @@ export default function AddSaleOfferScreen({navigation}) {
           if (response?.message === 'Data From Database') {
             // setOfferData(response?.data);
             console.log(response, '<<<< this is sales offer screen');
-            if (response.data.length > 0) {
+            if (response.data.length > 3) {
               setCanApply(false);
             }
             // console.log(
@@ -364,9 +364,10 @@ export default function AddSaleOfferScreen({navigation}) {
           <>
             <Text style={{...commonStyles.fs16_500, marginTop: 10}}>Offer</Text>
             <TextInput
-              placeholder="Offer"
+              placeholder="Offer Percent (ex: 20%)"
               placeholderTextColor="#999"
               value={code}
+              keyboardType="number-pad"
               onChangeText={val => {
                 setCode(val);
                 setdocError(false);

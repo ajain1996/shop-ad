@@ -22,6 +22,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import DocumentPicker from 'react-native-document-picker';
 import {
   addNewJobPostRequest,
+  GetFacilities,
   getJobsByOwnerIdPostRequest,
   monthsArray,
 } from '../../utils/API';
@@ -116,9 +117,15 @@ export default function AddJobScreen({navigation}) {
   const [startDate, setStartDate] = React.useState('');
   const [endDate, setEndDate] = React.useState('');
   const [canAppy, setCanAppy] = useState(true);
+  // const [Facilities, setFacilities] = useState({})
+  const [allFacilities, setAllFacilities] = useState([]);
 
   useEffect(() => {
     // Alert.alert('hello');
+    GetFacilities(res => {
+      console.log(res, '<<<these are facilities');
+      setAllFacilities(res.data);
+    });
     if (
       userData[0]?.pAddress == undefined ||
       userData[0].pAddress == 'undefined' ||
@@ -140,7 +147,7 @@ export default function AddJobScreen({navigation}) {
       getJobsByOwnerIdPostRequest(userData[0]?._id, token, response => {
         setLoading(false);
         if (response !== null) {
-          if (response.data.length > 0) {
+          if (response.data.length > 3) {
             console.log(response, '<<<<this is response of get all job--- ');
             // Alert.alert('having job');
             setCanAppy(false);
@@ -832,14 +839,15 @@ export default function AddJobScreen({navigation}) {
                 Facilities
               </Text>
               <FlatList
-                data={[
-                  'Indore, India',
-                  'Bhopal, India',
-                  'Nagpur, India',
-                  'Jabalpur, India',
-                  'Kashmir, India',
-                  'Goa, India',
-                ]}
+                data={allFacilities}
+                // data={[
+                //   'Indore, India',
+                //   'Bhopal, India',
+                //   'Nagpur, India',
+                //   'Jabalpur, India',
+                //   'Kashmir, India',
+                //   'Goa, India',
+                // ]}
                 numColumns={2}
                 renderItem={({item}) => {
                   return (
@@ -847,7 +855,7 @@ export default function AddJobScreen({navigation}) {
                       style={[styles.checkboxWrapper]}
                       onPress={() => {
                         if (facilities?.length === 0) {
-                          setFacilities(item);
+                          setFacilities(item.name);
                         } else {
                           setFacilities('');
                         }
@@ -860,12 +868,12 @@ export default function AddJobScreen({navigation}) {
                             height: 13,
                             borderRadius: 100,
                             backgroundColor:
-                              facilities === item ? '#000' : '#fff',
+                              facilities === item.name ? '#000' : '#fff',
                           }}
                         />
                       </View>
                       <Text style={{...commonStyles.fs14_400, marginLeft: 10}}>
-                        {item}
+                        {item.name}
                       </Text>
                     </TouchableOpacity>
                   );
@@ -1309,7 +1317,10 @@ export default function AddJobScreen({navigation}) {
                           height: 13,
                           borderRadius: 100,
                           backgroundColor:
-                            maritalStatus === item.toLocaleLowerCase()
+                            item == 'Required' && jobVerification == true
+                              ? '#000'
+                              : item == 'Not Required' &&
+                                jobVerification == false
                               ? '#000'
                               : '#fff',
                         }}

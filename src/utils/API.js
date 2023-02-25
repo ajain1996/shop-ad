@@ -1,14 +1,10 @@
 import {Alert} from 'react-native';
 import Auth from '../services/Auth';
 
-// const BASE_URL = 'https://shop-ad-strix.herokuapp.com/user/';
-// const BASE_URL2 = 'https://shop-ad-strix.herokuapp.com/';
-
-const BASE_URL2 = 'https://shopback-kht7.onrender.com/';
-// const BASE_URL2 =
-//   'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/';
+// const BASE_URL2 = 'https://shopback-kht7.onrender.com/';
+const BASE_URL2 =
+  'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/';
 const BASE_URL = BASE_URL2 + 'user/';
-// const BASE_URL = 'https://shop-ad-strix.herokuapp.com/user/';
 
 export const mobileRegisterPostRequest = async (
   email,
@@ -1267,6 +1263,18 @@ export const unFollowPostAPI = async (payload, successCallBack) => {
       console.log(result);
       successCallBack(JSON.parse(result));
     })
+    .catch(error => console.log('error', error));
+};
+
+export const GetFacilities = callBack => {
+  var requestOptions = {
+    method: 'GET',
+    redirect: 'follow',
+  };
+
+  fetch(BASE_URL2 + 'job/facility', requestOptions)
+    .then(response => response.text())
+    .then(result => callBack(JSON.parse(result)))
     .catch(error => console.log('error', error));
 };
 

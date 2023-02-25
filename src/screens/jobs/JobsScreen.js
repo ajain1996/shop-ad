@@ -242,12 +242,12 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
   React.useEffect(() => {
     (async () => {
       const unsubscribe = navigation.addListener('focus', () => {
-        getUserByIDPostAPI(item?.ownerId, bearerToken, response => {
-          if (response.data) {
-            console.log(response, '<<<<responseerror');
-            setUser(response?.data[0]);
-          }
-        });
+        setUser(item?.ownerId);
+        // getUserByIDPostAPI(item?.ownerId, bearerToken, response => {
+        //   if (response.data) {
+        //     console.log(response, '<<<<responseerror');
+        //   }
+        // });
 
         getLikesCountByIDPostAPI(item?._id, bearerToken, response => {
           if (response !== null) {

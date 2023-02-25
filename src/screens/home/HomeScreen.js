@@ -530,12 +530,13 @@ const RenderSingleOffer = ({
 
   // console.log(diffDays, item.endDate, today, '<<<<current date');
   // if (diffDays > 4) {
+  // if ( > 4) {
   //   return null;
   // }
   // if (diffDays < 0) {
 
-  // if (diffDays <= 0 || isNaN(diffDays)) {
-  if (false) {
+  if (diffDays <= 0 || isNaN(diffDays)) {
+    // if (false) {
     return null;
   } else {
     return (
@@ -689,35 +690,37 @@ const RenderSingleOffer = ({
                 />
               )}
             </ScrollView>
-            <View
-              style={{
-                position: 'absolute',
-                borderWidth: 2,
-                borderColor: '#000',
-                bottom: 10,
-                right: 10,
-                backgroundColor: COLORS.primary,
-                borderRadius: 50,
-                width: 70,
-                height: 70,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderColor: '#fff',
-                color: '#fff',
-                fontWeight: 'bold',
-                padding: 5,
-              }}>
-              <Text
+            {item?.code && (
+              <View
                 style={{
+                  position: 'absolute',
+                  borderWidth: 2,
+                  borderColor: '#000',
+                  bottom: 10,
+                  right: 10,
+                  backgroundColor: COLORS.primary,
+                  borderRadius: 50,
+                  width: 70,
+                  height: 70,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderColor: '#fff',
                   color: '#fff',
                   fontWeight: 'bold',
-                  width: '100%',
-                  textAlign: 'center',
+                  padding: 5,
                 }}>
-                {item?.code}
-              </Text>
-            </View>
+                <Text
+                  style={{
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    width: '100%',
+                    textAlign: 'center',
+                  }}>
+                  {item?.code} %
+                </Text>
+              </View>
+            )}
           </>
         </TouchableHighlight>
         <View style={{...commonStyles.rowBetween, padding: 15}}>

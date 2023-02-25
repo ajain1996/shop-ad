@@ -103,7 +103,7 @@ export default function AddWorksScreen({navigation}) {
           if (response?.message === 'Item Found') {
             // setWorkData(response?.data);
             console.log('this is work data', response);
-            if (response.data.length > 0) {
+            if (response.data.length > 3) {
               setCanApply(false);
             }
           }
