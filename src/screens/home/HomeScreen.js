@@ -490,7 +490,7 @@ const RenderSingleOffer = ({
     }
   };
 
-  function dayDiff(startDate, endDate, des, id) {
+  function dayDiff(startDate, endDate, des, id, poststa) {
     const convertArr = d => {
       const a = d.replace('/', '-');
       const b = a.replace('/', '-');
@@ -503,23 +503,28 @@ const RenderSingleOffer = ({
         `${parseInt(convertArr(endDate)[0])}-${
           monthsArray[parseInt(convertArr(endDate)[1])]
         }-${parseInt(convertArr(endDate)[2])}`,
-      ) -
-      moment(
-        `${parseInt(convertArr(startDate)[0])}-${
-          monthsArray[parseInt(convertArr(startDate)[1])]
-        }-${parseInt(convertArr(startDate)[2])}`,
-      );
+      ) - moment(startDate);
 
     const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-
+    if (id == '63ff229ec91a4b8315ec9b35') {
+      console.log(
+        startDate,
+        endDate,
+        des,
+        id,
+        diffInDays + 1,
+        poststa,
+        '<<<< this is id',
+      );
+    }
     return diffInDays + 1;
   }
 
   var startDate = moment(item?.startDate).format('DD/MM/YYYY');
   var endDate = moment(item?.endDate).format('DD/MM/YYYY');
   const d = new Date();
-  let today = d.getDate() + '-' + +d.getMonth() + 1 + '-' + d.getFullYear();
-  var diffDays = dayDiff(today, endDate, item.description, item._id);
+  const today = `${+d.getMonth() + 1}-${d.getDate()}-${d.getFullYear()}`;
+  var diffDays = dayDiff(today, endDate, item.description, item._id, startDate);
 
   const checkDaysFromCurrDate = dayDiff(
     `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`,

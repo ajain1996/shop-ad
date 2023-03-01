@@ -105,6 +105,15 @@ export default function WorksScreen({navigation}) {
           return true;
         }
       }
+      if (item.title) {
+        const smallname = item.title.toLocaleLowerCase();
+        const matchLoc = smallname.match(smallVal);
+        if (matchLoc != null) {
+          console.log(matchLoc, '<<<thisisdata');
+
+          return true;
+        }
+      }
       if (item.designationName) {
         const smallname = item.designationName.toLocaleLowerCase();
         const matchLoc = smallname.match(smallVal);
