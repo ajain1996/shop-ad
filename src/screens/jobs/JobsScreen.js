@@ -56,6 +56,7 @@ export default function JobsScreen({navigation}) {
           getAllJobsPostRequest(token, response => {
             console.log(response.data, '<<<<this is dataofjobs');
             if (response !== null) {
+              // dispatch(setJob([...response?.data].reverse()));
               dispatch(setJob([...response?.data].reverse()));
               setAllJobs([...response?.data].reverse());
             }
@@ -87,6 +88,7 @@ export default function JobsScreen({navigation}) {
       setBearerToken(token);
       getAllJobsPostRequest(token, response => {
         if (response !== null) {
+          // dispatch(setJob([...response?.data].reverse()));
           dispatch(setJob([...response?.data].reverse()));
         }
       });
@@ -197,16 +199,24 @@ export default function JobsScreen({navigation}) {
                 );
 
               const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-
+              console.log(
+                startDate,
+                endDate,
+                des,
+                id,
+                diffInDays,
+                '<<<< these are daydiff',
+              );
               return diffInDays + 1;
             }
 
             var startDate = moment(item?.startDate).format('DD/MM/YYYY');
             var endDate = moment(item?.endDate).format('DD/MM/YYYY');
             const d = new Date();
-            const today = `${
+            const today = `${d.getDate()}-${
               +d.getMonth() + 1
-            }-${d.getDate()}-${d.getFullYear()}`;
+            }-${d.getFullYear()}`;
+
             var diffDays = dayDiff(today, endDate, item.description, item._id);
             console.log(diffDays, '<<<this is diffdays');
             if (diffDays < 0) return null;

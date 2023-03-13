@@ -232,7 +232,7 @@ export default function HomeScreen({navigation}) {
             style={{width: 36, height: 36}}
           />
         </TouchableHighlight>
-        <HomeFilterCategory2
+        {/* <HomeFilterCategory2
           modalVisible={showCategoryModal}
           refreshScreen={refreshScreen}
           setRefreshScreen={setRefreshScreen}
@@ -249,7 +249,7 @@ export default function HomeScreen({navigation}) {
           callback={() => {
             setShowCategoryModal(!showCategoryModal);
           }}
-        />
+        /> */}
       </View>
 
       <HomeSearchData
@@ -331,7 +331,6 @@ const RenderSingleOffer = ({
         //     console.log(response?.data[0], '<<<<thisisitemofsingleoffer');
         //   }
         // });
-
         getLikesCountByIDPostAPI(item?._id, bearerToken, response => {
           if (response !== null) {
             if (response.data) {
@@ -345,7 +344,6 @@ const RenderSingleOffer = ({
             }
           }
         });
-
         getCommentsCountByIDPostAPI(item?._id, bearerToken, response => {
           if (response !== null) {
             if (response.data) {
@@ -523,7 +521,7 @@ const RenderSingleOffer = ({
   var startDate = moment(item?.startDate).format('DD/MM/YYYY');
   var endDate = moment(item?.endDate).format('DD/MM/YYYY');
   const d = new Date();
-  const today = `${+d.getMonth() + 1}-${d.getDate()}-${d.getFullYear()}`;
+  const today = `${d.getDate()}-${+d.getMonth() + 1}-${d.getFullYear()}`;
   var diffDays = dayDiff(today, endDate, item.description, item._id, startDate);
 
   const checkDaysFromCurrDate = dayDiff(

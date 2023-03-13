@@ -341,7 +341,7 @@ export default function AddSaleOfferScreen({navigation}) {
               placeholderTextColor="#999"
               value={price}
               // numberOfLines={1}
-              keyboardType="number-pad"
+              // keyboardType="number-pad"
               multiline={true}
               textAlignVertical="top"
               onChangeText={val => {
@@ -367,7 +367,7 @@ export default function AddSaleOfferScreen({navigation}) {
               placeholder="Offer Percent (ex: 20%)"
               placeholderTextColor="#999"
               value={code}
-              keyboardType="number-pad"
+              // keyboardType="number-pad"
               onChangeText={val => {
                 setCode(val);
                 setdocError(false);
