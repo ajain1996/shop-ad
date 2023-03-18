@@ -7,6 +7,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  Linking,
 } from 'react-native';
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -67,7 +68,7 @@ export default function ProfileScreen({navigation, route}) {
 
     return null;
   };
-  console.log(userData, '<<< this i suserData');
+  console.log(userData, '<<< thisisuserData');
   React.useEffect(() => {
     setLoading(true);
     getToken();
@@ -375,22 +376,24 @@ export default function ProfileScreen({navigation, route}) {
               />
             </View>
           </TouchableHighlight>
-          <TouchableOpacity
-            style={{marginLeft: 10, marginTop: 7}}
-            onPress={() => {
-              setShowJobProfile(true);
-            }}>
-            <Text
-              style={{
-                borderWidth: 1,
-                padding: 8,
-                borderRadius: 10,
-                backgroundColor: showJobProfile ? 'orange' : 'white',
-                color: showJobProfile ? 'white' : 'black',
+          {userType != 'shop' && (
+            <TouchableOpacity
+              style={{marginLeft: 10, marginTop: 7}}
+              onPress={() => {
+                setShowJobProfile(true);
               }}>
-              Job Profile
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  borderWidth: 1,
+                  padding: 8,
+                  borderRadius: 10,
+                  backgroundColor: showJobProfile ? 'orange' : 'white',
+                  color: showJobProfile ? 'white' : 'black',
+                }}>
+                Job Profile
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
         {!showJobProfile && (
           <>
@@ -754,6 +757,28 @@ export default function ProfileScreen({navigation, route}) {
                 </View>
               );
             })}
+            <View
+              style={{
+                width: '60%',
+                paddingHorizontal: 20,
+
+                // alignSelf: 'center',
+              }}>
+              {userData[0]?.certificate && (
+                <TouchableOpacity
+                  style={{
+                    borderWidth: 1,
+                    padding: 5,
+                    borderRadius: 10,
+                    textAlign: 'center',
+                  }}
+                  onPress={() => {
+                    Linking.openURL(userData[0]?.certificate);
+                  }}>
+                  <Text style={{textAlign: 'center'}}> Open Certificate</Text>
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
         )}
         <View>

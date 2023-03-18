@@ -37,7 +37,7 @@ export default function HomeSearch({
         />
 
         <TextInput
-          placeholder="Near by location"
+          placeholder="Search"
           placeholderTextColor="#999"
           onChangeText={onChange}
           style={{...commonStyles.fs14_500, height: 58, marginLeft: 12}}

@@ -89,6 +89,7 @@ export default function WorksScreen({navigation}) {
     // let data = [];
     setLoading(true);
     const data = allWork.filter(item => {
+      console.log(item, '<<<these are item');
       const smallLoc = item.location.toLowerCase();
       const matchLoc = smallLoc.match(smallVal);
       if (matchLoc != null) {
@@ -98,6 +99,15 @@ export default function WorksScreen({navigation}) {
       }
       if (item.ownerId) {
         const smallname = item.ownerId.name.toLocaleLowerCase();
+        const matchLoc = smallname.match(smallVal);
+        if (matchLoc != null) {
+          console.log(matchLoc, '<<<thisisdata');
+
+          return true;
+        }
+      }
+      if (item.description) {
+        const smallname = item.description.toLocaleLowerCase();
         const matchLoc = smallname.match(smallVal);
         if (matchLoc != null) {
           console.log(matchLoc, '<<<thisisdata');

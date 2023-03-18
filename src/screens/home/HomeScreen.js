@@ -216,7 +216,7 @@ export default function HomeScreen({navigation}) {
             });
           }}
         />
-        <TouchableHighlight
+        {/* <TouchableHighlight
           style={{
             alignItems: 'center',
             justifyContent: 'center',
@@ -231,7 +231,7 @@ export default function HomeScreen({navigation}) {
             source={require('../../assets/img/filter2.png')}
             style={{width: 36, height: 36}}
           />
-        </TouchableHighlight>
+        </TouchableHighlight> */}
         {/* <HomeFilterCategory2
           modalVisible={showCategoryModal}
           refreshScreen={refreshScreen}
@@ -504,7 +504,7 @@ const RenderSingleOffer = ({
       ) - moment(startDate);
 
     const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-    if (id == '63ff229ec91a4b8315ec9b35') {
+    if (des == 'Descriptioncheck') {
       console.log(
         startDate,
         endDate,
@@ -512,7 +512,7 @@ const RenderSingleOffer = ({
         id,
         diffInDays + 1,
         poststa,
-        '<<<< this is id',
+        '<<<< thisisid',
       );
     }
     return diffInDays + 1;
@@ -521,7 +521,9 @@ const RenderSingleOffer = ({
   var startDate = moment(item?.startDate).format('DD/MM/YYYY');
   var endDate = moment(item?.endDate).format('DD/MM/YYYY');
   const d = new Date();
-  const today = `${d.getDate()}-${+d.getMonth() + 1}-${d.getFullYear()}`;
+  const today = `${d.getDate()}-${
+    monthsArray[+d.getMonth() + 1]
+  }-${d.getFullYear()}`;
   var diffDays = dayDiff(today, endDate, item.description, item._id, startDate);
 
   const checkDaysFromCurrDate = dayDiff(
@@ -531,7 +533,7 @@ const RenderSingleOffer = ({
     'id',
   );
 
-  // console.log(diffDays, item.endDate, today, '<<<<current date');
+  console.log(diffDays, item.endDate, today, '<<<<currentdate');
   // if (diffDays > 4) {
   // if ( > 4) {
   //   return null;
@@ -720,7 +722,7 @@ const RenderSingleOffer = ({
                     width: '100%',
                     textAlign: 'center',
                   }}>
-                  {item?.code} %
+                  {item?.code}
                 </Text>
               </View>
             )}

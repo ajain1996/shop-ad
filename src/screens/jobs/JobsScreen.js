@@ -214,7 +214,7 @@ export default function JobsScreen({navigation}) {
             var endDate = moment(item?.endDate).format('DD/MM/YYYY');
             const d = new Date();
             const today = `${d.getDate()}-${
-              +d.getMonth() + 1
+              monthsArray[+d.getMonth() + 1]
             }-${d.getFullYear()}`;
 
             var diffDays = dayDiff(today, endDate, item.description, item._id);
