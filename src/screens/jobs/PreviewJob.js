@@ -156,7 +156,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
   const [likesCount, setLikesCount] = useState(0);
   const [isLike, setIsLike] = useState(false);
   const [commentsCount, setCommentsCount] = useState(0);
-
+  console.log(item, '<<<<< job item');
   React.useEffect(() => {
     (async () => {
       const unsubscribe = navigation.addListener('focus', () => {
@@ -438,29 +438,22 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         <JobsDetails text="Description:" item={item?.description} />
         <JobsDetails text="Shop Name:" item={item?.shopName} />
         <JobsDetails text="Contact Number:" item={item?.contactNumber} />
-        <JobsDetails text="Contact Email:" item={item?.contactEmail} />
-        <JobsDetails text="Designation Name:" item={item?.designationName} />
-        <JobsDetails
-          text="Experience Required:"
-          item={item?.experienceRequired}
-        />
+        <JobsDetails text="Contact Email:" item={item?.email} />
+        <JobsDetails text="Designation Name:" item={item?.contactPersonName} />
+        <JobsDetails text="Experience Required:" item={item?.experience} />
+        <JobsDetails text="Incentive Offered:" item={item?.incentive} />
+        <JobsDetails text="Interview Timing:" item={item?.interviewTiming} />
+        <JobsDetails text="Location:" item={item?.location} />
+
         <JobsDetails text="Incentive Offered:" item={item?.incentiveOffered} />
         <JobsDetails text="Interview Timing:" item={item?.interviewTiming} />
-        <JobsDetails text="Location:" item={item?.Location} />
-        <JobsDetails
-          text="Experience Required:"
-          item={item?.experienceRequired}
-        />
-        <JobsDetails text="Incentive Offered:" item={item?.incentiveOffered} />
-        <JobsDetails text="Interview Timing:" item={item?.interviewTiming} />
-        <JobsDetails text="Area of work:" item={item?.areaWork} />
+        <JobsDetails text="Area of work:" item={item?.areaOfWork} />
         {/* <JobsDetails text="Facilities:" item={item?.facilities} /> */}
         <JobsDetails text="Gender:" item={item?.gender} />
-        <JobsDetails text="Man power Number:" item={item?.manpowerNumber} />
-        <JobsDetails text="Number of work:" item={item?.numberWork} />
+        <JobsDetails text="Man power Number:" item={item?.manPower} />
         <JobsDetails text="Vechile Required:" item={item?.vechileRequired} />
         <JobsDetails text="Work Timing:" item={item?.workTiming} />
-        <JobsDetails text="Salary:" item={item?.salary} />
+        <JobsDetails text="Salary:" item={item?.salaryOffered} />
         <JobsDetails text="Message:" item={item?.message} />
         <JobsDetails text="StartDate:" item={item?.startDate} />
         <JobsDetails text="EndDate:" item={item?.endDate} />

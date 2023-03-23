@@ -149,8 +149,13 @@ export default function HomeScreen({navigation}) {
     }
     // let data = [];
     const data = allOffers.filter(item => {
-      const smallLoc = item.location.toLowerCase();
-      const matchLoc = smallLoc.match(smallVal);
+      console.log(item, '<<this is itemforsearch');
+      const smallLoc = item?.location?.toLowerCase();
+      const smallCode = item?.code?.toLowerCase();
+      const smallDes = item?.description?.toLowerCase();
+      const matchLoc = smallLoc?.match(smallVal);
+      const matchCode = smallCode?.match(smallVal);
+      const matchDes = smallDes?.match(smallVal);
       if (matchLoc != null) {
         console.log(matchLoc, '<<<thisisdata');
 
@@ -159,9 +164,7 @@ export default function HomeScreen({navigation}) {
       if (item.ownerId) {
         const smallname = item.ownerId.name.toLocaleLowerCase();
         const matchLoc = smallname.match(smallVal);
-        if (matchLoc != null) {
-          console.log(matchLoc, '<<<thisisdata');
-
+        if (matchLoc != null || matchCode != null || matchDes != null) {
           return true;
         }
       }
@@ -191,6 +194,8 @@ export default function HomeScreen({navigation}) {
             setLoading2(true);
 
             filterData(val);
+            filterIt(val);
+
             // return null;
             Auth.getLocalStorageData('bearer').then(token => {
               setLoading2(false);
@@ -202,7 +207,7 @@ export default function HomeScreen({navigation}) {
                 dispatch(setOffer(offerData));
                 return true;
               }
-              filterIt(val);
+              // filterIt(val);
               // console.log(filterIt(val), '<<<< this is filtered data');
               // getOffersByLocationPostRequest(val,2,token, response => {
               // commonSearch(val, 2, token, response => {
@@ -216,7 +221,7 @@ export default function HomeScreen({navigation}) {
             });
           }}
         />
-        {/* <TouchableHighlight
+        <TouchableHighlight
           style={{
             alignItems: 'center',
             justifyContent: 'center',
@@ -231,8 +236,8 @@ export default function HomeScreen({navigation}) {
             source={require('../../assets/img/filter2.png')}
             style={{width: 36, height: 36}}
           />
-        </TouchableHighlight> */}
-        {/* <HomeFilterCategory2
+        </TouchableHighlight>
+        <HomeFilterCategory2
           modalVisible={showCategoryModal}
           refreshScreen={refreshScreen}
           setRefreshScreen={setRefreshScreen}
@@ -249,7 +254,7 @@ export default function HomeScreen({navigation}) {
           callback={() => {
             setShowCategoryModal(!showCategoryModal);
           }}
-        /> */}
+        />
       </View>
 
       <HomeSearchData

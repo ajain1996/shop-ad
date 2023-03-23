@@ -1407,10 +1407,11 @@ export default function AddJobScreen({navigation}) {
                   shopName,
                   location,
                   userId: userData[0]?._id,
-                  salaryOffered,
+                  salaryOffered: MinSalary + ' to ' + MaxSalatry,
                   contactPersonName,
                   startDate,
                   endDate,
+
                   contactNumber,
                   email: userData[0]?.email,
                   gender,

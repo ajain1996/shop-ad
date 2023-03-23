@@ -96,7 +96,7 @@ export default function JobsScreen({navigation}) {
   }
 
   const filterIt = val => {
-    console.log('val', val);
+    console.log('value flter', val);
     setLoading(true);
     const smallVal = val.toLocaleLowerCase();
     if (val.trim() == '') {
@@ -106,6 +106,7 @@ export default function JobsScreen({navigation}) {
     // let data = [];
     setLoading(true);
     const data = allJobs.filter(item => {
+      console.log(item, '<<<item');
       const smallLoc = item.location.toLowerCase();
       const matchLoc = smallLoc.match(smallVal);
       if (matchLoc != null) {
@@ -133,6 +134,15 @@ export default function JobsScreen({navigation}) {
       }
       if (item.shopName) {
         const smallname = item.shopName.toLocaleLowerCase();
+        const matchLoc = smallname.match(smallVal);
+        if (matchLoc != null) {
+          console.log(matchLoc, '<<<thisisdata');
+
+          return true;
+        }
+      }
+      if (item.title) {
+        const smallname = item.title.toLocaleLowerCase();
         const matchLoc = smallname.match(smallVal);
         if (matchLoc != null) {
           console.log(matchLoc, '<<<thisisdata');

@@ -29,12 +29,14 @@ import CustomLoader, {CustomPanel} from '../../components/CustomLoader';
 import PTRView from 'react-native-pull-to-refresh';
 import {useDispatch, useSelector} from 'react-redux';
 import {setJob} from '../../redux/reducer/jobs';
-import {SIZES} from '../../utils/theme';
+import {COLORS, SIZES} from '../../utils/theme';
+import moment from 'moment';
 
 export default function PreviewOffer({navigation, route}) {
   const dispatch = useDispatch();
   const item = route.params;
-
+  const {userData} = useSelector(state => state.User);
+  console.log(item, '<<<this is itemdata');
   const [loading, setLoading] = React.useState(false);
 
   //   useEffect(() => {
@@ -49,6 +51,7 @@ export default function PreviewOffer({navigation, route}) {
   //       });
   //     });
   //   }, []);
+  console.log(userData, '<<<< userData');
 
   return (
     <>
@@ -87,7 +90,7 @@ export default function PreviewOffer({navigation, route}) {
           /> */}
       <PTRView>
         <ScrollView style={{marginTop: 20}}>
-          <RenderSingleOffer item={item} />
+          <RenderSingleOffer item={item} userData={userData} />
           {/* {jobsData.map((item, index) => {
               return (
                 <View key={index}>
@@ -118,8 +121,8 @@ const RenderSingleOffer = ({
 }) => {
   console.log(item, '<<<<<preview');
   const {userData} = useSelector(state => state.User);
-
-  const [user, setUser] = useState([]);
+  const user = item.userData[0];
+  // const [user, setUser] = useState([]);
   const [likesCount, setLikesCount] = useState(0);
   const [isLike, setIsLike] = useState(false);
   const [commentsCount, setCommentsCount] = useState(0);
@@ -293,7 +296,7 @@ const RenderSingleOffer = ({
   //   }
   // };
 
-  function dayDiff(startDate, endDate, des, id) {
+  function dayDiff(startDate, endDate, des, id, poststa) {
     const convertArr = d => {
       const a = d.replace('/', '-');
       const b = a.replace('/', '-');
@@ -301,39 +304,35 @@ const RenderSingleOffer = ({
     };
 
     // const diffInMs = moment(`12-Dec-2022`) - moment(`10-Dec-2022`);
-    // const diffInMs =
-    //   moment(
-    //     `${parseInt(convertArr(endDate)[0])}-${
-    //       monthsArray[parseInt(convertArr(endDate)[1])]
-    //     }-${parseInt(convertArr(endDate)[2])}`,
-    //   ) -
-    //   moment(
-    //     `${parseInt(convertArr(startDate)[0])}-${
-    //       monthsArray[parseInt(convertArr(startDate)[1])]
-    //     }-${parseInt(convertArr(startDate)[2])}`,
-    //   );
+    const diffInMs =
+      moment(
+        `${parseInt(convertArr(endDate)[0])}-${
+          monthsArray[parseInt(convertArr(endDate)[1])]
+        }-${parseInt(convertArr(endDate)[2])}`,
+      ) - moment(startDate);
 
-    // const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-
+    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+    if (des == 'Descriptioncheck') {
+      console.log(
+        startDate,
+        endDate,
+        des,
+        id,
+        diffInDays + 1,
+        poststa,
+        '<<<< thisisid',
+      );
+    }
     return diffInDays + 1;
   }
 
-  // var startDate = moment(item?.startDate).format('DD/MM/YYYY');
-  // var endDate = moment(item?.endDate).format('DD/MM/YYYY');
-  // var diffDays = dayDiff(startDate, endDate, item.description, item._id);
-  // const d = new Date();
-  // const checkDaysFromCurrDate = dayDiff(
-  //   `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`,
-  //   endDate,
-  //   'des',
-  //   'id',
-  // );
-  // console.log(checkDaysFromCurrDate, '<<<<current date');
-  // if (diffDays > 4) {
-  //   return null;
-  // }
-  // if (diffDays < 0) {
-
+  var startDate = moment(item?.startDate).format('DD/MM/YYYY');
+  var endDate = moment(item?.endDate).format('DD/MM/YYYY');
+  const d = new Date();
+  const today = `${d.getDate()}-${
+    monthsArray[+d.getMonth() + 1]
+  }-${d.getFullYear()}`;
+  var diffDays = dayDiff(today, endDate, item.description, item._id, startDate);
   return (
     <View
       style={{
@@ -442,28 +441,61 @@ const RenderSingleOffer = ({
           //   item,
           // });
         }}>
-        <ScrollView horizontal={true}>
-          {item?.offerImage && (
-            <Image
-              source={{uri: item?.offerImage}}
-              style={{width: SIZES.width, height: 311}}
-            />
-          )}
-          {/* {item?.offerImage && (
+        <>
+          <ScrollView horizontal={true}>
+            {item?.offerImage && (
+              <Image
+                source={{uri: item?.offerImage}}
+                style={{width: SIZES.width, height: 311}}
+              />
+            )}
+            {/* {item?.offerImage && (
                 <Image
                   source={{uri: item?.offerImage}}
                   style={{width: SIZES.width, height: 311}}
                 />
               )} */}
-          {item.imageData?.map(initem => {
-            return (
-              <Image
-                source={{uri: initem?.uri}}
-                style={{width: SIZES.width, height: 311}}
-              />
-            );
-          })}
-        </ScrollView>
+            {item?.imageData?.map(initem => {
+              return (
+                <Image
+                  source={{uri: initem?.uri}}
+                  style={{width: SIZES.width, height: 311}}
+                />
+              );
+            })}
+          </ScrollView>
+          {item?.code && (
+            <View
+              style={{
+                position: 'absolute',
+                borderWidth: 2,
+                borderColor: '#000',
+                bottom: 10,
+                right: 10,
+                backgroundColor: COLORS.primary,
+                borderRadius: 50,
+                width: 70,
+                height: 70,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderColor: '#fff',
+                color: '#fff',
+                fontWeight: 'bold',
+                padding: 5,
+              }}>
+              <Text
+                style={{
+                  color: '#fff',
+                  fontWeight: 'bold',
+                  width: '100%',
+                  textAlign: 'center',
+                }}>
+                {item?.code}
+              </Text>
+            </View>
+          )}
+        </>
       </TouchableHighlight>
 
       <View style={{...commonStyles.rowBetween, padding: 15}}>
@@ -544,7 +576,12 @@ const RenderSingleOffer = ({
       )}
       <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -10}}>
         <Text style={{...commonStyles.fs13_500, marginBottom: 12}}>
-          Days left:2
+          Category: {item?.category}
+        </Text>
+      </View>
+      <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -10}}>
+        <Text style={{...commonStyles.fs13_500, marginBottom: 12}}>
+          Days Left: {diffDays}
         </Text>
       </View>
     </View>

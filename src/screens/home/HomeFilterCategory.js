@@ -53,21 +53,22 @@ const HomeFilterCategory = ({
           underlayColor="transparent">
           <View style={styles.modalView}>
             <ScrollView>
-              {categories?.map((item, index) => {
+              {/* {categories?.map((item, index) => { */}
+              {[{categoryName: 'Near By'}]?.map((item, index) => {
                 return (
                   <TouchableHighlight
                     key={index}
                     style={[styles.button]}
                     underlayColor="#dcdcdc"
                     onPress={() => {
-                      Auth.getLocalStorageData('bearer').then(token => {
-                        getOffersByCategoryAPI(item?._id, token, response => {
-                          if (response !== null) {
-                            dispatch(setOffer(response?.data));
-                            callback();
-                          }
-                        });
-                      });
+                      // Auth.getLocalStorageData('bearer').then(token => {
+                      //   getOffersByCategoryAPI(item?._id, token, response => {
+                      //     if (response !== null) {
+                      //       dispatch(setOffer(response?.data));
+                      //       callback();
+                      //     }
+                      //   });
+                      // });
                     }}>
                     <Text style={styles.textStyle}>{item?.categoryName}</Text>
                   </TouchableHighlight>

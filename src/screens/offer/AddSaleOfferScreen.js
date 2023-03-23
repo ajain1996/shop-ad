@@ -287,6 +287,11 @@ export default function AddSaleOfferScreen({navigation}) {
       imageData,
       userData,
       description,
+      location,
+      category,
+      startDate,
+      code,
+      endDate,
     });
   };
 
