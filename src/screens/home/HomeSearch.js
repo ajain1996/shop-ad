@@ -18,7 +18,8 @@ export default function HomeSearch({
       <View
         style={{
           width: width ? width : '100%',
-          height: 58,
+          // borderWidth: 1,
+          height: 24,
           ...commonStyles.rowStart,
           padding: 16,
           backgroundColor: '#EFEFEF',
@@ -31,7 +32,7 @@ export default function HomeSearch({
           shadowColor: '#999',
         }}>
         <Image
-          source={require('../../assets/img/location.png')}
+          source={require('../../assets/img/searchicon.png')}
           resizeMode="contain"
           style={{width: 22, height: 24}}
         />
@@ -40,7 +41,12 @@ export default function HomeSearch({
           placeholder="Search"
           placeholderTextColor="#999"
           onChangeText={onChange}
-          style={{...commonStyles.fs14_500, height: 58, marginLeft: 12}}
+          style={{
+            ...commonStyles.fs14_500,
+            height: 58,
+            marginLeft: 12,
+            width: '100%',
+          }}
           {...rest}
         />
       </View>

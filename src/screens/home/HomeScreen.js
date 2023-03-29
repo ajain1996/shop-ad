@@ -82,7 +82,7 @@ export default function HomeScreen({navigation}) {
       getAllOffersPostRequest(token, response => {
         setLoading(false);
         if (response !== null) {
-          console.log('offers', response.data, '\n\n\n\n offers');
+          console.log('offers', response.data, '\n\n\n\nofferskjlk');
           dispatch(setOffer(response?.data));
           setAllOffers(response.data);
           console.log(response.data);
@@ -152,12 +152,26 @@ export default function HomeScreen({navigation}) {
       console.log(item, '<<this is itemforsearch');
       const smallLoc = item?.location?.toLowerCase();
       const smallCode = item?.code?.toLowerCase();
+      const smallCategory = item?.cateoryId?.categoryName?.toLowerCase();
       const smallDes = item?.description?.toLowerCase();
+      const smallPrice = item?.price?.toLowerCase();
       const matchLoc = smallLoc?.match(smallVal);
+      const matchPrice = smallPrice?.match(smallVal);
+      const matchCate = smallCategory?.match(smallVal);
       const matchCode = smallCode?.match(smallVal);
       const matchDes = smallDes?.match(smallVal);
       if (matchLoc != null) {
         console.log(matchLoc, '<<<thisisdata');
+
+        return true;
+      }
+      if (matchCate != null) {
+        console.log(matchLoc, '<<<thisisdata');
+
+        return true;
+      }
+      if (matchPrice != null) {
+        console.log(matchPrice, '<<<thisisdata');
 
         return true;
       }
@@ -221,7 +235,7 @@ export default function HomeScreen({navigation}) {
             });
           }}
         />
-        <TouchableHighlight
+        {/* <TouchableHighlight
           style={{
             alignItems: 'center',
             justifyContent: 'center',
@@ -236,7 +250,7 @@ export default function HomeScreen({navigation}) {
             source={require('../../assets/img/filter2.png')}
             style={{width: 36, height: 36}}
           />
-        </TouchableHighlight>
+        </TouchableHighlight> */}
         <HomeFilterCategory2
           modalVisible={showCategoryModal}
           refreshScreen={refreshScreen}
@@ -323,10 +337,10 @@ const RenderSingleOffer = ({
   const [commentsCount, setCommentsCount] = useState(0);
   // console.log(item, '<<<thisisitem');
   React.useEffect(() => {
-    GetCategoryName(item.cateoryId, bearerToken, res => {
-      // console.log('categoryitem1', res.data[0]);
-      setCateogyrName(res.data[0].categoryName);
-    });
+    // GetCategoryName(item.cateoryId, bearerToken, res => {
+    // console.log('categoryitem1', res.data[0]);
+    // setCateogyrName(res.data[0].categoryName);
+    // });
     (async () => {
       const unsubscribe = navigation.addListener('focus', () => {
         setUser(item.ownerId);
@@ -363,11 +377,11 @@ const RenderSingleOffer = ({
 
   React.useEffect(() => {
     (async () => {
-      getUserByIDPostAPI(item?.ownerId, bearerToken, response => {
-        if (response !== null) {
-          setUser(response?.data[0]);
-        }
-      });
+      //  getUserByIDPostAPI(item?.ownerId, bearerToken, response => {
+      //  if (response !== null) {
+      //  setUser(response?.data[0]);
+      // }
+      // });
 
       getLikesCountByIDPostAPI(item?._id, bearerToken, response => {
         if (response !== null) {
@@ -549,6 +563,7 @@ const RenderSingleOffer = ({
     // if (false) {
     return null;
   } else {
+    console.log(item, '<<<thisissingleitemto');
     return (
       <View
         style={{
@@ -822,7 +837,7 @@ const RenderSingleOffer = ({
               marginTop: 2,
               color: '#E27127',
             }}>
-            {cateogyrName}
+            {item?.cateoryId?.categoryName}
           </Text>
         </View>
         <View

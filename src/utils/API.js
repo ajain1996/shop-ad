@@ -1,9 +1,9 @@
 import {Alert} from 'react-native';
 import Auth from '../services/Auth';
 
-// const BASE_URL2 = 'https://shopback-kht7.onrender.com/';
-const BASE_URL2 =
-  'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/';
+const BASE_URL2 = 'https://shop-backend2.onrender.com/';
+//const BASE_URL2 =
+//'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/';
 const BASE_URL = BASE_URL2 + 'user/';
 
 export const mobileRegisterPostRequest = async (
@@ -159,12 +159,14 @@ export const addNewOfferPostRequest = async (
 
 export const getAllOffersPostRequest = async (bearerToken, successCallBack) => {
   try {
+    console.log(BASE_URL2 + 'salesoffer', '<<<callingthis');
     let response = await fetch(BASE_URL2 + 'salesoffer', {
       method: 'GET',
       headers: {Authorization: `Bearer ${bearerToken}`},
     });
     let json = await response.json();
     successCallBack(json);
+    console.log(json, '<<<alloffers');
   } catch (error) {
     console.error('error', error);
     successCallBack(null);
@@ -1077,11 +1079,13 @@ export const updateUserPostRequest = async (
     userType,
     image,
     bearerToken,
+    formData,
     '\n\n\n data at sending to update',
     imageChanged,
     categoryOfShop,
   );
 
+  //return null;
   // const userImage = {
   //   name: image?.assets[0].fileName,
   //   uri: image.assets[0].uri,
@@ -1103,7 +1107,7 @@ export const updateUserPostRequest = async (
     formdata.append('image', image, image.name);
   }
 
-  formdata.append('eduction', formdata.education);
+  formdata.append('eduction', formData.eduction);
   // formdata.append("experineceCertificate", formdata?.ex);
   formdata.append('martialStatus', formData?.martialStatus);
   // formdata.append("physicalDisablity", "cwsfe c");
@@ -1113,7 +1117,7 @@ export const updateUserPostRequest = async (
   formdata.append('purposeOfRegistration', formData?.purposeOfRegistration);
   formdata.append('pAddress', formData?.pAddress);
   formdata.append('rAddress', formData?.rAddress);
-  formdata.append('fathername', formdata?.fathername);
+  formdata.append('fathername', formData?.fathername);
   formdata.append('mothername', formData?.mothername);
   if (isCertificateUploaded) {
     formdata.append(

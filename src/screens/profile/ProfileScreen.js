@@ -20,6 +20,7 @@ import {
   getJobDetailByID,
   getJobsByOwnerIdPostRequest,
   getOffersByOwnerIdPostRequest,
+  getUserDataById,
   getWorksByOwnerIdPostRequest,
 } from '../../utils/API';
 import Auth from '../../services/Auth';
@@ -36,6 +37,7 @@ import {JobsDetails} from '../jobs/JobsDetails';
 import {useState} from 'react';
 import {useEffect} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
+import {setUser} from '../../redux/reducer/user';
 
 export default function ProfileScreen({navigation, route}) {
   const [offerData, setOfferData] = React.useState([]);
@@ -68,7 +70,8 @@ export default function ProfileScreen({navigation, route}) {
 
     return null;
   };
-  console.log(userData, '<<< thisisuserData');
+
+  console.log(userData, '<<<<<<<userdatafinal');
   React.useEffect(() => {
     setLoading(true);
     getToken();
@@ -128,6 +131,10 @@ export default function ProfileScreen({navigation, route}) {
         getJobByApplicantId(token, userData[0]._id, res => {
           console.log(res, '<<<<< applied jobs by user');
           setJobsData(res.data);
+        });
+        getUserDataById(userData[0]?._id, token, async res => {
+          console.log('thisisuserdata', res.data, '\n\n\n\n');
+          dispatch(setUser(res.data));
         });
         const data = await AsyncStorage.getItem('SAVED_OFFER');
         // Alert.alert(data);

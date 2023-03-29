@@ -204,8 +204,8 @@ export default function AddJobScreen({navigation}) {
       } else if (message.length === 0) {
         setMessageError(true);
       } else {
-        setLoading(true);
         Auth.getAccount().then(userData => {
+          setLoading(true);
           Auth.getLocalStorageData('bearer').then(token => {
             addNewJobPostRequest(
               title,

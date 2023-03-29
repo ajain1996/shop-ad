@@ -113,7 +113,7 @@ export default function AddSaleOfferScreen({navigation}) {
           if (response?.data !== null || response?.data !== undefined) {
             setCategories(response?.data);
             setAllCategory(response.data);
-            console.log(response, '<<<<<response');
+            console.log(response, '<<<<<responsecategory');
           }
         }
       });
@@ -150,7 +150,7 @@ export default function AddSaleOfferScreen({navigation}) {
   const filterSearch = text => {
     if (text.trim() == '') return setCategories(allCategory);
     else {
-      const t1 = text.toLocaleLowerCase().trim();
+      const t1 = text?.toLocaleLowerCase().trim();
       let filtered = allCategory.filter(item => {
         const t2 = item.categoryName.toLocaleLowerCase().trim();
         if (t2.match(t1)) return true;

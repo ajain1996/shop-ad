@@ -96,6 +96,7 @@ export default function UpdateProfileScreen({navigation}) {
   const [purposeOfRegistration, setpurposeOfRegistration] = useState('');
   const [loading, setLoading] = React.useState(false);
   const [name, setName] = React.useState('');
+  const [education, setEducation] = useState('');
   const [phone, setPhone] = React.useState('');
   const [imageChanged, setImageChanged] = React.useState(false);
   const [imageData, setImageData] = React.useState({uri: ''});
@@ -106,6 +107,8 @@ export default function UpdateProfileScreen({navigation}) {
   React.useEffect(() => {
     setName(userData[0].name);
     setPhone(userData[0].mobile);
+    setEducation(userData[0].eduction);
+
     setImageData({uri: userData[0].userProfile});
     console.log(userData, '<<<<<  this is userData');
     const {pAddress, rAddress} = userData[0];
@@ -184,12 +187,14 @@ export default function UpdateProfileScreen({navigation}) {
           phone,
           userType,
           imageData,
+
           token,
           imageChanged,
           formData,
           isCertificateUploaded,
           shopCategory,
           purposeOfRegistration,
+
           async response => {
             console.log(response, '<<<< this is response of image update');
             // return null;
