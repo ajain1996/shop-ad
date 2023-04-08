@@ -40,7 +40,7 @@ export default function LoginScreen({navigation}) {
     } else {
       setLoading(true);
       mobileLoginPostRequest(email, password, userType, async response => {
-        console.log('kjekre');
+        console.log('kjekre', response, '<<<this is res');
         setLoading(false);
         if (response !== null) {
           if (response?.message !== undefined) {

@@ -537,7 +537,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
               Contact person: {item?.designationName}
             </Text>
           </View>
-          <View
+          {/* <View
             style={{
               marginHorizontal: 6,
               marginVertical: 4,
@@ -554,7 +554,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
               }}>
               Man Power: {item?.manpowerNumber}
             </Text>
-          </View>
+          </View> */}
 
           {showMore && (
             <>
@@ -681,7 +681,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
                     fontSize: 13,
                     fontWeight: '500',
                   }}>
-                  vechile Required: {item?.vechileRequired}
+                  vehicle Required: {item?.vechileRequired}
                 </Text>
               </View>
               <View

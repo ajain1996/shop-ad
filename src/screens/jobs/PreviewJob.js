@@ -440,20 +440,28 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         <JobsDetails text="Contact Number:" item={item?.contactNumber} />
         <JobsDetails text="Contact Email:" item={item?.email} />
         <JobsDetails text="Designation Name:" item={item?.contactPersonName} />
-        <JobsDetails text="Experience Required:" item={item?.experience} />
+        <JobsDetails
+          text="Experience Required:"
+          item={item?.experience + ' Year'}
+        />
         <JobsDetails text="Incentive Offered:" item={item?.incentive} />
-        <JobsDetails text="Interview Timing:" item={item?.interviewTiming} />
+        <JobsDetails
+          text="Interview Timing:"
+          item={item?.interviewTiming + '  ' + item?.workShift?.interview}
+        />
         <JobsDetails text="Location:" item={item?.location} />
 
         <JobsDetails text="Incentive Offered:" item={item?.incentiveOffered} />
-        <JobsDetails text="Interview Timing:" item={item?.interviewTiming} />
         <JobsDetails text="Area of work:" item={item?.areaOfWork} />
         {/* <JobsDetails text="Facilities:" item={item?.facilities} /> */}
         <JobsDetails text="Gender:" item={item?.gender} />
-        <JobsDetails text="Man power Number:" item={item?.manPower} />
+        <JobsDetails text="Number of workers:" item={item?.manPower} />
         <JobsDetails text="Vechile Required:" item={item?.vechileRequired} />
-        <JobsDetails text="Work Timing:" item={item?.workTiming} />
-        <JobsDetails text="Salary:" item={item?.salaryOffered} />
+        <JobsDetails
+          text="Work Timing:"
+          item={item?.workTiming + '  ' + item?.workShift?.start}
+        />
+        <JobsDetails text="Salary:" item={'Rs ' + item?.salaryOffered} />
         <JobsDetails text="Message:" item={item?.message} />
         <JobsDetails text="StartDate:" item={item?.startDate} />
         <JobsDetails text="EndDate:" item={item?.endDate} />

@@ -15,9 +15,10 @@ import Auth from '../../services/Auth';
 import CustomInputHeader from '../../components/CustomInputHeader';
 import {applyJobPostAPI} from '../../utils/API';
 import CustomLoader, {CustomPanel} from '../../components/CustomLoader';
+import {useSelector} from 'react-redux';
 
 export default function ApplyJobScreen({navigation, route}) {
-  // const { userData } = useSelector(state => state.User);
+  const {userData} = useSelector(state => state.User);
 
   const [cvFileError, setCvFileError] = React.useState(false);
   const [educationCertificateError, setEducationCertificateError] =

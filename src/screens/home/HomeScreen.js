@@ -80,12 +80,12 @@ export default function HomeScreen({navigation}) {
       console.log(token, '<<<<<<token');
       setBearerToken(token);
       getAllOffersPostRequest(token, response => {
-        setLoading(false);
         if (response !== null) {
           console.log('offers', response.data, '\n\n\n\nofferskjlk');
           dispatch(setOffer(response?.data));
           setAllOffers(response.data);
           console.log(response.data);
+          setLoading(false);
         }
       });
 
@@ -107,11 +107,11 @@ export default function HomeScreen({navigation}) {
   function _refresh() {
     setLoading(true);
     Auth.getLocalStorageData('bearer').then(token => {
-      setLoading(false);
       setBearerToken(token);
       getAllOffersPostRequest(token, response => {
         if (response !== null) {
           dispatch(setOffer(response?.data));
+          setLoading(false);
         }
       });
     });
@@ -482,8 +482,8 @@ const RenderSingleOffer = ({
   const handleShare = async () => {
     try {
       const result = await Share.share({
-        message: `Offer Details\nLocation: ${item.location}\n Description${item?.description}\n${item?.offerImage}`,
-        url: 'https://play.google.com/store/apps',
+        message: `\nOffer Details\nLocation: ${item.location}\n Description${item?.description}`,
+        url: 'data:image/png;base64,' + item.offerImage,
       });
       if (result.action === Share.sharedAction) {
         // console.log('here');
@@ -552,7 +552,7 @@ const RenderSingleOffer = ({
     'id',
   );
 
-  console.log(diffDays, item.endDate, today, '<<<<currentdate');
+  // console.log(diffDays, item.endDate, today, '<<<<currentdate');
   // if (diffDays > 4) {
   // if ( > 4) {
   //   return null;
@@ -563,7 +563,7 @@ const RenderSingleOffer = ({
     // if (false) {
     return null;
   } else {
-    console.log(item, '<<<thisissingleitemto');
+    // console.log(item, '<<<thisissingleitemto');
     return (
       <View
         style={{

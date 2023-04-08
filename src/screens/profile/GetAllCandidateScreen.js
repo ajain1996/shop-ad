@@ -187,7 +187,7 @@ export const GetAllCandidateScreen = ({item, index, navigation}) => {
           <Text style={styles.conpanyName}>Mobile: {userData.mobile}</Text>
           <Text style={styles.conpanyName}>Education: {userData.eduction}</Text>
           <Text style={styles.conpanyName}>
-            Experience: {userData.experienceYears}
+            Experience: {userData.experienceYears} Years
           </Text>
           <Text style={styles.conpanyName}>
             Father name: {userData.fathername}
@@ -200,7 +200,6 @@ export const GetAllCandidateScreen = ({item, index, navigation}) => {
           </Text>
           {/* <Text style={styles.conpanyName}>{userData.martialStatus}</Text> */}
           <Text style={styles.conpanyName}>Address: {userData.rAddress}</Text>
-          <Text style={styles.conpanyName}>Religion: {userData.religion}</Text>
           <Text style={styles.conpanyName}>Religion: {userData.religion}</Text>
           {item.resumeLink != '' && item.resumeLink != null && (
             <Text

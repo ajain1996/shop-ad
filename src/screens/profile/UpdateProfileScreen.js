@@ -123,7 +123,8 @@ export default function UpdateProfileScreen({navigation}) {
     setFormData({
       ...formData,
       ...userData[0],
-      certificate: {name: 'View certificate'},
+      certificate:
+        userData[0].certificate == null ? 'null' : {name: 'View certificate'},
     });
   }, []);
 
@@ -180,6 +181,7 @@ export default function UpdateProfileScreen({navigation}) {
       console.log(imageData, '<<<< this is formdata');
       // return null;
       Auth.getLocalStorageData('bearer').then(token => {
+        console.log(token, '<<<< this is totken bearer');
         updateUserPostRequest(
           userData[0]?._id,
           emailId,

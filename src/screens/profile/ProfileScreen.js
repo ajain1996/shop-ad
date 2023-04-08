@@ -97,6 +97,7 @@ export default function ProfileScreen({navigation, route}) {
           if (response !== null) {
             if (response?.message === 'Item Found') {
               setJobsData(response?.data);
+              console.log('these are jobdata', response.data);
             }
           }
         });
@@ -709,7 +710,7 @@ export default function ProfileScreen({navigation, route}) {
           <View>
             {[
               {
-                key: 'Eduction',
+                key: 'Education',
                 value:
                   userData[0]?.eduction == '' ? 'NA' : userData[0]?.eduction,
               },
@@ -718,7 +719,7 @@ export default function ProfileScreen({navigation, route}) {
                 value:
                   userData[0]?.experienceYears == ''
                     ? 'NA'
-                    : userData[0]?.experienceYears,
+                    : userData[0]?.experienceYears + ' Years',
               },
               {
                 key: 'Mobile',
@@ -862,7 +863,7 @@ export const SingleJob = ({item, index, userType, navigation}) => {
       />
       <JobsDetails
         text="Experience Required:"
-        item={jobDetails?.experienceRequired}
+        item={jobDetails?.experienceRequired + ' Years '}
       />
       <JobsDetails
         text="Incentive Offered:"
@@ -872,16 +873,16 @@ export const SingleJob = ({item, index, userType, navigation}) => {
         text="Interview Timing:"
         item={jobDetails?.interviewTiming}
       />
-      <JobsDetails text="Location:" item={jobDetails?.Location} />
+      <JobsDetails text="Location:" item={jobDetails?.location} />
       <JobsDetails
         text="Experience Required:"
-        item={jobDetails?.experienceRequired}
+        item={jobDetails?.experienceRequired + 'Years'}
       />
       {showJobData ? (
         <View>
           <JobsDetails
             text="Incentive Offered:"
-            item={jobDetails?.incentiveOffered}
+            item={'Rs ' + jobDetails?.incentiveOffered}
           />
           <JobsDetails
             text="Interview Timing:"
@@ -890,17 +891,14 @@ export const SingleJob = ({item, index, userType, navigation}) => {
           <JobsDetails text="Area of work:" item={jobDetails?.areaWork} />
           <JobsDetails text="Facilities:" item={jobDetails?.facilities} />
           <JobsDetails text="Gender:" item={jobDetails?.gender} />
-          <JobsDetails
-            text="Man power Number:"
-            item={jobDetails?.manpowerNumber}
-          />
+
           <JobsDetails text="Number of work:" item={jobDetails?.numberWork} />
           <JobsDetails
             text="Vechile Required:"
             item={jobDetails?.vechileRequired}
           />
           <JobsDetails text="Work Timing:" item={jobDetails?.workTiming} />
-          <JobsDetails text="Salary:" item={jobDetails?.salary} />
+          <JobsDetails text="Salary:" item={'RS ' + jobDetails?.salary} />
           <JobsDetails text="Message:" item={jobDetails?.message} />
           <JobsDetails text="StartDate:" item={jobDetails?.startDate} />
           <JobsDetails text="EndDate:" item={jobDetails?.endDate} />

@@ -122,6 +122,77 @@ export const addNewOfferPostRequest = async (
   bearerToken,
   successCallBack,
 ) => {
+  var formdata = new FormData();
+  console.log(
+    {
+      desc,
+      location,
+      startDate,
+      endDate,
+      image,
+      ownerId,
+      shopId,
+      cateoryId,
+      price,
+      code,
+    },
+    '<<<< thisisofferreq',
+  );
+  // return null;
+  formdata.append('description', desc);
+  formdata.append('location', location);
+  formdata.append('startDate', startDate);
+  formdata.append('endDate', endDate);
+  if (image.length) {
+    formdata.append('offerImage', image[0], image[0].name);
+  }
+  if (image.length > 1) {
+    formdata.append('offerImage1', image[1], image[1].name);
+  }
+  if (image.length > 2) {
+    formdata.append('offerImage2', image[2], image[2].name);
+  }
+  if (image.length > 3) {
+    formdata.append('offerImage3', image[3], image[3].name);
+  }
+  if (image.length > 4) {
+    formdata.append('offerImage4', image[4], image[4].name);
+  }
+  formdata.append('ownerId', ownerId);
+  formdata.append('cateoryId', cateoryId);
+  formdata.append('price', price);
+  formdata.append('code', code);
+  console.log('herererer');
+  try {
+    let response = await fetch(BASE_URL2 + 'salesoffer', {
+      method: 'POST',
+      body: formdata,
+      redirect: 'follow',
+    });
+
+    console.log('offeraddnew', response);
+    let json = await response.json();
+    console.log(response);
+    successCallBack(json);
+  } catch (error) {
+    console.error('error', error);
+    successCallBack(null);
+  }
+};
+export const addNewOfferPostRequest1 = async (
+  desc,
+  location,
+  startDate,
+  endDate,
+  image,
+  ownerId,
+  shopId,
+  cateoryId,
+  price,
+  code,
+  bearerToken,
+  successCallBack,
+) => {
   let formData = new FormData();
   console.log('callign apis');
   formData.append('description', desc);
@@ -148,6 +219,7 @@ export const addNewOfferPostRequest = async (
       },
       body: formData,
     });
+
     let json = await response.json();
     console.log(json);
     successCallBack(json);

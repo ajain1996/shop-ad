@@ -65,9 +65,9 @@ export default function AddSaleOfferScreen({navigation}) {
     }).then(response => {
       let tempArray = [];
       response.forEach(item => {
-        console.log(item);
+        console.log(item, '<<<theseareimage');
         let image = {
-          name: item?.path,
+          name: 'imagename',
           uri: item?.path,
           type: item?.mime,
         };

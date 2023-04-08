@@ -99,6 +99,11 @@ export default function AddJobScreen({navigation}) {
   const [vehicleRequired, setVehicleRequired] = React.useState('');
   const [facilities, setFacilities] = React.useState('');
   const [incentive, setIncentive] = React.useState('');
+  const [workShift, setWorkShift] = useState({
+    start: 'AM',
+    end: 'PM',
+    interview: 'AM',
+  });
   const [description, setDescription] = React.useState('');
 
   const [cvFile, setCvFile] = React.useState('');
@@ -115,6 +120,7 @@ export default function AddJobScreen({navigation}) {
 
   const [loading, setLoading] = React.useState(false);
   const [startDate, setStartDate] = React.useState('');
+
   const [endDate, setEndDate] = React.useState('');
   const [canAppy, setCanAppy] = useState(true);
   // const [Facilities, setFacilities] = useState({})
@@ -224,7 +230,9 @@ export default function AddJobScreen({navigation}) {
               numberOfWorks,
               experience,
               manPower,
-              `${workTiming} to ${workTiming2}`,
+              `${workTiming + workShift?.start} to ${
+                workTiming2 + workShift?.end
+              }`,
               facilities,
               incentive,
               interviewTiming,
@@ -620,6 +628,8 @@ export default function AddJobScreen({navigation}) {
                 onChangeText={val => {
                   setNumberOfWork(val);
                   setNumberOfWorkError(false);
+                  setManPower(val);
+                  setManPowerError(false);
                 }}
                 style={[
                   styles.titleInput,
@@ -648,7 +658,7 @@ export default function AddJobScreen({navigation}) {
               />
             </>
 
-            <>
+            {/* <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
                 Number of Manpower Required <ReqField />
               </Text>
@@ -673,30 +683,68 @@ export default function AddJobScreen({navigation}) {
               ) : (
                 <></>
               )}
-            </>
+            </> */}
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
                 Work Start Timing
               </Text>
-              <TextInput
-                placeholder="Start hour (ex 13 for 1 PM)"
-                placeholderTextColor="#999"
-                value={workTiming}
-                keyboardType="number-pad"
-                onChangeText={val => {
-                  if (val > 24) {
-                    Toast.show('Valid time is 00:00 to 24:00');
-                  } else {
-                    setWorkTiming(val);
-                    setWorkTimingError(false);
-                  }
-                }}
-                style={[
-                  styles.titleInput,
-                  {borderColor: workTimingError ? 'red' : '#BDBDBD'},
-                ]}
-              />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}>
+                <TextInput
+                  placeholder="Start Time"
+                  placeholderTextColor="#999"
+                  value={workTiming}
+                  keyboardType="number-pad"
+                  onChangeText={val => {
+                    if (val > 12) {
+                      Toast.show('Valid time is 00:00 to 12:00');
+                    } else {
+                      setWorkTiming(val);
+                      setWorkTimingError(false);
+                    }
+                  }}
+                  style={[
+                    styles.titleInput,
+                    {
+                      borderColor: workTimingError ? 'red' : '#BDBDBD',
+                      width: '40%',
+                    },
+                  ]}
+                />
+                <Text
+                  style={{
+                    borderWidth: 1,
+                    width: '20%',
+                    textAlign: 'center',
+                    backgroundColor:
+                      workShift?.start == 'AM' ? 'orange' : 'white',
+                    color: workShift?.start == 'AM' ? 'white' : 'black',
+                  }}
+                  onPress={() => {
+                    setWorkShift({...workShift, start: 'AM'});
+                  }}>
+                  AM
+                </Text>
+                <Text
+                  style={{
+                    borderWidth: 1,
+                    width: '20%',
+                    textAlign: 'center',
+                    backgroundColor:
+                      workShift?.start == 'PM' ? 'orange' : 'white',
+                    color: workShift?.start == 'PM' ? 'white' : 'black',
+                  }}
+                  onPress={() => {
+                    setWorkShift({...workShift, start: 'PM'});
+                  }}>
+                  PM
+                </Text>
+              </View>
               {workTimingError ? (
                 <Text style={{...commonStyles.fs12_400, color: 'red'}}>
                   Work Start Timing is mandatory
@@ -709,24 +757,62 @@ export default function AddJobScreen({navigation}) {
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
                 Work End Timing
               </Text>
-              <TextInput
-                placeholder="End hour (ex 20 for 8 PM)"
-                placeholderTextColor="#999"
-                value={workTiming2}
-                keyboardType="number-pad"
-                onChangeText={val => {
-                  if (val > 24) {
-                    Toast.show('Valid time is 00:00 to 24:00');
-                  } else {
-                    setWorkTiming2(val);
-                    setWorkTimingError2(false);
-                  }
-                }}
-                style={[
-                  styles.titleInput,
-                  {borderColor: workTimingError ? 'red' : '#BDBDBD'},
-                ]}
-              />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}>
+                <TextInput
+                  placeholder="End Time"
+                  placeholderTextColor="#999"
+                  value={workTiming2}
+                  keyboardType="number-pad"
+                  onChangeText={val => {
+                    if (val > 12) {
+                      Toast.show('Valid time is 00:00 to 12:00');
+                    } else {
+                      setWorkTiming2(val);
+                      setWorkTimingError2(false);
+                    }
+                  }}
+                  style={[
+                    styles.titleInput,
+                    {
+                      borderColor: workTimingError ? 'red' : '#BDBDBD',
+                      width: '40%',
+                    },
+                  ]}
+                />
+                <Text
+                  style={{
+                    borderWidth: 1,
+                    width: '20%',
+                    textAlign: 'center',
+                    backgroundColor:
+                      workShift?.end == 'AM' ? 'orange' : 'white',
+                    color: workShift?.end == 'AM' ? 'white' : 'black',
+                  }}
+                  onPress={() => {
+                    setWorkShift({...workShift, end: 'AM'});
+                  }}>
+                  AM
+                </Text>
+                <Text
+                  style={{
+                    borderWidth: 1,
+                    width: '20%',
+                    textAlign: 'center',
+                    backgroundColor:
+                      workShift?.end == 'PM' ? 'orange' : 'white',
+                    color: workShift?.end == 'PM' ? 'white' : 'black',
+                  }}
+                  onPress={() => {
+                    setWorkShift({...workShift, end: 'PM'});
+                  }}>
+                  PM
+                </Text>
+              </View>
               {workTimingError2 ? (
                 <Text style={{...commonStyles.fs12_400, color: 'red'}}>
                   Work End Timing is mandatory
@@ -1237,25 +1323,63 @@ export default function AddJobScreen({navigation}) {
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
                 Interview Timing
               </Text>
-              <TextInput
-                placeholder="ex: 13:00 for 1PM"
-                placeholderTextColor="#999"
-                value={interviewTiming}
-                keyboardType="default"
-                maxLength={10}
-                onChangeText={val => {
-                  if (val > 24) {
-                    Toast.show('Please enter valid timing (00:00 to 24:00)');
-                  } else {
-                    setInterviewTiming(val);
-                    setInterviewTimingError(false);
-                  }
-                }}
-                style={[
-                  styles.titleInput,
-                  {borderColor: interviewTimingError ? 'red' : '#BDBDBD'},
-                ]}
-              />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}>
+                <TextInput
+                  placeholder="ex: 13:00 for 1PM"
+                  placeholderTextColor="#999"
+                  value={interviewTiming}
+                  keyboardType="default"
+                  maxLength={10}
+                  onChangeText={val => {
+                    if (val > 24) {
+                      Toast.show('Please enter valid timing (00:00 to 24:00)');
+                    } else {
+                      setInterviewTiming(val);
+                      setInterviewTimingError(false);
+                    }
+                  }}
+                  style={[
+                    styles.titleInput,
+                    {
+                      borderColor: interviewTimingError ? 'red' : '#BDBDBD',
+                      width: '40%',
+                    },
+                  ]}
+                />
+                <Text
+                  style={{
+                    borderWidth: 1,
+                    width: '20%',
+                    textAlign: 'center',
+                    backgroundColor:
+                      workShift?.interview == 'AM' ? 'orange' : 'white',
+                    color: workShift?.interview == 'AM' ? 'white' : 'black',
+                  }}
+                  onPress={() => {
+                    setWorkShift({...workShift, interview: 'AM'});
+                  }}>
+                  AM
+                </Text>
+                <Text
+                  style={{
+                    borderWidth: 1,
+                    width: '20%',
+                    textAlign: 'center',
+                    backgroundColor:
+                      workShift?.interview == 'PM' ? 'orange' : 'white',
+                    color: workShift?.interview == 'PM' ? 'white' : 'black',
+                  }}
+                  onPress={() => {
+                    setWorkShift({...workShift, interview: 'PM'});
+                  }}>
+                  PM
+                </Text>
+              </View>
               {interviewTimingError ? (
                 <Text style={{...commonStyles.fs12_400, color: 'red'}}>
                   Interview timing is mandatory
@@ -1411,7 +1535,7 @@ export default function AddJobScreen({navigation}) {
                   contactPersonName,
                   startDate,
                   endDate,
-
+                  workShift,
                   contactNumber,
                   email: userData[0]?.email,
                   gender,
