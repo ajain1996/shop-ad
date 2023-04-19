@@ -24,7 +24,7 @@ export default function CustomTextInput({
           style={{
             width: 20,
             height: 20,
-            tintColor: isSelected ? '#fff' : '#0A5281',
+            tintColor: isSelected ? '#000' : '#0A5281',
           }}
         />
       </View>

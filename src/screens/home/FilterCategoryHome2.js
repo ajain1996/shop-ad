@@ -14,11 +14,13 @@ import {getAllCategoriesAPI, getOffersByCategoryAPI} from '../../utils/API';
 import {commonStyles} from '../../utils/styles';
 import {SIZES} from '../../utils/theme';
 
-const HomeFilterCategory = ({
+const HomeFilterCategory2 = ({
   modalVisible,
   callback,
   setCategoryId,
   navigation,
+  refreshScreen,
+  setRefreshScreen,
   selectedCategory = () => {},
 }) => {
   const dispatch = useDispatch();
@@ -53,14 +55,16 @@ const HomeFilterCategory = ({
           underlayColor="transparent">
           <View style={styles.modalView}>
             <ScrollView>
-              {/* {categories?.map((item, index) => { */}
-              {[{categoryName: 'Near By'}]?.map((item, index) => {
+              {[1].map((item, index) => {
+                if (index > 1) return null;
                 return (
                   <TouchableHighlight
                     key={index}
                     style={[styles.button]}
                     underlayColor="#dcdcdc"
                     onPress={() => {
+                      setRefreshScreen(!refreshScreen);
+                      callback();
                       // Auth.getLocalStorageData('bearer').then(token => {
                       //   getOffersByCategoryAPI(item?._id, token, response => {
                       //     if (response !== null) {
@@ -70,7 +74,11 @@ const HomeFilterCategory = ({
                       //   });
                       // });
                     }}>
-                    <Text style={styles.textStyle}>{item?.categoryName}</Text>
+                    <Text style={styles.textStyle}>
+                      {/* {item?.categoryName} */}
+                      {/* {index == 1 && 'Most Liked'} */}
+                      {index == 0 && 'Most Shared'}
+                    </Text>
                   </TouchableHighlight>
                 );
               })}
@@ -131,9 +139,12 @@ const styles = StyleSheet.create({
   },
   button: {
     padding: 20,
-    width: SIZES.width / 1.1,
+    width: 250,
     backgroundColor: '#f7f8f9',
     marginBottom: 8,
+    // flexDirection: 'row',
+    // justifyContent: 'center',
+    // textAlign: 'center',
   },
   button2: {
     padding: 15,
@@ -149,6 +160,8 @@ const styles = StyleSheet.create({
     color: '#000',
     fontWeight: 'bold',
     textAlign: 'center',
+    width: '100%',
+    // borderWidth: 2,
   },
   modalText: {
     marginBottom: 15,
@@ -165,4 +178,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeFilterCategory;
+export default HomeFilterCategory2;

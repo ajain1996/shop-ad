@@ -27,8 +27,14 @@ export default function AppNavigation() {
 
   const getUser = async () => {
     let data = await Auth.getAccount();
+    console.log(data, '<<<< this is data at async');
     Auth.getLocalStorageData('bearer').then(token => {
-      getUserDataById('638c4deb0a101475c9cd2ae9', token, res => {
+      if (data == 'null' || data == null) {
+        setLoginChk(false);
+        return null;
+      }
+      console.log(data, '<<<< this is data at async 2');
+      getUserDataById(data[0]?._id, token, res => {
         console.log(res.data, '<<<<< \n\n\n\n res at user get at navigation');
         console.log('\n\n\n\n\ndata fetched: ', data);
         if (data !== null) {

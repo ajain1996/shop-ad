@@ -6,6 +6,7 @@ import {
   TouchableHighlight,
   Share,
   ScrollView,
+  Alert,
 } from 'react-native';
 
 import React from 'react';
@@ -37,6 +38,7 @@ import HomeModal from '../home/HomeModal';
 import LinearGradient from 'react-native-linear-gradient';
 import {JobsDetails} from './JobsDetails';
 import moment from 'moment';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function JobsScreen({navigation}) {
   const dispatch = useDispatch();
@@ -44,6 +46,7 @@ export default function JobsScreen({navigation}) {
 
   const [bearerToken, setBearerToken] = useState('');
   const [loading, setLoading] = React.useState(false);
+  const [allJobs, setAllJobs] = useState([]);
 
   React.useEffect(() => {
     (async () => {
@@ -51,8 +54,11 @@ export default function JobsScreen({navigation}) {
         Auth.getLocalStorageData('bearer').then(token => {
           setBearerToken(token);
           getAllJobsPostRequest(token, response => {
+            console.log(response.data, '<<<<this is dataofjobs');
             if (response !== null) {
+              // dispatch(setJob([...response?.data].reverse()));
               dispatch(setJob([...response?.data].reverse()));
+              setAllJobs([...response?.data].reverse());
             }
           });
         });
@@ -68,6 +74,7 @@ export default function JobsScreen({navigation}) {
       setBearerToken(token);
       getAllJobsPostRequest(token, response => {
         if (response !== null) {
+          console.log(response.data.reverse(), '<<<<these are all jobst');
           dispatch(setJob([...response?.data].reverse()));
         }
       });
@@ -81,11 +88,86 @@ export default function JobsScreen({navigation}) {
       setBearerToken(token);
       getAllJobsPostRequest(token, response => {
         if (response !== null) {
-          dispatch(setJob(response?.data));
+          // dispatch(setJob([...response?.data].reverse()));
+          dispatch(setJob([...response?.data].reverse()));
         }
       });
     });
   }
+
+  const filterIt = val => {
+    console.log('value flter', val);
+    setLoading(true);
+    const smallVal = val.toLocaleLowerCase();
+    if (val.trim() == '') {
+      dispatch(setJob(allJobs));
+      return setLoading(false);
+    }
+    // let data = [];
+    setLoading(true);
+    const data = allJobs.filter(item => {
+      console.log(item, '<<<item');
+      const smallLoc = item.location.toLowerCase();
+      const matchLoc = smallLoc.match(smallVal);
+      if (matchLoc != null) {
+        console.log(matchLoc, '<<<thisisdata');
+
+        return true;
+      }
+      if (item.ownerId) {
+        const smallname = item.ownerId.name.toLocaleLowerCase();
+        const matchLoc = smallname.match(smallVal);
+        if (matchLoc != null) {
+          console.log(matchLoc, '<<<thisisdata');
+
+          return true;
+        }
+      }
+      if (item.ownerId) {
+        const smallname = item.salary;
+        const matchLoc = smallname.match(smallVal);
+        if (matchLoc != null) {
+          console.log(matchLoc, '<<<thisisdata');
+
+          return true;
+        }
+      }
+      if (item.designationName) {
+        const smallname = item.designationName.toLocaleLowerCase();
+        const matchLoc = smallname.match(smallVal);
+        if (matchLoc != null) {
+          console.log(matchLoc, '<<<thisisdata');
+
+          return true;
+        }
+      }
+      if (item.shopName) {
+        const smallname = item.shopName.toLocaleLowerCase();
+        const matchLoc = smallname.match(smallVal);
+        if (matchLoc != null) {
+          console.log(matchLoc, '<<<thisisdata');
+
+          return true;
+        }
+      }
+      if (item.title) {
+        const smallname = item.title.toLocaleLowerCase();
+        const matchLoc = smallname.match(smallVal);
+        if (matchLoc != null) {
+          console.log(matchLoc, '<<<thisisdata');
+
+          return true;
+        }
+      }
+      // const matchName = smallname.match(smallVal);
+      // console.log(matchLoc, smallLoc, smallVal, '<<<<checkmatch');
+    });
+    dispatch(setJob(data));
+    setLoading(false);
+    // return data;
+    // console.log(data, '<<filterit');
+    // relativeTimeRounding
+  };
 
   return (
     <>
@@ -96,21 +178,67 @@ export default function JobsScreen({navigation}) {
       />
 
       <HomeSearch
+        showSwitchText={true}
         onChange={val => {
-          setLoading(true);
-          Auth.getLocalStorageData('bearer').then(token => {
-            setLoading(false);
-            getJobsByLocationPostRequest(val, token, response => {
-              if (response !== null) {
-                dispatch(setJob(response?.data));
-              }
-            });
-          });
+          // setLoading(true);
+          filterIt(val);
+
+          // Auth.getLocalStorageData('bearer').then(token => {
+          // setLoading(false);
+          // getJobsByLocationPostRequest(val, token, response => {
+          //   console.log('thisissearch', response.data);
+          //   if (response !== null) {
+          //     dispatch(setJob(response?.data));
+          //   }
+          // });
+          // });
         }}
       />
       <PTRView onRefresh={_refresh}>
         <ScrollView>
           {jobsData.map((item, index) => {
+            function dayDiff(startDate, endDate, des, id) {
+              const convertArr = d => {
+                const a = d.replace('/', '-');
+                const b = a.replace('/', '-');
+                return b.split('-');
+              };
+
+              // const diffInMs = moment(`12-Dec-2022`) - moment(`10-Dec-2022`);
+              const diffInMs =
+                moment(
+                  `${parseInt(convertArr(endDate)[0])}-${
+                    monthsArray[parseInt(convertArr(endDate)[1])]
+                  }-${parseInt(convertArr(endDate)[2])}`,
+                ) -
+                moment(
+                  `${parseInt(convertArr(startDate)[0])}-${
+                    monthsArray[parseInt(convertArr(startDate)[1])]
+                  }-${parseInt(convertArr(startDate)[2])}`,
+                );
+
+              const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+              console.log(
+                startDate,
+                endDate,
+                des,
+                id,
+                diffInDays,
+                '<<<< these are daydiff',
+              );
+              return diffInDays + 1;
+            }
+
+            var startDate = moment(item?.startDate).format('DD/MM/YYYY');
+            var endDate = moment(item?.endDate).format('DD/MM/YYYY');
+            const d = new Date();
+            const today = `${d.getDate()}-${
+              monthsArray[+d.getMonth() + 1]
+            }-${d.getFullYear()}`;
+
+            var diffDays = dayDiff(today, endDate, item.description, item._id);
+            console.log(diffDays, '<<<this is diffdays');
+            if (diffDays < 0) return null;
             return (
               <View key={index}>
                 <RenderSingleJob
@@ -139,15 +267,17 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
   const [likesCount, setLikesCount] = useState(0);
   const [isLike, setIsLike] = useState(false);
   const [commentsCount, setCommentsCount] = useState(0);
+  const [showMore, setShowMore] = useState(false);
 
   React.useEffect(() => {
     (async () => {
       const unsubscribe = navigation.addListener('focus', () => {
-        getUserByIDPostAPI(item?.ownerId, bearerToken, response => {
-          if (response !== null) {
-            setUser(response?.data[0]);
-          }
-        });
+        setUser(item?.ownerId);
+        // getUserByIDPostAPI(item?.ownerId, bearerToken, response => {
+        //   if (response.data) {
+        //     console.log(response, '<<<<responseerror');
+        //   }
+        // });
 
         getLikesCountByIDPostAPI(item?._id, bearerToken, response => {
           if (response !== null) {
@@ -210,7 +340,8 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
     })();
   }, [item]);
 
-  const handleLike = () => {
+  const handleLike = async () => {
+    // Alert.alert('like');
     if (isLike) {
       setLikesCount(prev => prev - 1);
       setIsLike(false);
@@ -221,6 +352,15 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
           }
         }
       });
+      const alllike = await AsyncStorage.getItem('LIKED_OFFER');
+      console.log(`${alllike}`, '<<<thisislike');
+      if (alllike == 'NaN') {
+        await AsyncStorage.setItem('LIKED_OFFER', `1`);
+      } else if (alllike && parseInt(alllike) > 0) {
+        const d = parseInt(alllike) - +1;
+        await AsyncStorage.setItem('LIKED_OFFER', `${d}`);
+        console.log(d);
+      }
     } else if (!isLike) {
       setLikesCount(prev => prev + 1);
       setIsLike(true);
@@ -238,6 +378,21 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
           }
         },
       );
+      const alllike = await AsyncStorage.getItem('LIKED_OFFER');
+      // console.log(alllike, 'plus');
+      console.log(`${alllike}`, '<<<thisislike');
+
+      if (alllike == 'NaN') {
+        await AsyncStorage.setItem('LIKED_OFFER', `1`);
+      }
+      if (alllike) {
+        const d = parseInt(alllike) + +1;
+        await AsyncStorage.setItem('LIKED_OFFER', `${d}`);
+        console.log(d, 'minus');
+      } else {
+        console.log(1);
+        await AsyncStorage.setItem('LIKED_OFFER', `1`);
+      }
     }
   };
 
@@ -275,60 +430,321 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
       alert(error.message);
     }
   };
-  function dayDiff(startDate, endDate, des, id) {
-    const convertArr = d => {
-      const a = d.replace('/', '-');
-      const b = a.replace('/', '-');
-      return b.split('-');
-    };
-    const today = new Date();
-    const inlocal = today.toLocaleDateString();
-    var currDate = moment(inlocal).format('DD/MM/YYYY');
-
-    // const diffInMs = moment(`12-Dec-2022`) - moment(`10-Dec-2022`);
-    // console.log(
-    //   startDate,
-    //   inlocal,
-    //   moment(startDate).format('DD/MM/YYYY'),
-    //   moment('10/1/22').format('DD/MM/YYYY'),
-    //   '<<<< this is inlocal',
-    // );
-    const diffInMs =
-      moment(
-        `${parseInt(convertArr(endDate)[0])}-${
-          monthsArray[parseInt(convertArr(endDate)[1])]
-        }-${parseInt(convertArr(endDate)[2])}`,
-      ) -
-      moment(
-        `${parseInt(convertArr(currDate)[0])}-${
-          monthsArray[parseInt(convertArr(currDate)[1])]
-        }-${parseInt(convertArr(currDate)[2])}`,
-      );
-
-    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-
-    return diffInDays + 1;
-  }
-
-  var startDate = moment(item?.startDate).format('DD/MM/YYYY');
-  var endDate = moment(item?.endDate).format('DD/MM/YYYY');
-  var diffDays = dayDiff(startDate, endDate, item.description, item._id);
 
   return (
     <View
       style={{
         borderBottomColor: '#D8D8D8',
-        borderBottomWidth: 1,
+        borderBottomWidth: 2,
         backgroundColor: '#fff',
+        marginHorizontal: 10,
+        marginBottom: 20,
       }}>
       <View
         style={{
           ...commonStyles.rowBetween,
-          height: 62,
+          height: 60,
           width: '100%',
-          padding: 20,
+          // padding: 20,
+          paddingHorizontal: 20,
+
+          paddingTop: 5,
         }}>
-        <View style={{...commonStyles.rowStart, alignItems: 'center'}}>
+        <View style={{borderWidth: 0}}>
+          <Text style={{fontSize: 15, fontWeight: 'bold', color: '#000'}}>
+            Required {item?.title}
+          </Text>
+        </View>
+      </View>
+      <View
+        style={{
+          width: '100%',
+          flexDirection: 'row',
+          justifyContent: 'flex-end',
+          // borderWidth: 2,
+          marginTop: -10,
+          // height
+          // alignItems: 'center',
+        }}>
+        <Text
+          style={{
+            // marginRight: 15,
+            fontWeight: '800',
+            color: 'skyblue',
+            fontSize: 14,
+          }}>
+          Salary: Rs {item?.salary}
+        </Text>
+        <TouchableHighlight
+          onPress={() => setHomeModalVisible(true)}
+          underlayColor="#f7f8f9">
+          <Image
+            source={require('../../assets/img/3dots.png')}
+            resizeMode="contain"
+            style={{width: 24, height: 20, borderRadius: 100}}
+          />
+        </TouchableHighlight>
+      </View>
+
+      <View style={{paddingHorizontal: 12}}>
+        <View
+          style={{
+            flexWrap: 'wrap',
+            flexDirection: 'row',
+          }}>
+          <View
+            style={{
+              marginHorizontal: 6,
+              marginVertical: 4,
+              backgroundColor: 'lightgrey',
+              alignSelf: 'center',
+              paddingHorizontal: 7,
+              borderRadius: 5,
+            }}>
+            <Text
+              style={{
+                color: 'rgba(0,0,0,0.7)',
+                fontSize: 13,
+                fontWeight: '500',
+              }}>
+              Experience: {item?.experienceRequired} year(s)
+            </Text>
+          </View>
+          <View
+            style={{
+              marginHorizontal: 6,
+              marginVertical: 4,
+              backgroundColor: 'lightgrey',
+              alignSelf: 'center',
+              paddingHorizontal: 7,
+              borderRadius: 5,
+            }}>
+            <Text
+              style={{
+                color: 'rgba(0,0,0,0.7)',
+                fontSize: 13,
+                fontWeight: '500',
+              }}>
+              Location: {item?.location}
+            </Text>
+          </View>
+          <View
+            style={{
+              marginHorizontal: 6,
+              marginVertical: 4,
+              backgroundColor: 'lightgrey',
+              alignSelf: 'center',
+              paddingHorizontal: 7,
+              borderRadius: 5,
+            }}>
+            <Text
+              style={{
+                color: 'rgba(0,0,0,0.7)',
+                fontSize: 13,
+                fontWeight: '500',
+              }}>
+              Contact person: {item?.designationName}
+            </Text>
+          </View>
+          {/* <View
+            style={{
+              marginHorizontal: 6,
+              marginVertical: 4,
+              backgroundColor: 'lightgrey',
+              alignSelf: 'center',
+              paddingHorizontal: 7,
+              borderRadius: 5,
+            }}>
+            <Text
+              style={{
+                color: 'rgba(0,0,0,0.7)',
+                fontSize: 13,
+                fontWeight: '500',
+              }}>
+              Man Power: {item?.manpowerNumber}
+            </Text>
+          </View> */}
+
+          {showMore && (
+            <>
+              <View
+                style={{
+                  marginHorizontal: 6,
+                  marginVertical: 4,
+                  backgroundColor: 'lightgrey',
+                  alignSelf: 'center',
+                  paddingHorizontal: 7,
+                  borderRadius: 5,
+                }}>
+                <Text
+                  style={{
+                    color: 'rgba(0,0,0,0.7)',
+                    fontSize: 13,
+                    fontWeight: '500',
+                  }}>
+                  Mail: {item?.contactEmail}
+                </Text>
+              </View>
+              <View
+                style={{
+                  marginHorizontal: 6,
+                  marginVertical: 4,
+                  backgroundColor: 'lightgrey',
+                  alignSelf: 'center',
+                  paddingHorizontal: 7,
+                  borderRadius: 5,
+                }}>
+                <Text
+                  style={{
+                    color: 'rgba(0,0,0,0.7)',
+                    fontSize: 13,
+                    fontWeight: '500',
+                  }}>
+                  Incentive: {item?.incentiveOffered}
+                </Text>
+              </View>
+              <View
+                style={{
+                  marginHorizontal: 6,
+                  marginVertical: 4,
+                  backgroundColor: 'lightgrey',
+                  alignSelf: 'center',
+                  paddingHorizontal: 7,
+                  borderRadius: 5,
+                }}>
+                <Text
+                  style={{
+                    color: 'rgba(0,0,0,0.7)',
+                    fontSize: 13,
+                    fontWeight: '500',
+                  }}>
+                  Gender: {item?.gender}
+                </Text>
+              </View>
+              <View
+                style={{
+                  marginHorizontal: 6,
+                  marginVertical: 4,
+                  backgroundColor: 'lightgrey',
+                  alignSelf: 'center',
+                  paddingHorizontal: 7,
+                  borderRadius: 5,
+                }}>
+                <Text
+                  style={{
+                    color: 'rgba(0,0,0,0.7)',
+                    fontSize: 13,
+                    fontWeight: '500',
+                  }}>
+                  Number: {item?.contactNumber}
+                </Text>
+              </View>
+              <View
+                style={{
+                  marginHorizontal: 6,
+                  marginVertical: 4,
+                  backgroundColor: 'lightgrey',
+                  alignSelf: 'center',
+                  paddingHorizontal: 7,
+                  borderRadius: 5,
+                }}>
+                <Text
+                  style={{
+                    color: 'rgba(0,0,0,0.7)',
+                    fontSize: 13,
+                    fontWeight: '500',
+                  }}>
+                  Area of Work: {item?.areaWork}
+                </Text>
+              </View>
+              <View
+                style={{
+                  marginHorizontal: 6,
+                  marginVertical: 4,
+                  backgroundColor: 'lightgrey',
+                  alignSelf: 'center',
+                  paddingHorizontal: 7,
+                  borderRadius: 5,
+                }}>
+                <Text
+                  style={{
+                    color: 'rgba(0,0,0,0.7)',
+                    fontSize: 13,
+                    fontWeight: '500',
+                  }}>
+                  Workers Required: {item?.numberWork}
+                </Text>
+              </View>
+              <View
+                style={{
+                  marginHorizontal: 6,
+                  marginVertical: 4,
+                  backgroundColor: 'lightgrey',
+                  alignSelf: 'center',
+                  paddingHorizontal: 7,
+                  borderRadius: 5,
+                }}>
+                <Text
+                  style={{
+                    color: 'rgba(0,0,0,0.7)',
+                    fontSize: 13,
+                    fontWeight: '500',
+                  }}>
+                  vehicle Required: {item?.vechileRequired}
+                </Text>
+              </View>
+              <View
+                style={{
+                  marginHorizontal: 6,
+                  marginVertical: 4,
+                  backgroundColor: 'lightgrey',
+                  alignSelf: 'center',
+                  paddingHorizontal: 7,
+                  borderRadius: 5,
+                }}>
+                <Text
+                  style={{
+                    color: 'rgba(0,0,0,0.7)',
+                    fontSize: 13,
+                    fontWeight: '500',
+                  }}>
+                  Work Timing: {item?.workTiming}
+                </Text>
+              </View>
+            </>
+          )}
+
+          <View
+            style={{
+              marginHorizontal: 6,
+              marginVertical: 4,
+              // backgroundColor: 'lightgrey',
+              alignSelf: 'center',
+              paddingHorizontal: 7,
+              borderRadius: 5,
+            }}>
+            <Text
+              style={{
+                color: '#FF0000',
+                fontSize: 13,
+                fontWeight: '500',
+              }}
+              onPress={() => {
+                setShowMore(!showMore);
+              }}>
+              {showMore ? 'Less' : 'More'}
+            </Text>
+          </View>
+        </View>
+
+        <View style={{height: 11}} />
+
+        <View
+          style={{
+            ...commonStyles.rowStart,
+            alignItems: 'center',
+            paddingHorizontal: 8,
+          }}>
           <TouchableHighlight
             underlayColor="#f7f8f9"
             onPress={() => {
@@ -375,7 +791,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
             )}
           </TouchableHighlight>
 
-          <View style={{marginLeft: 6}}>
+          <View style={{marginLeft: 12}}>
             <TouchableHighlight
               underlayColor="#f7f8f9"
               onPress={() => {
@@ -384,78 +800,75 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
                   userId: item?.ownerId,
                 });
               }}>
-              <Text style={{...commonStyles.fs14_700}}>{user?.name}</Text>
+              <Text style={{...commonStyles.fs14_700}}>{item?.shopName}</Text>
             </TouchableHighlight>
             <View style={{...commonStyles.rowStart, alignItems: 'center'}}>
-              <Image
-                source={require('../../assets/img/location.png')}
-                resizeMode="contain"
-                style={{width: 18, height: 16}}
-              />
+              <Text>Interview Timing: </Text>
               <TouchableHighlight
                 onPress={() => {
                   navigation.navigate('LocationScreen');
                 }}
                 underlayColor="#f7f8f9">
-                <Text style={{...commonStyles.fs12_400, marginLeft: 2}}>
-                  {item?.location}
+                <Text style={{...commonStyles.fs14_700, marginLeft: 2}}>
+                  {item?.interviewTiming}
                 </Text>
               </TouchableHighlight>
             </View>
           </View>
         </View>
-        <TouchableHighlight
-          onPress={() => setHomeModalVisible(true)}
-          underlayColor="#f7f8f9">
-          <Image
-            source={require('../../assets/img/3dots.png')}
-            resizeMode="contain"
-            style={{width: 24, height: 24, borderRadius: 100}}
-          />
-        </TouchableHighlight>
-      </View>
+        <View style={{height: 8}} />
 
+        <View style={{paddingHorizontal: 8}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+            <Text>Date: {`${item?.startDate} to ${item.endDate}`}</Text>
+          </View>
+          <Text style={{color: '#000', width: '100%'}}>
+            Description: {item?.description}
+          </Text>
+          <Text style={{color: '#000', width: '100%'}}>
+            Message: {item?.message}
+          </Text>
+        </View>
+      </View>
       <View>
-        <JobsDetails text="Title:" item={item?.title} />
-        <JobsDetails text="Description:" item={item?.description} />
-        <JobsDetails text="Shop Name:" item={item?.shopName} />
-        <JobsDetails text="Contact Number:" item={item?.contactNumber} />
-        <JobsDetails text="Contact Email:" item={item?.contactEmail} />
-        <JobsDetails text="Designation Name:" item={item?.designationName} />
-        <JobsDetails
-          text="Experience Required:"
-          item={item?.experienceRequired}
-        />
-        <JobsDetails text="Incentive Offered:" item={item?.incentiveOffered} />
-        <JobsDetails text="Interview Timing:" item={item?.interviewTiming} />
-        <JobsDetails text="Location:" item={item?.Location} />
-        <JobsDetails
-          text="Experience Required:"
-          item={item?.experienceRequired}
-        />
-        <JobsDetails text="Incentive Offered:" item={item?.incentiveOffered} />
-        <JobsDetails text="Interview Timing:" item={item?.interviewTiming} />
-        <JobsDetails text="Area of work:" item={item?.areaWork} />
+        {/* <JobsDetails text="Title:" item={item?.title} /> */}
+        {/* <JobsDetails text="Date to apply" item={`${item?.startDate} to ${item.endDate}`} /> */}
+        {/* <JobsDetails text="Description:" item={item?.description} /> */}
+        {/* <JobsDetails text="Shop Name:" item={item?.shopName} /> */}
+        {/* <JobsDetails text="Contact Number:" item={item?.contactNumber} />
+        <JobsDetails text="Contact Email:" item={item?.contactEmail} /> */}
+        {/* <JobsDetails text="Designation Name:" item={item?.designationName} /> */}
+        {/* <JobsDetails text="Incentive Offered:" item={item?.incentiveOffered} /> */}
+        {/* <JobsDetails text="Interview Timing:" item={item?.interviewTiming} /> */}
+        {/* <JobsDetails text="Location:" item={item?.location} /> */}
+        {/* <JobsDetails text="Experience Required:" item={item?.experienceRequired} /> */}
+        {/* <JobsDetails text="Area of work:" item={item?.areaWork} /> */}
         {/* <JobsDetails text="Facilities:" item={item?.facilities} /> */}
-        <JobsDetails text="Gender:" item={item?.gender} />
-        <JobsDetails text="Man power Number:" item={item?.manpowerNumber} />
-        <JobsDetails text="Number of work:" item={item?.numberWork} />
-        <JobsDetails text="Vechile Required:" item={item?.vechileRequired} />
-        <JobsDetails text="Work Timing:" item={item?.workTiming} />
-        <JobsDetails text="Salary:" item={item?.salary} />
-        <JobsDetails text="Message:" item={item?.message} />
-        <JobsDetails text="StartDate:" item={item?.startDate} />
-        <JobsDetails text="EndDate:" item={item?.endDate} />
-        <Text style={{height: 8}} />
+        {/* <JobsDetails text="Gender:" item={item?.gender} />
+        <JobsDetails text="Man power Number:" item={item?.manpowerNumber} /> */}
+        {/* <JobsDetails text="Number of work:" item={item?.numberWork} /> */}
+        {/* <JobsDetails text="Vechile Required:" item={item?.vechileRequired} /> */}
+        {/* <JobsDetails text="Work Timing:" item={item?.workTiming} /> */}
+        {/* <JobsDetails text="Salary:" item={item?.salary} /> */}
+        {/* <JobsDetails text="Message:" item={item?.message} /> */}
+
+        <Text style={{height: 1}} />
         {userType === 'user' ? (
           <LinearGradient
             colors={['#EDAA26', '#E27127']}
             style={{
               width: 160,
-              height: 48,
+              height: 30,
               ...commonStyles.centerStyles,
               borderRadius: 5,
-              marginLeft: 20,
+              alignSelf: 'flex-end',
+              marginRight: 20,
+              // marginLeft: 20,
             }}>
             <TouchableHighlight
               onPress={handleApplyJob}
@@ -524,7 +937,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         </TouchableHighlight>
       </View>
 
-      <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -16}}>
+      {/* <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -16}}>
         <Text style={{...commonStyles.fs14_500, marginBottom: 12}}>
           @{email}
         </Text>
@@ -546,13 +959,14 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
           style={{...commonStyles.fs12_400, marginLeft: 8, marginBottom: 12}}>
           {item?.date}
         </Text>
-      </View>
+      </View> */}
 
       <HomeModal
         modalVisible={homeModalVisible}
         setModalVisible={setHomeModalVisible}
         feedbackFor="job"
         feedbackNumber={item?.ownerId}
+        showSave={true}
         savedCallback={async () => {
           const oldData = await AsyncStorage.getItem('SAVED_JOBS');
           if (oldData == null) {
@@ -560,10 +974,11 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
           } else {
             const parseIT = JSON.parse(oldData);
             await AsyncStorage.setItem(
-              'Saved_Item',
+              'SAVED_JOBS',
               JSON.stringify([...parseIT, item]),
             );
           }
+          setHomeModalVisible(!homeModalVisible);
         }}
       />
     </View>

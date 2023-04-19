@@ -18,6 +18,7 @@ import {setUser} from '../redux/reducer/user';
 import Toast from 'react-native-simple-toast';
 import Auth from '../services/Auth';
 import CustomLoader, {CustomPanel} from '../components/CustomLoader';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen({navigation}) {
   const dispatch = useDispatch();
@@ -39,7 +40,7 @@ export default function LoginScreen({navigation}) {
     } else {
       setLoading(true);
       mobileLoginPostRequest(email, password, userType, async response => {
-        console.log('kjekre');
+        console.log('kjekre', response, '<<<this is res');
         setLoading(false);
         if (response !== null) {
           if (response?.message !== undefined) {
@@ -61,6 +62,11 @@ export default function LoginScreen({navigation}) {
                 'email_password',
                 email_password?.toString(),
               );
+              await AsyncStorage.setItem('LIKED_OFFER', `0`);
+              await AsyncStorage.setItem('SAVED_OFFER', `[]`);
+              await AsyncStorage.setItem('TOTAL_SHARED', `0`);
+
+              // const data = await AsyncStorage.getItem('SAVED_OFFER');
               Toast.show('Login Successfully!');
               setEmail('');
               setPassword('');
@@ -101,7 +107,7 @@ export default function LoginScreen({navigation}) {
               marginTop: 8,
               marginBottom: 20,
             }}>
-            Login now to track all your expenses and income at a place!
+            {/* Login now to track all your expenses and income at a place! */}
           </Text>
 
           <CustomTextInput

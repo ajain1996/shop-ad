@@ -22,7 +22,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import DocumentPicker from 'react-native-document-picker';
 import {
   addNewJobPostRequest,
+  GetFacilities,
   getJobsByOwnerIdPostRequest,
+  monthsArray,
 } from '../../utils/API';
 import Auth from '../../services/Auth';
 import PersonalLeaveDatePicker from '../../components/CustomDatePicker';
@@ -30,6 +32,7 @@ import CustomLoader, {CustomPanel} from '../../components/CustomLoader';
 import {useSelector} from 'react-redux';
 import {useEffect} from 'react';
 import {useState} from 'react';
+import {ReqField} from '../offer/AddSaleOfferScreen';
 
 export default function AddJobScreen({navigation}) {
   const {userData} = useSelector(state => state.User);
@@ -58,6 +61,7 @@ export default function AddJobScreen({navigation}) {
   const [experienceError, setExperienceError] = React.useState(false);
   const [manPowerError, setManPowerError] = React.useState(false);
   const [workTimingError, setWorkTimingError] = React.useState(false);
+  const [workTimingError2, setWorkTimingError2] = React.useState(false);
   const [salaryOfferedError, setSalaryOfferedError] = React.useState(false);
   const [vehicleRequiredError, setVehicleRequiredError] = React.useState(false);
   const [facilitiesError, setFacilitiesError] = React.useState(false);
@@ -90,10 +94,16 @@ export default function AddJobScreen({navigation}) {
   const [experience, setExperience] = React.useState('');
   const [manPower, setManPower] = React.useState('');
   const [workTiming, setWorkTiming] = React.useState('');
+  const [workTiming2, setWorkTiming2] = React.useState('');
   const [salaryOffered, setSalaryOffered] = React.useState('');
   const [vehicleRequired, setVehicleRequired] = React.useState('');
   const [facilities, setFacilities] = React.useState('');
   const [incentive, setIncentive] = React.useState('');
+  const [workShift, setWorkShift] = useState({
+    start: 'AM',
+    end: 'PM',
+    interview: 'AM',
+  });
   const [description, setDescription] = React.useState('');
 
   const [cvFile, setCvFile] = React.useState('');
@@ -101,24 +111,51 @@ export default function AddJobScreen({navigation}) {
   const [experienceCertificate, setExperienceCertificate] = React.useState('');
   const [policyVerification, setPolicyVerification] = React.useState('');
   const [interviewTiming, setInterviewTiming] = React.useState('');
+  const [MinSalary, setMinSalary] = useState(null);
+  const [MaxSalatry, setMaxSalatry] = useState(null);
   const [contactNumber, setContactNumber] = React.useState('');
   const [contactPersonName, setContactPersonName] = React.useState('');
   const [message, setMessage] = React.useState('');
+  const [jobVerification, setJobVerification] = useState(false);
 
   const [loading, setLoading] = React.useState(false);
   const [startDate, setStartDate] = React.useState('');
+
   const [endDate, setEndDate] = React.useState('');
   const [canAppy, setCanAppy] = useState(true);
+  // const [Facilities, setFacilities] = useState({})
+  const [allFacilities, setAllFacilities] = useState([]);
 
   useEffect(() => {
-    Alert.alert('hello');
+    // Alert.alert('hello');
+    GetFacilities(res => {
+      console.log(res, '<<<these are facilities');
+      setAllFacilities(res.data);
+    });
+    if (
+      userData[0]?.pAddress == undefined ||
+      userData[0].pAddress == 'undefined' ||
+      userData[0].pAddress == null ||
+      userData[0].pAddress == 'null'
+    ) {
+      Alert.alert('Alert', 'Update your profile to add offer', [
+        {
+          text: 'Redirect',
+          onPress: () => {
+            navigation.navigate('UpdateProfileScreen', {});
+          },
+        },
+      ]);
+    } else {
+      setAddress(userData[0].pAddress);
+    }
     Auth.getLocalStorageData('bearer').then(token => {
       getJobsByOwnerIdPostRequest(userData[0]?._id, token, response => {
         setLoading(false);
         if (response !== null) {
-          if (response.data.length > 0) {
+          if (response.data.length > 3) {
             console.log(response, '<<<<this is response of get all job--- ');
-            Alert.alert('having job');
+            // Alert.alert('having job');
             setCanAppy(false);
           }
         }
@@ -126,23 +163,55 @@ export default function AddJobScreen({navigation}) {
     });
   }, []);
 
+  const dayDiff = (startDate, endDate) => {
+    const convertArr = d => {
+      const a = d.replace('/', '-');
+      const b = a.replace('/', '-');
+      return b.split('-');
+    };
+
+    // const diffInMs = moment(`12-Dec-2022`) - moment(`10-Dec-2022`);
+    const diffInMs =
+      moment(
+        `${parseInt(convertArr(endDate)[0])}-${
+          monthsArray[parseInt(convertArr(endDate)[1])]
+        }-${parseInt(convertArr(endDate)[2])}`,
+      ) -
+      moment(
+        `${parseInt(convertArr(startDate)[0])}-${
+          monthsArray[parseInt(convertArr(startDate)[1])]
+        }-${parseInt(convertArr(startDate)[2])}`,
+      );
+
+    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+    return diffInDays + 1;
+  };
   const handleSubmit = () => {
     if (!canAppy) {
-      Toast.show('Please by membership to create more jobs!!');
+      Toast.show('Please buy membership to create more jobs!!');
       return null;
     }
+
+    // var start1 = moment(startDate).format('DD/MM/YYYY');
+    // var end1 = moment(endDate).format('DD/MM/YYYY');
+    // var diffDays = dayDiff(start1, end1);
+
+    // console.log(diffDays);
+    // return null;
+
     if (userType === 'shop') {
       if (interviewTiming.length === 0) {
         setInterviewTimingError(true);
-      } else if (contactNumber.length === 0) {
+      } else if (contactNumber.length < 10) {
         setContactNumberError(true);
       } else if (contactPersonName.length === 0) {
         setContactPersonNameError(true);
       } else if (message.length === 0) {
         setMessageError(true);
       } else {
-        setLoading(true);
         Auth.getAccount().then(userData => {
+          setLoading(true);
           Auth.getLocalStorageData('bearer').then(token => {
             addNewJobPostRequest(
               title,
@@ -150,7 +219,7 @@ export default function AddJobScreen({navigation}) {
               shopName,
               location,
               userData[0]?._id,
-              'salaryOffered',
+              MinSalary + ' to ' + MaxSalatry, // salaryOffered,
               contactPersonName,
               startDate,
               endDate,
@@ -161,7 +230,9 @@ export default function AddJobScreen({navigation}) {
               numberOfWorks,
               experience,
               manPower,
-              workTiming,
+              `${workTiming + workShift?.start} to ${
+                workTiming2 + workShift?.end
+              }`,
               facilities,
               incentive,
               interviewTiming,
@@ -171,6 +242,7 @@ export default function AddJobScreen({navigation}) {
               policyVerification,
               educationCertificate,
               experienceCertificate,
+              jobVerification,
               token,
               response => {
                 setLoading(false);
@@ -202,84 +274,9 @@ export default function AddJobScreen({navigation}) {
                     return true;
                   }
                   if (response.errors) {
-                    Alert.alert('Alert', response.errors.offerImage.message);
+                    console.log(response, '<<< this is response');
+                    Alert.alert('Alert', response.message);
                     return true;
-                  }
-                }
-              },
-            );
-          });
-        });
-      }
-    } else {
-      if (cvFile.length === 0) {
-        setCvFileError(true);
-      } else if (educationCertificate.length === 0) {
-        setEducationCertificateError(true);
-      } else if (experienceCertificate.length === 0) {
-        setExperienceCertificateError(true);
-      } else if (policyVerification.length === 0) {
-        setPolicyVerificationError(true);
-      } else if (interviewTiming.length === 0) {
-        setInterviewTimingError(true);
-      } else if (contactNumber.length === 0) {
-        setContactNumberError(true);
-      } else if (contactPersonName.length === 0) {
-        setContactPersonNameError(true);
-      } else if (message.length === 0) {
-        setMessageError(true);
-      } else {
-        setLoading(true);
-        Auth.getAccount().then(userData => {
-          Auth.getLocalStorageData('bearer').then(token => {
-            addNewJobPostRequest(
-              title,
-              description,
-              shopName,
-              location,
-              userData[0]?._id,
-              salaryOffered,
-              contactPersonName,
-              startDate,
-              endDate,
-              contactNumber,
-              userData[0]?.email,
-              gender,
-              areaOfWork,
-              numberOfWorks,
-              experience,
-              manPower,
-              workTiming,
-              facilities,
-              incentive,
-              interviewTiming,
-              vehicleRequired,
-              message,
-              cvFile,
-              policyVerification,
-              educationCertificate,
-              experienceCertificate,
-              token,
-              response => {
-                setLoading(false);
-                if (response !== null) {
-                  if (response?.message) {
-                    Alert.alert(
-                      'Alert',
-                      response.message,
-                      [
-                        {
-                          text: 'OK',
-                          onPress: async () => {
-                            navigation.goBack();
-                          },
-                        },
-                      ],
-                      {cancelable: false},
-                    );
-                  }
-                  if (response.errors) {
-                    Alert.alert('Alert', response.errors.offerImage.message);
                   }
                 }
               },
@@ -325,6 +322,7 @@ export default function AddJobScreen({navigation}) {
       }
     }
   };
+  console.log(endDate, '<<<<< Enddate');
 
   const {userType} = useSelector(state => state.UserType);
 
@@ -338,16 +336,46 @@ export default function AddJobScreen({navigation}) {
             justifyContent: 'space-around',
             marginTop: 30,
           }}>
-          <RenderTickComponent showNext={showTick.tick1} title="Basic" />
-          <RenderTickComponent showNext={showTick.tick2} title="Work" />
-          <RenderTickComponent showNext={showTick.tick3} title="Document" />
+          <RenderTickComponent
+            showNext={showTick.tick1}
+            title="Basic"
+            onPress={() => {
+              setShowNext({
+                next1: true,
+                next2: false,
+                next3: false,
+              });
+            }}
+          />
+          <RenderTickComponent
+            showNext={showTick.tick2}
+            title="Work"
+            onPress={() => {
+              setShowNext({
+                next1: false,
+                next2: true,
+                next3: false,
+              });
+            }}
+          />
+          <RenderTickComponent
+            showNext={showTick.tick3}
+            title="Document"
+            onPress={() => {
+              setShowNext({
+                next1: false,
+                next2: false,
+                next3: true,
+              });
+            }}
+          />
         </View>
 
         {showNext.next1 ? (
           <View style={{paddingHorizontal: 16}}>
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Add Title
+                Add Title <ReqField />
               </Text>
               <TextInput
                 placeholder="Title"
@@ -364,7 +392,7 @@ export default function AddJobScreen({navigation}) {
               />
               {titleError ? (
                 <Text style={{...commonStyles.fs12_400, color: 'red'}}>
-                  Description is mandatory
+                  Title is mandatory
                 </Text>
               ) : (
                 <></>
@@ -373,7 +401,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Shop Name
+                Shop Name <ReqField />
               </Text>
               <TextInput
                 placeholder="Shop name"
@@ -399,15 +427,16 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Address of Firm
+                Address of Firm <ReqField />
               </Text>
               <TextInput
                 placeholder="Address"
                 placeholderTextColor="#999"
-                value={address}
+                value={userData[0].pAddress}
                 onChangeText={val => {
-                  setAddress(val);
-                  setAddressError(false);
+                  Toast.show('Please contact admin to change location');
+                  // setAddress(val);
+                  // setAddressError(false);
                 }}
                 style={[
                   styles.titleInput,
@@ -461,13 +490,6 @@ export default function AddJobScreen({navigation}) {
                             onChangeText={(val) => { setMaritalStatus(val); setMaritalStatusError(false) }}
                             style={[styles.titleInput, { borderColor: maritalStatusError ? "red" : "#BDBDBD" }]}
                         /> */}
-              {maritalStatusError ? (
-                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
-                  Marital status is mandatory
-                </Text>
-              ) : (
-                <></>
-              )}
             </>
 
             <>
@@ -508,18 +530,11 @@ export default function AddJobScreen({navigation}) {
                             onChangeText={(val) => { setGender(val); setGenderError(false) }}
                             style={[styles.titleInput, { borderColor: genderError ? "red" : "#BDBDBD" }]}
                         /> */}
-              {genderError ? (
-                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
-                  Gender is mandatory
-                </Text>
-              ) : (
-                <></>
-              )}
             </>
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Location
+                Location <ReqField />
               </Text>
               <TextInput
                 placeholder="Location"
@@ -536,7 +551,7 @@ export default function AddJobScreen({navigation}) {
               />
               {locationError ? (
                 <Text style={{...commonStyles.fs12_400, color: 'red'}}>
-                  Gender is mandatory
+                  Location is mandatory
                 </Text>
               ) : (
                 <></>
@@ -553,10 +568,6 @@ export default function AddJobScreen({navigation}) {
                   setShopNameError(true);
                 } else if (address.length === 0) {
                   setAddressError(true);
-                } else if (maritalStatus.length === 0) {
-                  setMaritalStatusError(true);
-                } else if (gender.length === 0) {
-                  setGenderError(true);
                 } else {
                   setShowNext({
                     next1: false,
@@ -581,7 +592,7 @@ export default function AddJobScreen({navigation}) {
           <View style={{paddingHorizontal: 16}}>
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Area of work
+                Area of work <ReqField />
               </Text>
               <TextInput
                 placeholder="Area of work"
@@ -607,7 +618,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Number of Workers
+                Required Manpower
               </Text>
               <TextInput
                 placeholder="Number of Workers"
@@ -617,29 +628,25 @@ export default function AddJobScreen({navigation}) {
                 onChangeText={val => {
                   setNumberOfWork(val);
                   setNumberOfWorkError(false);
+                  setManPower(val);
+                  setManPowerError(false);
                 }}
                 style={[
                   styles.titleInput,
                   {borderColor: numberOfWorksError ? 'red' : '#BDBDBD'},
                 ]}
               />
-              {numberOfWorksError ? (
-                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
-                  Number of Workers is mandatory
-                </Text>
-              ) : (
-                <></>
-              )}
             </>
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Experience Required
+                Experience Required (in years)
               </Text>
               <TextInput
                 placeholder="Experience Required"
                 placeholderTextColor="#999"
                 value={experience}
+                keyboardType="number-pad"
                 onChangeText={val => {
                   setExperience(val);
                   setExperienceError(false);
@@ -649,18 +656,11 @@ export default function AddJobScreen({navigation}) {
                   {borderColor: experienceError ? 'red' : '#BDBDBD'},
                 ]}
               />
-              {experienceError ? (
-                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
-                  Experience Required is mandatory
-                </Text>
-              ) : (
-                <></>
-              )}
             </>
 
-            <>
+            {/* <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Number of Manpower Required
+                Number of Manpower Required <ReqField />
               </Text>
               <TextInput
                 placeholder="Number of Manpower Required"
@@ -683,28 +683,139 @@ export default function AddJobScreen({navigation}) {
               ) : (
                 <></>
               )}
-            </>
+            </> */}
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Work Timing
+                Work Start Timing
               </Text>
-              <TextInput
-                placeholder="Work Timing"
-                placeholderTextColor="#999"
-                value={workTiming}
-                onChangeText={val => {
-                  setWorkTiming(val);
-                  setWorkTimingError(false);
-                }}
-                style={[
-                  styles.titleInput,
-                  {borderColor: workTimingError ? 'red' : '#BDBDBD'},
-                ]}
-              />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}>
+                <TextInput
+                  placeholder="Start Time"
+                  placeholderTextColor="#999"
+                  value={workTiming}
+                  keyboardType="number-pad"
+                  onChangeText={val => {
+                    if (val > 12) {
+                      Toast.show('Valid time is 00:00 to 12:00');
+                    } else {
+                      setWorkTiming(val);
+                      setWorkTimingError(false);
+                    }
+                  }}
+                  style={[
+                    styles.titleInput,
+                    {
+                      borderColor: workTimingError ? 'red' : '#BDBDBD',
+                      width: '40%',
+                    },
+                  ]}
+                />
+                <Text
+                  style={{
+                    borderWidth: 1,
+                    width: '20%',
+                    textAlign: 'center',
+                    backgroundColor:
+                      workShift?.start == 'AM' ? 'orange' : 'white',
+                    color: workShift?.start == 'AM' ? 'white' : 'black',
+                  }}
+                  onPress={() => {
+                    setWorkShift({...workShift, start: 'AM'});
+                  }}>
+                  AM
+                </Text>
+                <Text
+                  style={{
+                    borderWidth: 1,
+                    width: '20%',
+                    textAlign: 'center',
+                    backgroundColor:
+                      workShift?.start == 'PM' ? 'orange' : 'white',
+                    color: workShift?.start == 'PM' ? 'white' : 'black',
+                  }}
+                  onPress={() => {
+                    setWorkShift({...workShift, start: 'PM'});
+                  }}>
+                  PM
+                </Text>
+              </View>
               {workTimingError ? (
                 <Text style={{...commonStyles.fs12_400, color: 'red'}}>
-                  Work Timing is mandatory
+                  Work Start Timing is mandatory
+                </Text>
+              ) : (
+                <></>
+              )}
+            </>
+            <>
+              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+                Work End Timing
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}>
+                <TextInput
+                  placeholder="End Time"
+                  placeholderTextColor="#999"
+                  value={workTiming2}
+                  keyboardType="number-pad"
+                  onChangeText={val => {
+                    if (val > 12) {
+                      Toast.show('Valid time is 00:00 to 12:00');
+                    } else {
+                      setWorkTiming2(val);
+                      setWorkTimingError2(false);
+                    }
+                  }}
+                  style={[
+                    styles.titleInput,
+                    {
+                      borderColor: workTimingError ? 'red' : '#BDBDBD',
+                      width: '40%',
+                    },
+                  ]}
+                />
+                <Text
+                  style={{
+                    borderWidth: 1,
+                    width: '20%',
+                    textAlign: 'center',
+                    backgroundColor:
+                      workShift?.end == 'AM' ? 'orange' : 'white',
+                    color: workShift?.end == 'AM' ? 'white' : 'black',
+                  }}
+                  onPress={() => {
+                    setWorkShift({...workShift, end: 'AM'});
+                  }}>
+                  AM
+                </Text>
+                <Text
+                  style={{
+                    borderWidth: 1,
+                    width: '20%',
+                    textAlign: 'center',
+                    backgroundColor:
+                      workShift?.end == 'PM' ? 'orange' : 'white',
+                    color: workShift?.end == 'PM' ? 'white' : 'black',
+                  }}
+                  onPress={() => {
+                    setWorkShift({...workShift, end: 'PM'});
+                  }}>
+                  PM
+                </Text>
+              </View>
+              {workTimingError2 ? (
+                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+                  Work End Timing is mandatory
                 </Text>
               ) : (
                 <></>
@@ -773,7 +884,7 @@ export default function AddJobScreen({navigation}) {
                                 })
                             } */}
               <PersonalLeaveDatePicker
-                heading="Shift"
+                heading="Job publish Start date"
                 placeholderText="Start Date"
                 minimumDate={''}
                 maximumDate={endDate === '' ? '' : endDate}
@@ -782,18 +893,23 @@ export default function AddJobScreen({navigation}) {
                 error={startDateError}
                 onDateSelected={function (selectedStartDate) {
                   setStartDate(moment(selectedStartDate).format('DD-MMM-YYYY'));
+
+                  const forStart =
+                    moment(selectedStartDate).format('DD-MM-YYYY');
+                  console.log(selectedStartDate);
                   setStartDateError(false);
                 }}
               />
 
               <PersonalLeaveDatePicker
-                // heading="End Date"
+                heading="End Date"
                 placeholderText="End Date"
                 minimumDate={''}
                 maximumDate=""
                 initialDate={endDate === '' ? startDate : endDate}
                 onDateSelected={function (selectedStartDate) {
                   setEndDate(moment(selectedStartDate).format('DD-MMM-YYYY'));
+                  // handleSubmit();
                 }}
               />
               {/* </View> */}
@@ -809,14 +925,15 @@ export default function AddJobScreen({navigation}) {
                 Facilities
               </Text>
               <FlatList
-                data={[
-                  'Indore, India',
-                  'Bhopal, India',
-                  'Nagpur, India',
-                  'Jabalpur, India',
-                  'Kashmir, India',
-                  'Goa, India',
-                ]}
+                data={allFacilities}
+                // data={[
+                //   'Indore, India',
+                //   'Bhopal, India',
+                //   'Nagpur, India',
+                //   'Jabalpur, India',
+                //   'Kashmir, India',
+                //   'Goa, India',
+                // ]}
                 numColumns={2}
                 renderItem={({item}) => {
                   return (
@@ -824,7 +941,7 @@ export default function AddJobScreen({navigation}) {
                       style={[styles.checkboxWrapper]}
                       onPress={() => {
                         if (facilities?.length === 0) {
-                          setFacilities(item);
+                          setFacilities(item.name);
                         } else {
                           setFacilities('');
                         }
@@ -837,12 +954,12 @@ export default function AddJobScreen({navigation}) {
                             height: 13,
                             borderRadius: 100,
                             backgroundColor:
-                              facilities === item ? '#000' : '#fff',
+                              facilities === item.name ? '#000' : '#fff',
                           }}
                         />
                       </View>
                       <Text style={{...commonStyles.fs14_400, marginLeft: 10}}>
-                        {item}
+                        {item.name}
                       </Text>
                     </TouchableOpacity>
                   );
@@ -859,12 +976,12 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Incentive Offered
+                Incentive Offered <ReqField />
               </Text>
               <TextInput
                 placeholder="Incentive Offered"
                 placeholderTextColor="#999"
-                keyboardType="number-pad"
+                // keyboardType="number-pad"
                 value={incentive}
                 onChangeText={val => {
                   setIncentive(val);
@@ -885,15 +1002,43 @@ export default function AddJobScreen({navigation}) {
             </>
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Salary Offered
+                Min Salary Offered <ReqField />
               </Text>
               <TextInput
-                placeholder="Salary Offered"
+                placeholder="ex: Rs 10,000 "
                 placeholderTextColor="#999"
                 keyboardType="number-pad"
-                value={salaryOffered}
+                value={MinSalary}
                 onChangeText={val => {
-                  setSalaryOffered(val);
+                  // setSalaryOffered(val)
+                  setMinSalary(val);
+                  // setIncentiveError(false);
+                }}
+                style={[
+                  styles.titleInput,
+                  {borderColor: incentiveError ? 'red' : '#BDBDBD'},
+                ]}
+              />
+              {/* { ? (
+                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+                  Incentive is mandatory
+                </Text>
+              ) : (
+                <></>
+              )} */}
+            </>
+            <>
+              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+                Max Salary Offered <ReqField />
+              </Text>
+              <TextInput
+                placeholder="ex: Rs 20,000 "
+                placeholderTextColor="#999"
+                keyboardType="number-pad"
+                value={MaxSalatry}
+                onChangeText={val => {
+                  // setSalaryOffered(val)
+                  setMaxSalatry(val);
                   // setIncentiveError(false);
                 }}
                 style={[
@@ -912,7 +1057,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 10}}>
-                Description
+                Description <ReqField />
               </Text>
               <TextInput
                 placeholder=""
@@ -945,22 +1090,33 @@ export default function AddJobScreen({navigation}) {
               onPress={() => {
                 if (areaOfWork.length === 0) {
                   setAreaOfWorkError(true);
-                } else if (numberOfWorks.length === 0) {
-                  setNumberOfWorkError(true);
-                } else if (experience.length === 0) {
-                  setExperienceError(true);
                 } else if (manPower.length === 0) {
                   setManPowerError(true);
-                } else if (workTiming.length === 0) {
-                  setWorkTimingError(true);
-                } else if (vehicleRequired.length === 0) {
-                  setVehicleRequiredError(true);
-                } else if (facilities.length === 0) {
-                  setFacilitiesError(true);
-                } else if (incentive.length === 0) {
-                  setIncentiveError(true);
                 } else if (description.length === 0) {
                   setDescriptionError(true);
+                }
+                var start1 = moment(startDate).format('DD/MM/YYYY');
+                var end1 = moment(endDate).format('DD/MM/YYYY');
+                var diffDays = dayDiff(start1, end1);
+                if (diffDays > 4) {
+                  Toast.show(
+                    'Only Premium members can create job for more than 4 days',
+                  );
+                  return null;
+                }
+                if (diffDays < 0) {
+                  Toast.show(
+                    'Start date and end date is wrong!. (check dates again)',
+                  );
+                  return null;
+                }
+                if (
+                  MinSalary == null ||
+                  MaxSalatry == null ||
+                  +MinSalary > +MaxSalatry
+                ) {
+                  console.log(MinSalary, MaxSalatry, MinSalary > MaxSalatry);
+                  return Toast.show('Please enter valid salary range');
                 } else {
                   setShowNext({
                     next1: false,
@@ -1167,21 +1323,63 @@ export default function AddJobScreen({navigation}) {
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
                 Interview Timing
               </Text>
-              <TextInput
-                placeholder="Interview Timing"
-                placeholderTextColor="#999"
-                value={interviewTiming}
-                keyboardType="default"
-                maxLength={10}
-                onChangeText={val => {
-                  setInterviewTiming(val);
-                  setInterviewTimingError(false);
-                }}
-                style={[
-                  styles.titleInput,
-                  {borderColor: interviewTimingError ? 'red' : '#BDBDBD'},
-                ]}
-              />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}>
+                <TextInput
+                  placeholder="ex: 13:00 for 1PM"
+                  placeholderTextColor="#999"
+                  value={interviewTiming}
+                  // keyboardType="default"
+                  // maxLength={10}
+                  onChangeText={val => {
+                    if (val > 24) {
+                      Toast.show('Please enter valid timing (00:00 to 24:00)');
+                    } else {
+                      setInterviewTiming(val);
+                      setInterviewTimingError(false);
+                    }
+                  }}
+                  style={[
+                    styles.titleInput,
+                    {
+                      borderColor: interviewTimingError ? 'red' : '#BDBDBD',
+                      width: '80%',
+                    },
+                  ]}
+                />
+                {/* <Text
+                  style={{
+                    borderWidth: 1,
+                    width: '20%',
+                    textAlign: 'center',
+                    backgroundColor:
+                      workShift?.interview == 'AM' ? 'orange' : 'white',
+                    color: workShift?.interview == 'AM' ? 'white' : 'black',
+                  }}
+                  onPress={() => {
+                    setWorkShift({...workShift, interview: 'AM'});
+                  }}>
+                  AM
+                </Text>
+                <Text
+                  style={{
+                    borderWidth: 1,
+                    width: '20%',
+                    textAlign: 'center',
+                    backgroundColor:
+                      workShift?.interview == 'PM' ? 'orange' : 'white',
+                    color: workShift?.interview == 'PM' ? 'white' : 'black',
+                  }}
+                  onPress={() => {
+                    setWorkShift({...workShift, interview: 'PM'});
+                  }}>
+                  PM
+                </Text> */}
+              </View>
               {interviewTimingError ? (
                 <Text style={{...commonStyles.fs12_400, color: 'red'}}>
                   Interview timing is mandatory
@@ -1218,7 +1416,49 @@ export default function AddJobScreen({navigation}) {
               />
               {contactNumberError ? (
                 <Text style={{...commonStyles.fs12_400, color: 'red'}}>
-                  Contact number is mandatory
+                  Please enter valid contact number
+                </Text>
+              ) : (
+                <></>
+              )}
+            </>
+            <>
+              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+                Job Verification
+              </Text>
+              {['Required', 'Not Required'].map(item => {
+                return (
+                  <TouchableOpacity
+                    style={[styles.checkboxWrapper]}
+                    onPress={() => {
+                      if (item == 'Required') setJobVerification(true);
+                      else setJobVerification(false);
+                    }}>
+                    <View style={[styles.checkbox]}>
+                      <View
+                        style={{
+                          width: 13,
+                          height: 13,
+                          borderRadius: 100,
+                          backgroundColor:
+                            item == 'Required' && jobVerification == true
+                              ? '#000'
+                              : item == 'Not Required' &&
+                                jobVerification == false
+                              ? '#000'
+                              : '#fff',
+                        }}
+                      />
+                    </View>
+                    <Text style={{...commonStyles.fs14_400, marginLeft: 10}}>
+                      {item}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+              {contactNumberError ? (
+                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+                  Please enter valid contact number
                 </Text>
               ) : (
                 <></>
@@ -1253,7 +1493,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Message
+                Message <ReqField />
               </Text>
               <TextInput
                 placeholder="Message"
@@ -1281,6 +1521,46 @@ export default function AddJobScreen({navigation}) {
             </>
             <View style={{marginTop: 20}} />
 
+            <Custom_Auth_Btn
+              btnText="Preview"
+              // style={{width: '50%'}}
+              onPress={() => {
+                navigation.navigate('PreviewJob', {
+                  title,
+                  description,
+                  shopName,
+                  location,
+                  userId: userData[0]?._id,
+                  salaryOffered: MinSalary + ' to ' + MaxSalatry,
+                  contactPersonName,
+                  startDate,
+                  endDate,
+                  workShift,
+                  contactNumber,
+                  email: userData[0]?.email,
+                  gender,
+                  areaOfWork,
+                  numberOfWorks,
+                  experience,
+                  manPower,
+                  workTiming,
+                  facilities,
+                  incentive,
+                  interviewTiming,
+                  vehicleRequired,
+                  message,
+                  cvFile,
+                  policyVerification,
+                  educationCertificate,
+                  experienceCertificate,
+                });
+              }}
+            />
+            <View
+              style={{
+                height: 20,
+              }}
+            />
             <Custom_Auth_Btn btnText="Submit" onPress={handleSubmit} />
             <View style={{marginTop: 20}} />
           </View>
@@ -1295,37 +1575,39 @@ export default function AddJobScreen({navigation}) {
   );
 }
 
-const RenderTickComponent = ({showNext, title}) => {
+const RenderTickComponent = ({showNext, title, onPress}) => {
   return (
-    <View style={{alignItems: 'center'}}>
-      <LinearGradient
-        style={{
-          width: 24,
-          height: 24,
-          borderRadius: 100,
-          ...commonStyles.centerStyles,
-        }}
-        colors={showNext ? ['#1572B9', '#0995C8'] : ['#D9D9D9', '#D9D9D9']}>
-        {showNext ? (
-          <Image
-            source={require('../../assets/img/tick.png')}
-            style={{width: 10.5, height: 7.5, tintColor: '#fff'}}
-          />
-        ) : (
-          <></>
-        )}
-      </LinearGradient>
-      <Text style={{...commonStyles.fs14_500}}>{title}</Text>
-      <View
-        style={{
-          width: SIZES.width / 3,
-          height: 2,
-          backgroundColor: showNext ? '#1572B9' : '#D9D9D9',
-          position: 'absolute',
-          top: 12,
-        }}
-      />
-    </View>
+    <TouchableOpacity onPress={onPress}>
+      <View style={{alignItems: 'center'}}>
+        <LinearGradient
+          style={{
+            width: 24,
+            height: 24,
+            borderRadius: 100,
+            ...commonStyles.centerStyles,
+          }}
+          colors={showNext ? ['#1572B9', '#0995C8'] : ['#D9D9D9', '#D9D9D9']}>
+          {showNext ? (
+            <Image
+              source={require('../../assets/img/tick.png')}
+              style={{width: 10.5, height: 7.5, tintColor: '#fff'}}
+            />
+          ) : (
+            <></>
+          )}
+        </LinearGradient>
+        <Text style={{...commonStyles.fs14_500}}>{title}</Text>
+        <View
+          style={{
+            width: SIZES.width / 3,
+            height: 2,
+            backgroundColor: showNext ? '#1572B9' : '#D9D9D9',
+            position: 'absolute',
+            top: 12,
+          }}
+        />
+      </View>
+    </TouchableOpacity>
   );
 };
 

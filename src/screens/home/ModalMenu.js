@@ -14,6 +14,7 @@ import Auth from '../../services/Auth';
 import {commonStyles} from '../../utils/styles';
 import {SIZES} from '../../utils/theme';
 import Toast from 'react-native-simple-toast';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ModalMenu = ({modalVisible, callback, navigation}) => {
   const dispatch = useDispatch();
@@ -76,7 +77,7 @@ const ModalMenu = ({modalVisible, callback, navigation}) => {
               </View>
 
               <View style={{marginLeft: 9, marginTop: -5}}>
-                <Text style={[commonStyles.fs16_500]}>{username}</Text>
+                <Text style={[commonStyles.fs16_500]}>{userData[0]?.name}</Text>
                 <TouchableHighlight
                   style={{...styles.switchAccount}}
                   underlayColor="#eee"
@@ -109,21 +110,34 @@ const ModalMenu = ({modalVisible, callback, navigation}) => {
               <Text style={styles.textStyle}>Get Membership</Text>
             </TouchableHighlight>
 
-            <TouchableHighlight
+            {/* <TouchableHighlight
               style={[styles.button]}
               underlayColor="#dcdcdc"
               onPress={() => {
                 navigation.navigate('SavedScreen');
               }}>
               <Text style={styles.textStyle}>Saved</Text>
-            </TouchableHighlight>
+            </TouchableHighlight> */}
 
             <TouchableHighlight
               style={[styles.button]}
               underlayColor="#dcdcdc"
               onPress={() => {
-                Auth.logout().then(() => {
+                Auth.logout().then(async () => {
                   dispatch(removeUser([]));
+                  await AsyncStorage.setItem(
+                    'LIKED_OFFER',
+                    JSON.stringify(null),
+                  );
+
+                  await AsyncStorage.setItem(
+                    'SAVED_OFFER',
+                    JSON.stringify(null),
+                  );
+                  await AsyncStorage.setItem(
+                    'TOTAL_SHARED',
+                    JSON.stringify(null),
+                  );
                 });
               }}>
               <Text style={styles.textStyle}>Logout</Text>

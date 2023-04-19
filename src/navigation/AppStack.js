@@ -19,6 +19,12 @@ import LocationScreen from '../screens/location/LocationScreen';
 import ApplyJobScreen from '../screens/jobs/ApplyJobScreen';
 import SavedScreen from '../screens/saved/SavedScreen';
 import GetAllCandidatesScreen from '../screens/profile/GetAllCandidateScreen';
+import Offerdetail from '../screens/offer/OfferDetail';
+import PreviewJobScreen, {PreviewJob} from '../screens/jobs/PreviewJob';
+import PreviewWork from '../screens/works/PreviewWork';
+import PreviewOffer from '../screens/offer/PreviewOffer';
+import WorkDetail from '../screens/works/WorkDetail';
+import WorkDetailPreview from '../screens/works/WorkDetailPreview';
 
 export default function AppStack() {
   const Stack = createStackNavigator();
@@ -32,10 +38,6 @@ export default function AppStack() {
       <StatusBar barStyle="light-content" backgroundColor="#1572B9" />
       <Stack.Navigator initialRouteName="Root" screenOptions={screenOptions}>
         <Stack.Screen name="Root" component={BottomTabs} />
-        <Stack.Screen
-          name="GetAllCandidatesScreen"
-          component={GetAllCandidatesScreen}
-        />
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen name="WorksScreen" component={WorksScreen} />
         <Stack.Screen
@@ -49,7 +51,13 @@ export default function AppStack() {
           component={GetMembershipScreen}
         />
         <Stack.Screen name="AddWorksScreen" component={AddWorksScreen} />
+        <Stack.Screen name="OfferDetail" component={Offerdetail} />
+        <Stack.Screen name="PreviewJob" component={PreviewJobScreen} />
         <Stack.Screen name="UserDetailsScreen" component={UserDetailsScreen} />
+        <Stack.Screen name="PreviewWork" component={PreviewWork} />
+        <Stack.Screen name="workDetail" component={WorkDetail} />
+        <Stack.Screen name="workDetailPreview" component={WorkDetailPreview} />
+        <Stack.Screen name="PreviewOffer" component={PreviewOffer} />
         <Stack.Screen name="UserPostScreen" component={UserPostScreen} />
         <Stack.Screen name="CommentScreen" component={CommentScreen} />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
@@ -60,6 +68,10 @@ export default function AppStack() {
         <Stack.Screen name="LocationScreen" component={LocationScreen} />
         <Stack.Screen name="ApplyJobScreen" component={ApplyJobScreen} />
         <Stack.Screen name="SavedScreen" component={SavedScreen} />
+        <Stack.Screen
+          name="GetAllCandidatesScreen"
+          component={GetAllCandidatesScreen}
+        />
       </Stack.Navigator>
     </>
   );

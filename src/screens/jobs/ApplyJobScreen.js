@@ -15,9 +15,10 @@ import Auth from '../../services/Auth';
 import CustomInputHeader from '../../components/CustomInputHeader';
 import {applyJobPostAPI} from '../../utils/API';
 import CustomLoader, {CustomPanel} from '../../components/CustomLoader';
+import {useSelector} from 'react-redux';
 
 export default function ApplyJobScreen({navigation, route}) {
-  // const { userData } = useSelector(state => state.User);
+  const {userData} = useSelector(state => state.User);
 
   const [cvFileError, setCvFileError] = React.useState(false);
   const [educationCertificateError, setEducationCertificateError] =
@@ -74,14 +75,14 @@ export default function ApplyJobScreen({navigation, route}) {
 
   const handleSubmit = () => {
     if (cvFile.length === 0) {
-      // setCvFileError(true);
-    } else if (educationCertificate.length === 0) {
-      setEducationCertificateError(true);
-    } else if (experienceCertificate.length === 0) {
-      setExperienceCertificateError(true);
-    } else if (policyVerification.length === 0) {
-      setPolicyVerificationError(true);
-    } else {
+      setCvFileError(true);
+    }
+    // else if (educationCertificate.length === 0) {
+    //   setEducationCertificateError(true);
+    // } else if (experienceCertificate.length === 0) {
+    //   setExperienceCertificateError(true);
+    // }
+    else {
       setLoading(true);
       Auth.getAccount().then(userData => {
         Auth.getLocalStorageData('bearer').then(token => {
@@ -90,24 +91,31 @@ export default function ApplyJobScreen({navigation, route}) {
             uri: cvFile?.uri,
             type: cvFile?.type,
           };
+          let policy = '';
+          let experience = '';
+          let education = '';
 
-          const policy = {
-            name: policyVerification?.name,
-            uri: policyVerification?.uri,
-            type: policyVerification?.type,
-          };
-
-          const experience = {
-            name: experienceCertificate?.name,
-            uri: experienceCertificate?.uri,
-            type: experienceCertificate?.type,
-          };
-
-          const education = {
-            name: educationCertificate?.name,
-            uri: educationCertificate?.uri,
-            type: educationCertificate?.type,
-          };
+          if (policyVerification != '') {
+            policy = {
+              name: policyVerification?.name,
+              uri: policyVerification?.uri,
+              type: policyVerification?.type,
+            };
+          }
+          if (experienceCertificate != '') {
+            experience = {
+              name: experienceCertificate?.name,
+              uri: experienceCertificate?.uri,
+              type: experienceCertificate?.type,
+            };
+          }
+          if (educationCertificate != '') {
+            education = {
+              name: educationCertificate?.name,
+              uri: educationCertificate?.uri,
+              type: educationCertificate?.type,
+            };
+          }
           applyJobPostAPI(
             jobId,
             userData[0]?._id,
@@ -164,7 +172,13 @@ export default function ApplyJobScreen({navigation, route}) {
           </Text>
           <>
             <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-              Attach CV
+              Attach CV{' '}
+              <Text
+                style={{
+                  color: '#FF0000',
+                }}>
+                *
+              </Text>
             </Text>
             {cvFile.length === 0 ? (
               <TouchableHighlight
@@ -181,7 +195,15 @@ export default function ApplyJobScreen({navigation, route}) {
               </TouchableHighlight>
             ) : (
               <View style={[styles.attachCV, commonStyles.rowBetween]}>
-                <Text style={{...commonStyles.fs14_500}}>{cvFile.name}</Text>
+                <Text style={{...commonStyles.fs14_500}}>
+                  {cvFile.name}{' '}
+                  <Text
+                    style={{
+                      color: '#FF0000',
+                    }}>
+                    *
+                  </Text>
+                </Text>
                 <TouchableHighlight
                   onPress={() => setCvFile('')}
                   underlayColor="#f7f8f9">
@@ -203,7 +225,13 @@ export default function ApplyJobScreen({navigation, route}) {
 
           <>
             <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-              Education Certificate
+              Education Certificate{' '}
+              {/* <Text
+                style={{
+                  color: '#FF0000',
+                }}>
+                *
+              </Text> */}
             </Text>
             {educationCertificate.length === 0 ? (
               <TouchableHighlight
@@ -244,7 +272,13 @@ export default function ApplyJobScreen({navigation, route}) {
 
           <>
             <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-              Experience Certificate
+              Experience Certificate{' '}
+              {/* <Text
+                style={{
+                  color: '#FF0000',
+                }}>
+                *
+              </Text> */}
             </Text>
             {experienceCertificate.length === 0 ? (
               <TouchableHighlight
@@ -323,11 +357,11 @@ export default function ApplyJobScreen({navigation, route}) {
               <></>
             )}
           </>
-          <View style={{marginTop: 20}} />
+          <View style={{marginTop: 10}} />
+          <Custom_Auth_Btn btnText="Submit" onPress={handleSubmit} />
         </View>
 
-        <Custom_Auth_Btn btnText="Submit" onPress={handleSubmit} />
-        <View style={{marginTop: 20}} />
+        <View style={{marginTop: 5}} />
       </View>
 
       <CustomPanel loading={loading} />

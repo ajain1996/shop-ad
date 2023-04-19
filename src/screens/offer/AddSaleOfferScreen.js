@@ -13,12 +13,15 @@ import React, {useEffect} from 'react';
 import CustomInputHeader from '../../components/CustomInputHeader';
 import {SIZES} from '../../utils/theme';
 import {launchImageLibrary, openPicker} from 'react-native-image-picker';
+import Toast from 'react-native-simple-toast';
 import {commonStyles} from '../../utils/styles';
 import ImagePicker from 'react-native-image-crop-picker';
+import {useIsFocused} from '@react-navigation/native';
 import moment from 'moment';
 import Custom_Auth_Btn from '../../components/Custom_Auth_Btn';
 import {
   addNewOfferPostRequest,
+  getAllCategoriesAPI,
   getOffersByOwnerIdPostRequest,
   monthsArray,
 } from '../../utils/API';
@@ -36,15 +39,21 @@ export default function AddSaleOfferScreen({navigation}) {
   const [locationError, setLocationError] = React.useState(false);
   const [startDateError, setStartDateError] = React.useState(false);
   const [endDateError, setEndDateError] = React.useState(false);
+  const [price, setPrice] = useState(0);
+  const [code, setCode] = useState('');
 
   const [imageData, setImageData] = React.useState('');
+  const [priceError, setPriceError] = useState(false);
+  const [docError, setdocError] = useState(false);
   const [description, setDescription] = React.useState('');
-  const [location, setLocation] = React.useState('');
+  const [location, setLocation] = React.useState();
   const [startDate, setStartDate] = React.useState('');
   const [endDate, setEndDate] = React.useState('');
-
+  const [allCategory, setAllCategory] = useState([]);
+  // const [, set] = useState(second)
   const [loading, setLoading] = React.useState(false);
   const [canApply, setCanApply] = useState(true);
+
   const getImage = () => {
     ImagePicker.openPicker({
       width: 200,
@@ -56,9 +65,9 @@ export default function AddSaleOfferScreen({navigation}) {
     }).then(response => {
       let tempArray = [];
       response.forEach(item => {
-        console.log(item);
+        console.log(item, '<<<theseareimage');
         let image = {
-          name: item?.path,
+          name: 'imagename',
           uri: item?.path,
           type: item?.mime,
         };
@@ -75,11 +84,41 @@ export default function AddSaleOfferScreen({navigation}) {
   };
 
   const [showCategoryModal, setShowCategoryModal] = React.useState(false);
-  const [category, setCategory] = React.useState({
-    name: '',
-    id: '',
-  });
+  const [category, setCategory] = React.useState('');
+  const [categories, setCategories] = useState([]);
+  const onFocus = useIsFocused();
 
+  React.useEffect(() => {
+    console.log(userData[0].pAddress, '<<<<< thisisuserdata');
+    if (
+      userData[0]?.pAddress == undefined ||
+      userData[0].pAddress == 'undefined' ||
+      userData[0].pAddress == null ||
+      userData[0].pAddress == 'null'
+    ) {
+      Alert.alert('Alert', 'Update your profile to add offer', [
+        {
+          text: 'Redirect',
+          onPress: () => {
+            navigation.navigate('UpdateProfileScreen', {});
+          },
+        },
+      ]);
+    } else {
+      setLocation(userData[0].pAddress);
+    }
+    Auth.getLocalStorageData('bearer').then(token => {
+      getAllCategoriesAPI(token, response => {
+        if (response !== null) {
+          if (response?.data !== null || response?.data !== undefined) {
+            setCategories(response?.data);
+            setAllCategory(response.data);
+            console.log(response, '<<<<<responsecategory');
+          }
+        }
+      });
+    });
+  }, []);
   useEffect(() => {
     Auth.getLocalStorageData('bearer').then(token => {
       getOffersByOwnerIdPostRequest(userData[0]?._id, token, response => {
@@ -88,7 +127,9 @@ export default function AddSaleOfferScreen({navigation}) {
           if (response?.message === 'Data From Database') {
             // setOfferData(response?.data);
             console.log(response, '<<<< this is sales offer screen');
-            setCanApply(false);
+            if (response.data.length > 3) {
+              setCanApply(false);
+            }
             // console.log(
             //   '\n\n\n\n\n\n\n\n\n\n\n',
             //   response.data,
@@ -100,11 +141,58 @@ export default function AddSaleOfferScreen({navigation}) {
     });
   }, []);
 
-  const handleSubmit = () => {
-    if (!canApply) {
-      Toast.show('Please by membership to create more Offers!!');
-      return null;
+  const getCategoryId = () => {
+    const checId = allCategory.filter(item => item.categoryName == category);
+    if (checId.length) return checId[0]._id;
+    else return category;
+  };
+
+  const filterSearch = text => {
+    if (text.trim() == '') return setCategories(allCategory);
+    else {
+      const t1 = text?.toLocaleLowerCase().trim();
+      let filtered = allCategory.filter(item => {
+        const t2 = item.categoryName.toLocaleLowerCase().trim();
+        if (t2.match(t1)) return true;
+        else false;
+      });
+      setCategories(filtered);
     }
+  };
+  const dayDiff = (startDate, endDate) => {
+    const convertArr = d => {
+      const a = d.replace('/', '-');
+      const b = a.replace('/', '-');
+      return b.split('-');
+    };
+    const diffInMs =
+      moment(
+        `${parseInt(convertArr(endDate)[0])}-${
+          monthsArray[parseInt(convertArr(endDate)[1])]
+        }-${parseInt(convertArr(endDate)[2])}`,
+      ) -
+      moment(
+        `${parseInt(convertArr(startDate)[0])}-${
+          monthsArray[parseInt(convertArr(startDate)[1])]
+        }-${parseInt(convertArr(startDate)[2])}`,
+      );
+
+    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+    return diffInDays + 1;
+  };
+
+  const handleSubmit = () => {
+    getCategoryId();
+    var start1 = moment(startDate).format('DD/MM/YYYY');
+    var end1 = moment(endDate).format('DD/MM/YYYY');
+    var diffDays = dayDiff(start1, end1);
+    // console.log(diffDays, '<<<this is deiff');
+    console.log(getCategoryId());
+    // if (!canApply) {
+    //   Toast.show('Please buy membership to create more Offers!!');
+    //   return null;
+    // }
     if (description.length === 0) {
       setDescriptionError(true);
     } else if (location.length === 0) {
@@ -127,17 +215,26 @@ export default function AddSaleOfferScreen({navigation}) {
       const finalEndDate = `${getMonthShort(endDate)[0]}-${monthsArray.indexOf(
         getMonthShort(endDate)[1],
       )}-${getMonthShort(endDate)[2]}`;
-
+      if (diffDays > 4) {
+        Toast.show('Only Premium members can create job for more than 4 days');
+        return null;
+      }
+      if (diffDays < 0) {
+        Toast.show('Start date and end date is wrong!. (check dates again)');
+        return null;
+      }
+      // return null;
       console.log('submit it \n\n\n\n\n\n\n', {
         description,
         startDate: finalStartDate,
         location,
         category: category.id,
-
+        price: price,
+        code: code,
         endDate: finalEndDate,
         imageData,
       });
-      //   return null;
+      // return null;
       setLoading(true);
       Auth.getLocalStorageData('bearer').then(token => {
         console.log(token, '<<<<< \n\n\n\n this is token');
@@ -150,9 +247,12 @@ export default function AddSaleOfferScreen({navigation}) {
             startDate,
             endDate,
             imageData,
+
             userData[0]._id,
             null,
-            category?.id,
+            getCategoryId(),
+            price,
+            code,
             token,
             response => {
               setLoading(false);
@@ -182,6 +282,18 @@ export default function AddSaleOfferScreen({navigation}) {
       });
     }
   };
+  const handlePreview = () => {
+    navigation.navigate('PreviewOffer', {
+      imageData,
+      userData,
+      description,
+      location,
+      category,
+      startDate,
+      code,
+      endDate,
+    });
+  };
 
   return (
     <>
@@ -199,7 +311,7 @@ export default function AddSaleOfferScreen({navigation}) {
 
           <>
             <Text style={{...commonStyles.fs16_500, marginTop: 10}}>
-              Description
+              Description <ReqField />
             </Text>
             <TextInput
               placeholder="Description"
@@ -225,19 +337,66 @@ export default function AddSaleOfferScreen({navigation}) {
               <></>
             )}
           </>
+          <>
+            <Text style={{...commonStyles.fs16_500, marginTop: 10}}>
+              Price <ReqField />
+            </Text>
+            <TextInput
+              placeholder="Price"
+              placeholderTextColor="#999"
+              value={price}
+              // numberOfLines={1}
+              // keyboardType="number-pad"
+              multiline={true}
+              textAlignVertical="top"
+              onChangeText={val => {
+                setPrice(val);
+                setPriceError(false);
+              }}
+              style={[
+                styles.locationInput,
+                {borderColor: descriptionError ? 'red' : '#BDBDBD'},
+              ]}
+            />
+            {priceError ? (
+              <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+                Price is mandatory
+              </Text>
+            ) : (
+              <></>
+            )}
+          </>
+          <>
+            <Text style={{...commonStyles.fs16_500, marginTop: 10}}>Offer</Text>
+            <TextInput
+              placeholder="Offer Percent (ex: 20%)"
+              placeholderTextColor="#999"
+              value={code}
+              // keyboardType="number-pad"
+              onChangeText={val => {
+                setCode(val);
+                setdocError(false);
+              }}
+              style={[
+                styles.locationInput,
+                {borderColor: locationError ? '#BDBDBD' : '#BDBDBD'},
+              ]}
+            />
+          </>
 
           <>
             <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-              Add Location
+              Location <ReqField />
             </Text>
             <View>
               <TextInput
                 placeholder="Location"
                 placeholderTextColor="#999"
-                value={location}
+                value={userData[0].pAddress}
                 onChangeText={val => {
-                  setLocation(val);
-                  setLocationError(false);
+                  Toast.show('Please contact admin to change location');
+                  // setLocation(val);
+                  // setLocationError(false);
                 }}
                 style={[
                   styles.locationInput,
@@ -325,42 +484,73 @@ export default function AddSaleOfferScreen({navigation}) {
             <Text style={{...commonStyles.fs16_500, marginTop: -20}}>
               Add Category
             </Text>
-            <TouchableOpacity onPress={() => setShowCategoryModal(true)}>
-              <View
-                style={[
-                  styles.locationInput,
-                  {borderColor: locationError ? 'red' : '#BDBDBD'},
-                ]}>
-                {category?.name?.length === 0 ? (
-                  <Text style={{...commonStyles.fs14_400, color: '#999'}}>
-                    Category
-                  </Text>
-                ) : (
-                  <Text style={{...commonStyles.fs14_400, color: '#000'}}>
-                    {category.name}
-                  </Text>
-                )}
+            {/* <TouchableOpacity onPress={() => setShowCategoryModal(true)}> */}
+            <>
+              <View>
+                <TextInput
+                  placeholder="Category"
+                  placeholderTextColor="#999"
+                  value={category}
+                  onChangeText={val => {
+                    setCategory(val);
+                    filterSearch(val);
+                    // seter(false);
+                  }}
+                  style={[
+                    styles.locationInput,
+                    {borderColor: locationError ? 'red' : '#BDBDBD'},
+                  ]}
+                />
+
+                <Image
+                  source={require('../../assets/img/location-track.png')}
+                  style={{
+                    width: 24,
+                    height: 24,
+                    position: 'absolute',
+                    right: 16,
+                    top: 22,
+                  }}
+                />
               </View>
-              <Image
-                source={require('../../assets/img/location-track.png')}
-                style={{
-                  width: 24,
-                  height: 24,
-                  position: 'absolute',
-                  right: 16,
-                  top: 22,
-                }}
-              />
-            </TouchableOpacity>
-            {locationError ? (
-              <Text style={{...commonStyles.fs12_400, color: 'red'}}>
-                Category is mandatory
-              </Text>
-            ) : (
-              <></>
+            </>
+            <Image
+              source={require('../../assets/img/location-track.png')}
+              style={{
+                width: 24,
+                height: 24,
+                position: 'absolute',
+                right: 16,
+                top: 22,
+              }}
+            />
+            {/* </TouchableOpacity> */}
+            {category != '' && (
+              <View>
+                {categories?.map(item => {
+                  return (
+                    <Text
+                      style={{
+                        width: '100%',
+                        height: 30,
+                        borderWidth: 0.5,
+                        marginTop: 2,
+                      }}
+                      onPress={() => {
+                        setCategory(item?.categoryName);
+                        setCategories([]);
+                      }}>
+                      {item.categoryName}
+                    </Text>
+                  );
+                })}
+              </View>
             )}
           </>
-          <Text />
+          <View style={{marginTop: 30}} />
+
+          <Custom_Auth_Btn btnText="Preview" onPress={handlePreview} />
+          <View style={{marginTop: 10}} />
 
           <Custom_Auth_Btn btnText="Upload" onPress={handleSubmit} />
           <Text />
@@ -388,89 +578,6 @@ export default function AddSaleOfferScreen({navigation}) {
     </>
   );
 }
-
-export const RenderUpload = ({
-  image,
-  getImage,
-  imageError,
-  setImageError,
-  setImageData,
-}) => {
-  return (
-    <View>
-      <View>
-        {image.length === 0 ? (
-          <TouchableHighlight
-            onPress={() => {
-              getImage();
-              setImageError(false);
-            }}
-            style={{paddingVertical: 16}}>
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
-              <Image
-                source={require('../../assets/img/work_img.png')}
-                resizeMode="contain"
-                style={{
-                  width: '100%',
-                  height: SIZES.width / 1.36,
-                  opacity: 0.8,
-                }}
-              />
-              <View style={[styles.upload]}>
-                <Image
-                  source={require('../../assets/img/upload.png')}
-                  resizeMode="contain"
-                  style={{width: 23, height: 23, tintColor: '#000'}}
-                />
-              </View>
-            </View>
-          </TouchableHighlight>
-        ) : (
-          <View style={{flex: 1}}>
-            <ScrollView horizontal={true} contentContainerStyle={{flexGrow: 1}}>
-              {image.map(res => {
-                return (
-                  <Image
-                    source={{uri: res?.uri}}
-                    resizeMode="stretch"
-                    style={{
-                      width: SIZES.width / 1.3,
-                      height: SIZES.width / 1.4,
-                      borderRadius: 9,
-                      marginRight: 20,
-                    }}
-                  />
-                );
-              })}
-            </ScrollView>
-            <TouchableHighlight
-              onPress={() => setImageData('')}
-              style={{
-                position: 'absolute',
-                top: 6,
-                right: 6,
-                borderRadius: 100,
-              }}
-              underlayColor="#f7f8f9">
-              <Image
-                source={require('../../assets/img/cross.png')}
-                style={{width: 25, height: 25, tintColor: '#fff'}}
-              />
-            </TouchableHighlight>
-          </View>
-        )}
-      </View>
-      {imageError ? (
-        <Text style={{...commonStyles.fs12_400, color: 'red', marginTop: -24}}>
-          Image is mandatory
-        </Text>
-      ) : (
-        <></>
-      )}
-    </View>
-  );
-};
-
 const styles = StyleSheet.create({
   upload: {
     width: 56,
@@ -515,3 +622,96 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
 });
+
+export const ReqField = () => {
+  return <Text style={{color: '#FF0000'}}>*</Text>;
+};
+
+export const RenderUpload = ({
+  image,
+  getImage,
+  imageError,
+  setImageError,
+  setImageData,
+  showCross = true,
+}) => {
+  return (
+    <View>
+      <View>
+        {image.length === 0 ? (
+          <TouchableHighlight
+            onPress={() => {
+              if (showCross) {
+                getImage();
+                setImageError(false);
+              }
+            }}
+            style={{paddingVertical: 16}}>
+            <View style={{alignItems: 'center', justifyContent: 'center'}}>
+              <Image
+                source={require('../../assets/img/work_img.png')}
+                resizeMode="contain"
+                style={{
+                  width: '100%',
+                  height: SIZES.width / 1.36,
+                  opacity: 0.8,
+                }}
+              />
+              {showCross && (
+                <View style={[styles.upload]}>
+                  <Image
+                    source={require('../../assets/img/upload.png')}
+                    resizeMode="contain"
+                    style={{width: 23, height: 23, tintColor: '#000'}}
+                  />
+                </View>
+              )}
+            </View>
+          </TouchableHighlight>
+        ) : (
+          <View style={{flex: 1}}>
+            <ScrollView horizontal={true} contentContainerStyle={{flexGrow: 1}}>
+              {image.map(res => {
+                return (
+                  <Image
+                    source={{uri: res?.uri}}
+                    resizeMode="stretch"
+                    style={{
+                      width: SIZES.width / 1.3,
+                      height: SIZES.width / 1.4,
+                      borderRadius: 9,
+                      marginRight: 20,
+                    }}
+                  />
+                );
+              })}
+            </ScrollView>
+            {showCross && (
+              <TouchableHighlight
+                onPress={() => setImageData('')}
+                style={{
+                  position: 'absolute',
+                  top: 6,
+                  right: 6,
+                  borderRadius: 100,
+                }}
+                underlayColor="#f7f8f9">
+                <Image
+                  source={require('../../assets/img/cross.png')}
+                  style={{width: 25, height: 25, tintColor: '#fff'}}
+                />
+              </TouchableHighlight>
+            )}
+          </View>
+        )}
+      </View>
+      {imageError ? (
+        <Text style={{...commonStyles.fs12_400, color: 'red', marginTop: -24}}>
+          Image is mandatory
+        </Text>
+      ) : (
+        <></>
+      )}
+    </View>
+  );
+};

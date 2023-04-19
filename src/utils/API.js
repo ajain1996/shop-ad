@@ -1,13 +1,10 @@
 import {Alert} from 'react-native';
 import Auth from '../services/Auth';
 
-// const BASE_URL = 'https://shop-ad-strix.herokuapp.com/user/';
-// const BASE_URL2 = 'https://shop-ad-strix.herokuapp.com/';
-const BASE_URL2 =
-  'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/';
-const BASE_URL =
-  'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/user/';
-// const BASE_URL = 'https://shop-ad-strix.herokuapp.com/user/';
+const BASE_URL2 = 'https://shop-backend2.onrender.com/';
+//const BASE_URL2 =
+//'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/';
+const BASE_URL = BASE_URL2 + 'user/';
 
 export const mobileRegisterPostRequest = async (
   email,
@@ -120,6 +117,79 @@ export const addNewOfferPostRequest = async (
   ownerId,
   shopId,
   cateoryId,
+  price,
+  code,
+  bearerToken,
+  successCallBack,
+) => {
+  var formdata = new FormData();
+  console.log(
+    {
+      desc,
+      location,
+      startDate,
+      endDate,
+      image,
+      ownerId,
+      shopId,
+      cateoryId,
+      price,
+      code,
+    },
+    '<<<< thisisofferreq',
+  );
+  // return null;
+  formdata.append('description', desc);
+  formdata.append('location', location);
+  formdata.append('startDate', startDate);
+  formdata.append('endDate', endDate);
+  if (image.length) {
+    formdata.append('offerImage', image[0], image[0].name);
+  }
+  if (image.length > 1) {
+    formdata.append('offerImage1', image[1], image[1].name);
+  }
+  if (image.length > 2) {
+    formdata.append('offerImage2', image[2], image[2].name);
+  }
+  if (image.length > 3) {
+    formdata.append('offerImage3', image[3], image[3].name);
+  }
+  if (image.length > 4) {
+    formdata.append('offerImage4', image[4], image[4].name);
+  }
+  formdata.append('ownerId', ownerId);
+  formdata.append('cateoryId', cateoryId);
+  formdata.append('price', price);
+  formdata.append('code', code);
+  console.log('herererer');
+  try {
+    let response = await fetch(BASE_URL2 + 'salesoffer', {
+      method: 'POST',
+      body: formdata,
+      redirect: 'follow',
+    });
+
+    console.log('offeraddnew', response);
+    let json = await response.json();
+    console.log(response);
+    successCallBack(json);
+  } catch (error) {
+    console.error('error', error);
+    successCallBack(null);
+  }
+};
+export const addNewOfferPostRequest1 = async (
+  desc,
+  location,
+  startDate,
+  endDate,
+  image,
+  ownerId,
+  shopId,
+  cateoryId,
+  price,
+  code,
   bearerToken,
   successCallBack,
 ) => {
@@ -127,6 +197,8 @@ export const addNewOfferPostRequest = async (
   console.log('callign apis');
   formData.append('description', desc);
   formData.append('location', location);
+  formData.append('price', price);
+  formData.append('code', code);
   formData.append('startDate', startDate);
   formData.append('endDate', endDate);
   formData.append('offerImage', image[0]);
@@ -147,6 +219,7 @@ export const addNewOfferPostRequest = async (
       },
       body: formData,
     });
+
     let json = await response.json();
     console.log(json);
     successCallBack(json);
@@ -158,12 +231,14 @@ export const addNewOfferPostRequest = async (
 
 export const getAllOffersPostRequest = async (bearerToken, successCallBack) => {
   try {
+    console.log(BASE_URL2 + 'salesoffer', '<<<callingthis');
     let response = await fetch(BASE_URL2 + 'salesoffer', {
       method: 'GET',
       headers: {Authorization: `Bearer ${bearerToken}`},
     });
     let json = await response.json();
     successCallBack(json);
+    console.log(json, '<<<alloffers');
   } catch (error) {
     console.error('error', error);
     successCallBack(null);
@@ -206,26 +281,101 @@ export const getOffersByLocationPostRequest = async (
   var body = {
     location: location.toString(),
   };
-
   try {
-    let response = await fetch(
-      'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/salesoffer/location',
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${bearerToken}`,
-        },
-        body: JSON.stringify(body),
+    let response = await fetch(BASE_URL2 + 'salesoffer/location', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${bearerToken}`,
       },
-    );
+      body: JSON.stringify(body),
+    });
     let json = await response.json();
     successCallBack(json);
   } catch (error) {
     console.error('error', error);
     successCallBack(null);
   }
+};
+
+export const commonSearch = async (location, ask, token, callBack) => {
+  var myHeaders = new Headers();
+  myHeaders.append('Authorization', 'Bearer ' + token);
+  myHeaders.append('Content-Type', 'application/json');
+
+  var raw = JSON.stringify({
+    location: location,
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow',
+  };
+
+  // fetch(BASE_URL2 + 'shop/location', requestOptions)
+  fetch(BASE_URL2 + 'salesoffer/location', requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      callBack(JSON.parse(result));
+      console.log(result);
+    })
+    .catch(error => console.log('error', error));
+};
+
+export const searchWork = async (location, ask, token, callBack) => {
+  var myHeaders = new Headers();
+  myHeaders.append('Authorization', 'Bearer ' + token);
+  myHeaders.append('Content-Type', 'application/json');
+
+  var raw = JSON.stringify({
+    location: location,
+    ask: ask,
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow',
+  };
+
+  // fetch(BASE_URL2 + 'shop/location', requestOptions)
+  fetch(BASE_URL2 + 'work/location', requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      callBack(JSON.parse(result));
+      console.log(result);
+    })
+    .catch(error => console.log('error', error));
+};
+export const searchJobs = async (location, ask, token, callBack) => {
+  var myHeaders = new Headers();
+  myHeaders.append('Authorization', 'Bearer ' + token);
+  myHeaders.append('Content-Type', 'application/json');
+
+  var raw = JSON.stringify({
+    location: location,
+    ask: ask,
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow',
+  };
+
+  // fetch(BASE_URL2 + 'shop/location', requestOptions)
+  fetch(BASE_URL2 + 'job/location', requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      callBack(JSON.parse(result));
+      console.log(result);
+    })
+    .catch(error => console.log('error', error));
 };
 
 export const getOffersByCategoryAPI = async (
@@ -278,7 +428,7 @@ export const addNewJobPostRequest = async (
   description,
   shopName,
   location,
-  ownerId,  
+  ownerId,
   salary,
   designationName,
   startDate,
@@ -300,6 +450,7 @@ export const addNewJobPostRequest = async (
   isPolice,
   isCertificate,
   isExperience,
+  jobVerification,
   bearerToken,
   successCallBack,
 ) => {
@@ -370,6 +521,31 @@ export const getAllJobsPostRequest = async (bearerToken, successCallBack) => {
   }
 };
 
+export const getAppliedCandidate = async (token, jobId, successCallBack) => {
+  var myHeaders = new Headers();
+  myHeaders.append('Authorization', 'Bearer ' + token);
+  myHeaders.append('Content-Type', 'application/json');
+
+  var raw = JSON.stringify({
+    id: jobId,
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow',
+  };
+
+  fetch(BASE_URL2 + 'jobapply/jobId', requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      console.log(JSON.parse(result));
+      successCallBack(JSON.parse(result));
+    })
+    .catch(error => console.log('error', error));
+};
+
 export const getJobsByOwnerIdPostRequest = async (
   id,
   bearerToken,
@@ -419,8 +595,9 @@ export const getJobsByLocationPostRequest = async (
         body: JSON.stringify(body),
       },
     );
-    let json = await response.json();
-    successCallBack(json);
+    // let json = await response.json();
+    console.log(response.json(), '<<< searchlocation');
+    // successCallBack(json);
   } catch (error) {
     console.error('error', error);
     successCallBack(null);
@@ -430,6 +607,7 @@ export const getJobsByLocationPostRequest = async (
 export const addNewWorkPostRequest = async (
   description,
   shopName,
+  name,
   location,
   salary,
   shiftTime,
@@ -437,37 +615,94 @@ export const addNewWorkPostRequest = async (
   ownerId,
   contactNumber,
   contactEmail,
+  imageData,
+  instaId,
+  facebookId,
+  emailId,
+  websiteAddress,
   bearerToken,
   successCallBack,
 ) => {
-  var body = {
-    description: description,
-    shopName: shopName,
-    location: location,
-    ownerId: ownerId,
-    salary: salary,
-    designationName: designationName,
-    shiftTime: shiftTime,
-    contactNumber: contactNumber,
-    contactEmail: contactEmail,
-  };
-
-  try {
-    let response = await fetch(BASE_URL2 + 'work', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${bearerToken}`,
-      },
-      body: JSON.stringify(body),
-    });
-    let json = await response.json();
-    successCallBack(json);
-  } catch (error) {
-    console.error('error', error);
-    successCallBack(null);
+  let formData = new FormData();
+  // return null;
+  console.log(
+    'adding work',
+    description,
+    shopName,
+    name, // here this is owner name
+    location,
+    salary,
+    shiftTime,
+    designationName,
+    ownerId,
+    contactNumber,
+    contactEmail,
+    imageData,
+    instaId,
+    facebookId,
+    emailId,
+    websiteAddress,
+  );
+  var myHeaders = new Headers();
+  myHeaders.append('Authorization', 'Bearer ' + bearerToken);
+  console.log(imageData, '<<<this is imagedata');
+  formData.append('description', description);
+  formData.append('shopName', shopName);
+  formData.append('location', location);
+  formData.append('name', name);
+  formData.append('ownerId', ownerId);
+  formData.append('salary', salary);
+  formData.append('instaId', instaId);
+  formData.append('facebookId', facebookId);
+  formData.append('emailId', emailId);
+  formData.append('websiteAddress', websiteAddress);
+  formData.append('designationName', designationName);
+  formData.append('shiftTime', shiftTime);
+  formData.append('contactNumber', contactNumber);
+  formData.append('contactEmail', contactEmail);
+  // formdata.append("image", imageData, "/C:/Users/dell/Pictures/Screenshots/1.png");
+  // return null;
+  if (imageData.length > 0) {
+    formData.append('image', imageData[0], 'name');
   }
+  if (imageData.length > 1) {
+    formData.append('image1', imageData[1], 'name');
+  }
+  if (imageData.length > 2) {
+    formData.append('image2', imageData[2], 'name');
+  }
+  if (imageData.length > 3) {
+    formData.append('image3', imageData[3], 'name');
+  }
+  if (imageData.length > 4) {
+    formData.append('image4', imageData[4], 'name');
+  }
+
+  // var body = {
+  //   description: description,
+  //   shopName: shopName,
+  //   location: location,
+  //   ownerId: ownerId,
+  //   salary: salary,
+  //   designationName: designationName,
+  //   shiftTime: shiftTime,
+  //   contactNumber: contactNumber,
+  //   contactEmail: contactEmail,
+  // };
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: formData,
+    redirect: 'follow',
+  };
+  fetch(BASE_URL2 + 'work', requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      console.log('success', result);
+      successCallBack(JSON.parse(result));
+    })
+    .catch(error => console.log('error', error));
 };
 
 export const getAllWorksPostRequest = async (bearerToken, successCallBack) => {
@@ -523,18 +758,15 @@ export const getWorksByLocationPostAPI = async (
   };
 
   try {
-    let response = await fetch(
-      'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/work/location',
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${bearerToken}`,
-        },
-        body: JSON.stringify(body),
+    let response = await fetch(BASE_URL2 + 'work/location', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${bearerToken}`,
       },
-    );
+      body: JSON.stringify(body),
+    });
     let json = await response.json();
     successCallBack(json);
   } catch (error) {
@@ -559,11 +791,60 @@ export const getUserByIDPostAPI = async (id, bearerToken, successCallBack) => {
       body: JSON.stringify(body),
     });
     let json = await response.json();
+    console.log('tis is user Data', json);
     successCallBack(json);
   } catch (error) {
     console.error('error', error);
     successCallBack(null);
   }
+};
+
+export const getJobDetailByID = (token, id, callBack) => {
+  var myHeaders = new Headers();
+  myHeaders.append('Authorization', 'Bearer ' + token);
+  myHeaders.append('Content-Type', 'application/json');
+
+  var raw = JSON.stringify({
+    id,
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow',
+  };
+
+  fetch(BASE_URL2 + 'job/uid', requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      console.log(result);
+      callBack(JSON.parse(result));
+    })
+    .catch(error => console.log('error', error));
+};
+
+export const getJobByApplicantId = (token, id, callBAck) => {
+  console.log('gettingalljobsbyapplicant ID', id);
+  var myHeaders = new Headers();
+  myHeaders.append('Authorization', 'Bearer ' + token);
+  myHeaders.append('Content-Type', 'application/json');
+
+  var raw = JSON.stringify({
+    id: id,
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow',
+  };
+
+  fetch(BASE_URL2 + 'jobapply/applicantId', requestOptions)
+    .then(response => response.text())
+    .then(result => callBAck(JSON.parse(result)))
+    .catch(error => console.log('error', error));
 };
 
 export const getLikesCountByIDPostAPI = async (
@@ -857,6 +1138,8 @@ export const updateUserPostRequest = async (
   imageChanged,
   formData,
   isCertificateUploaded,
+  categoryOfShop,
+  purposeOfRegistration,
   successCallBack,
 ) => {
   console.log(
@@ -868,14 +1151,19 @@ export const updateUserPostRequest = async (
     userType,
     image,
     bearerToken,
+    formData,
     '\n\n\n data at sending to update',
+    imageChanged,
+    categoryOfShop,
   );
 
+  //return null;
   // const userImage = {
   //   name: image?.assets[0].fileName,
   //   uri: image.assets[0].uri,
   //   type: image.assets[0].type,
   // };
+  // return null;
   var myHeaders = new Headers();
   myHeaders.append('Authorization', 'Bearer ' + bearerToken);
 
@@ -883,22 +1171,25 @@ export const updateUserPostRequest = async (
   formdata.append('uid', uid);
   formdata.append('email', email);
   formdata.append('name', name);
-  formdata.append('userType', userType);
+  // formdata.append('categoryOfShop', categoryOfShop);
+  // formdata.append('userType', userType);
   formdata.append('mobile', mobile);
-  if (imageChanged) {
-    formdata.append('Image', image, image.name);
+  if (imageChanged == true) {
+    console.log('data changed');
+    formdata.append('image', image, image.name);
   }
 
-  formdata.append('eduction', formdata.education);
+  formdata.append('eduction', formData.eduction);
   // formdata.append("experineceCertificate", formdata?.ex);
   formdata.append('martialStatus', formData?.martialStatus);
   // formdata.append("physicalDisablity", "cwsfe c");
   formdata.append('religion', formData?.religion);
   formdata.append('experienceYears', formData?.experienceYears);
   formdata.append('certifiedCourse', formData?.certifiedCourse);
+  formdata.append('purposeOfRegistration', formData?.purposeOfRegistration);
   formdata.append('pAddress', formData?.pAddress);
   formdata.append('rAddress', formData?.rAddress);
-  formdata.append('fathername', formdata?.fathername);
+  formdata.append('fathername', formData?.fathername);
   formdata.append('mothername', formData?.mothername);
   if (isCertificateUploaded) {
     formdata.append(
@@ -915,20 +1206,24 @@ export const updateUserPostRequest = async (
     redirect: 'follow',
   };
 
-  fetch(
-    'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/user/update',
-    requestOptions,
-  )
+  fetch(BASE_URL2 + 'user/update', requestOptions)
     .then(response => response.text())
     .then(result => {
       console.log(result, '<<<update image api');
       successCallBack(JSON.parse(result));
     })
-    .catch(error => console.log('error', error));
+
+    .catch(error => {
+      successCallBack({
+        status: false,
+        message: 'Please try uploading again !!!',
+      });
+    });
 };
 
 export const getUserDataById = async (uid, token, successCallBack) => {
   try {
+    console.log('userbyid', uid);
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('Authorization', `Bearer ${token}`);
@@ -1021,6 +1316,43 @@ export const followUserPostAPI = async (
     successCallBack(null);
   }
 };
+export const unFollowPostAPI = async (payload, successCallBack) => {
+  var myHeaders = new Headers();
+  myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append('Authorization', 'Bearer ' + payload.bearerToken);
+
+  var raw = JSON.stringify({
+    userId: payload.userId,
+    follwedId: payload.follwedId,
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow',
+  };
+
+  fetch(BASE_URL + 'unfollow', requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      console.log(result);
+      successCallBack(JSON.parse(result));
+    })
+    .catch(error => console.log('error', error));
+};
+
+export const GetFacilities = callBack => {
+  var requestOptions = {
+    method: 'GET',
+    redirect: 'follow',
+  };
+
+  fetch(BASE_URL2 + 'job/facility', requestOptions)
+    .then(response => response.text())
+    .then(result => callBack(JSON.parse(result)))
+    .catch(error => console.log('error', error));
+};
 
 export const applyJobPostAPI = async (
   jobId,
@@ -1052,6 +1384,7 @@ export const applyJobPostAPI = async (
     '\n certificateLink: ',
     certificateLink,
   );
+
   // return null;
   let formData = new FormData();
 
@@ -1061,16 +1394,20 @@ export const applyJobPostAPI = async (
   formData.append('applicantName', applicantName);
   formData.append('applicantContact', applicantContact);
   formData.append('resumeLink', resumeLink);
-  formData.append('policeLink', policeLink);
-  formData.append('experienceLink', experienceLink);
-  formData.append('certificateLink', certificateLink);
+  if (policeLink != '') {
+    formData.append('policeLink', policeLink);
+  }
+  if (experienceLink != '') {
+    formData.append('experienceLink', experienceLink);
+  }
+  if (certificateLink != '') {
+    formData.append('certificateLink', certificateLink);
+  }
 
   try {
     let response = await fetch(BASE_URL2 + 'jobapply', {
       method: 'POST',
       headers: {
-        // "Accept": 'application/json',
-        // "Content-Type": "application/json",
         Authorization: `Bearer ${bearerToken}`,
       },
       body: formData,
@@ -1079,7 +1416,7 @@ export const applyJobPostAPI = async (
     console.log(json, '<<<< \n\n\n json');
     successCallBack(json);
   } catch (error) {
-    console.error('error', error);
+    console.error('error', error.message);
     successCallBack(null);
   }
 };
@@ -1099,3 +1436,50 @@ export const monthsArray = [
   'Nov',
   'Dec',
 ];
+
+export const getCategoryById = (token, id, callBack) => {
+  var myHeaders = new Headers();
+  myHeaders.append('Authorization', 'Bearer ' + token);
+  myHeaders.append('Content-Type', 'application/json');
+
+  var raw = JSON.stringify({
+    id,
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow',
+  };
+
+  fetch(BASE_URL2 + 'category/byId', requestOptions)
+    .then(response => response.text())
+    .then(result => callBack(JSON.parse(result)))
+    .catch(error => console.log('error', error));
+};
+
+export const GetCategoryName = (id, token, callBack) => {
+  var myHeaders = new Headers();
+  myHeaders.append('Authorization', 'Bearer ' + token);
+  myHeaders.append('Content-Type', 'application/json');
+
+  var raw = JSON.stringify({
+    id: id,
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow',
+  };
+
+  fetch(BASE_URL2 + 'category/byId', requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      console.log('categoryitem calling', JSON.parse(result), id);
+      callBack(JSON.parse(result));
+    })
+    .catch(error => console.log('error', error));
+};
