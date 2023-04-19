@@ -456,7 +456,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         {/* <JobsDetails text="Facilities:" item={item?.facilities} /> */}
         <JobsDetails text="Gender:" item={item?.gender} />
         <JobsDetails text="Number of workers:" item={item?.manPower} />
-        <JobsDetails text="Vechile Required:" item={item?.vechileRequired} />
+        <JobsDetails text="Vechile Required:" item={item?.vehicleRequired} />
         <JobsDetails
           text="Work Timing:"
           item={item?.workTiming + '  ' + item?.workShift?.start}

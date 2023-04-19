@@ -123,6 +123,15 @@ export default function JobsScreen({navigation}) {
           return true;
         }
       }
+      if (item.ownerId) {
+        const smallname = item.salary;
+        const matchLoc = smallname.match(smallVal);
+        if (matchLoc != null) {
+          console.log(matchLoc, '<<<thisisdata');
+
+          return true;
+        }
+      }
       if (item.designationName) {
         const smallname = item.designationName.toLocaleLowerCase();
         const matchLoc = smallname.match(smallVal);

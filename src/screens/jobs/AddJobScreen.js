@@ -618,7 +618,7 @@ export default function AddJobScreen({navigation}) {
 
             <>
               <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
-                Number of Workers
+                Required Manpower
               </Text>
               <TextInput
                 placeholder="Number of Workers"
@@ -1333,8 +1333,8 @@ export default function AddJobScreen({navigation}) {
                   placeholder="ex: 13:00 for 1PM"
                   placeholderTextColor="#999"
                   value={interviewTiming}
-                  keyboardType="default"
-                  maxLength={10}
+                  // keyboardType="default"
+                  // maxLength={10}
                   onChangeText={val => {
                     if (val > 24) {
                       Toast.show('Please enter valid timing (00:00 to 24:00)');
@@ -1347,11 +1347,11 @@ export default function AddJobScreen({navigation}) {
                     styles.titleInput,
                     {
                       borderColor: interviewTimingError ? 'red' : '#BDBDBD',
-                      width: '40%',
+                      width: '80%',
                     },
                   ]}
                 />
-                <Text
+                {/* <Text
                   style={{
                     borderWidth: 1,
                     width: '20%',
@@ -1378,7 +1378,7 @@ export default function AddJobScreen({navigation}) {
                     setWorkShift({...workShift, interview: 'PM'});
                   }}>
                   PM
-                </Text>
+                </Text> */}
               </View>
               {interviewTimingError ? (
                 <Text style={{...commonStyles.fs12_400, color: 'red'}}>

@@ -663,19 +663,19 @@ export const addNewWorkPostRequest = async (
   // formdata.append("image", imageData, "/C:/Users/dell/Pictures/Screenshots/1.png");
   // return null;
   if (imageData.length > 0) {
-    formData.append('image', imageData[0], imageData[0].name);
+    formData.append('image', imageData[0], 'name');
   }
   if (imageData.length > 1) {
-    formData.append('image1', imageData[1], imageData[1].name);
+    formData.append('image1', imageData[1], 'name');
   }
   if (imageData.length > 2) {
-    formData.append('image2', imageData[2], imageData[2].name);
+    formData.append('image2', imageData[2], 'name');
   }
   if (imageData.length > 3) {
-    formData.append('image3', imageData[3], imageData[3].name);
+    formData.append('image3', imageData[3], 'name');
   }
   if (imageData.length > 4) {
-    formData.append('image4', imageData[4], imageData[4].name);
+    formData.append('image4', imageData[4], 'name');
   }
 
   // var body = {
