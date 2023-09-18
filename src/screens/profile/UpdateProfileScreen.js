@@ -9,17 +9,17 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
 } from 'react-native';
-import React, {useState} from 'react';
-import {SIZES} from '../../utils/theme';
-import {commonStyles} from '../../utils/styles';
+import React, { useState } from 'react';
+import { SIZES } from '../../utils/theme';
+import { commonStyles } from '../../utils/styles';
 import Custom_Auth_Btn from '../../components/Custom_Auth_Btn';
 import CustomTextInput from '../../components/CustomTextInput';
-import {SelectList} from 'react-native-dropdown-select-list';
+import { SelectList } from 'react-native-dropdown-select-list';
 import Auth from '../../services/Auth';
-import {useDispatch, useSelector} from 'react-redux';
-import CustomLoader, {CustomPanel} from '../../components/CustomLoader';
-import {launchImageLibrary} from 'react-native-image-picker';
-import {Linking} from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import CustomLoader, { CustomPanel } from '../../components/CustomLoader';
+import { launchImageLibrary } from 'react-native-image-picker';
+import { Linking } from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
 
 import {
@@ -27,9 +27,9 @@ import {
   mobileLoginPostRequest,
   updateUserPostRequest,
 } from '../../utils/API';
-import {setUser} from '../../redux/reducer/user';
+import { setUser } from '../../redux/reducer/user';
 import Toast from 'react-native-simple-toast';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const initialValues = {
   religion: '',
@@ -49,45 +49,45 @@ const initialValues = {
 };
 
 const purposeData = [
-  {key: '1', value: 'Ads'},
-  {key: '2', value: 'Recruitment'},
-  {key: '3', value: 'Work'},
-  {key: '4', value: 'All'},
+  { key: '1', value: 'Ads' },
+  { key: '2', value: 'Recruitment' },
+  { key: '3', value: 'Work' },
+  { key: '4', value: 'All' },
 ];
 const shopCategoryData = [
-  {key: '1', value: 'Fast food'},
-  {key: '2', value: 'Groceries'},
-  {key: '3', value: 'Kirana Store'},
-  {key: '4', value: 'Sari  Shop'},
-  {key: '5', value: 'Readymade Garments'},
-  {key: '6', value: 'Stationery'},
-  {key: '8', value: 'Printing Shop'},
-  {key: '9', value: 'Shoes store  '},
-  {key: '10', value: 'Repairing Shop'},
-  {key: '11', value: 'Bakeries'},
-  {key: '12', value: 'Namkeen Shop'},
-  {key: '13', value: 'Restaurants'},
-  {key: '14', value: 'Sweets Shop'},
-  {key: '15', value: 'Purse Shop'},
-  {key: '16', value: 'Wedding Suit Shop'},
-  {key: '17', value: 'Hardware Shop'},
-  {key: '18', value: 'Crockery Shop'},
-  {key: '19', value: 'Fancy Item Shop'},
-  {key: '20', value: 'Bag Shop'},
-  {key: '21', value: 'Mens Accessories Shop'},
-  {key: '22', value: "Woman's Accessories Shop"},
-  {key: '23', value: 'Tailor Shop'},
-  {key: '24', value: 'Jewellery Shop'},
-  {key: '25', value: 'Novell Shop'},
-  {key: '26', value: 'Metal Shop'},
-  {key: '27', value: 'Paint Shop'},
-  {key: '28', value: 'Curtain Shop'},
+  { key: '1', value: 'Fast food' },
+  { key: '2', value: 'Groceries' },
+  { key: '3', value: 'Kirana Store' },
+  { key: '4', value: 'Sari  Shop' },
+  { key: '5', value: 'Readymade Garments' },
+  { key: '6', value: 'Stationery' },
+  { key: '8', value: 'Printing Shop' },
+  { key: '9', value: 'Shoes store  ' },
+  { key: '10', value: 'Repairing Shop' },
+  { key: '11', value: 'Bakeries' },
+  { key: '12', value: 'Namkeen Shop' },
+  { key: '13', value: 'Restaurants' },
+  { key: '14', value: 'Sweets Shop' },
+  { key: '15', value: 'Purse Shop' },
+  { key: '16', value: 'Wedding Suit Shop' },
+  { key: '17', value: 'Hardware Shop' },
+  { key: '18', value: 'Crockery Shop' },
+  { key: '19', value: 'Fancy Item Shop' },
+  { key: '20', value: 'Bag Shop' },
+  { key: '21', value: 'Mens Accessories Shop' },
+  { key: '22', value: "Woman's Accessories Shop" },
+  { key: '23', value: 'Tailor Shop' },
+  { key: '24', value: 'Jewellery Shop' },
+  { key: '25', value: 'Novell Shop' },
+  { key: '26', value: 'Metal Shop' },
+  { key: '27', value: 'Paint Shop' },
+  { key: '28', value: 'Curtain Shop' },
 ];
-export default function UpdateProfileScreen({navigation}) {
+export default function UpdateProfileScreen({ navigation }) {
   const dispatch = useDispatch();
 
-  const {userData} = useSelector(state => state.User);
-  const {userType} = useSelector(state => state.UserType);
+  const { userData } = useSelector(state => state.User);
+  const { userType } = useSelector(state => state.UserType);
   const [nameError, setNameError] = React.useState(false);
   const [phoneError, setPhoneError] = React.useState(false);
   const [isCertificateUploaded, setIsCertificateUploaded] = useState(false);
@@ -99,7 +99,7 @@ export default function UpdateProfileScreen({navigation}) {
   const [education, setEducation] = useState('');
   const [phone, setPhone] = React.useState('');
   const [imageChanged, setImageChanged] = React.useState(false);
-  const [imageData, setImageData] = React.useState({uri: ''});
+  const [imageData, setImageData] = React.useState({ uri: '' });
   const [canChangeAddress, setCanChangeAddress] = useState(true);
   const [formData, setFormData] = useState(initialValues);
   const [errors, seterrors] = useState({});
@@ -109,9 +109,8 @@ export default function UpdateProfileScreen({navigation}) {
     setPhone(userData[0].mobile);
     setEducation(userData[0].eduction);
 
-    setImageData({uri: userData[0].userProfile});
-    console.log(userData, '<<<<<  this is userData');
-    const {pAddress, rAddress} = userData[0];
+    setImageData({ uri: userData[0].userProfile });
+    const { pAddress, rAddress } = userData[0];
     if (pAddress == '' || pAddress == null || pAddress == undefined) {
       setCanChangeAddress(true);
     } else {
@@ -124,11 +123,10 @@ export default function UpdateProfileScreen({navigation}) {
       ...formData,
       ...userData[0],
       certificate:
-        userData[0].certificate == null ? 'null' : {name: 'View certificate'},
+        userData[0].certificate == null ? 'null' : { name: 'View certificate' },
     });
   }, []);
 
-  // console.log(imageData, '\n\n\n\n<<<this is userdata');
   const handleUpdateUser = () => {
     // return null;
     if (name.length === 0) {
@@ -172,16 +170,13 @@ export default function UpdateProfileScreen({navigation}) {
           allValid = false;
         }
       });
-      console.log(allValid, '<<<allvalid');
       if (allValid == false) {
         setLoading(false);
         return null;
       }
 
-      console.log(imageData, '<<<< this is formdata');
       // return null;
       Auth.getLocalStorageData('bearer').then(token => {
-        console.log(token, '<<<< this is totken bearer');
         updateUserPostRequest(
           userData[0]?._id,
           emailId,
@@ -189,7 +184,6 @@ export default function UpdateProfileScreen({navigation}) {
           phone,
           userType,
           imageData,
-
           token,
           imageChanged,
           formData,
@@ -198,8 +192,6 @@ export default function UpdateProfileScreen({navigation}) {
           purposeOfRegistration,
 
           async response => {
-            console.log(response, '<<<< this is response of image update');
-            // return null;
             if (response.status == false) {
               setLoading(false);
               return Alert.alert(response.message);
@@ -211,11 +203,6 @@ export default function UpdateProfileScreen({navigation}) {
                   // Alert.alert('here');
 
                   getUserDataById(userData[0]?._id, token, async res => {
-                    console.log(
-                      '\n\n\n\n updated data user',
-                      res.data,
-                      '\n\n\n\n',
-                    );
                     Toast.show('Profile successfully updated');
                     await Auth.setAccount(res.data);
                     dispatch(setUser(res.data));
@@ -267,7 +254,7 @@ export default function UpdateProfileScreen({navigation}) {
       if (text === 'certificate') {
         setIsCertificateUploaded(true);
         // setCvFile(res[0]);
-        setFormData({...formData, certificate: res[0]});
+        setFormData({ ...formData, certificate: res[0] });
       } else if (text === 'educationCertificate') {
         setEducationCertificate(res[0]);
       } else if (text === 'experienceCertificate') {
@@ -284,7 +271,7 @@ export default function UpdateProfileScreen({navigation}) {
   };
 
   const handleChange = (name, value) => {
-    setFormData({...formData, [name]: value});
+    setFormData({ ...formData, [name]: value });
   };
   let options = {
     storageOptions: {
@@ -301,7 +288,6 @@ export default function UpdateProfileScreen({navigation}) {
       } else if (response?.error) {
       } else if (response?.customButton) {
       } else {
-        console.log(response, '<<<<thisis  response');
         setImage(response?.assets[0].uri);
         setImageChanged(true);
         setImageData({
@@ -368,18 +354,18 @@ export default function UpdateProfileScreen({navigation}) {
                     <Image
                       // source={require('../../assets/img/camera.png')}
                       source={userImage}
-                      style={{width: '75%', height: '75%', tintColor: '#999'}}
+                      style={{ width: '75%', height: '75%', tintColor: '#999' }}
                     />
                   </View>
                 ) : (
                   <Image
-                    source={{uri: imageData?.uri}}
-                    style={{width: 120, height: 120, borderRadius: 100}}
+                    source={{ uri: imageData?.uri }}
+                    style={{ width: 120, height: 120, borderRadius: 100 }}
                   />
                 )}
               </TouchableHighlight>
-              <Text style={{color: '#000', fontSize: 17}}>
-                Name <Text style={{color: '#FF0000'}}>*</Text>
+              <Text style={{ color: '#000', fontSize: 17 }}>
+                Name <Text style={{ color: '#FF0000' }}>*</Text>
               </Text>
               <CustomTextInput
                 placeholder="Name"
@@ -392,15 +378,15 @@ export default function UpdateProfileScreen({navigation}) {
                 }}
               />
               {nameError ? (
-                <Text style={{...commonStyles.fs13_400, color: 'red'}}>
+                <Text style={{ ...commonStyles.fs13_400, color: 'red' }}>
                   Name is required
                 </Text>
               ) : (
                 <></>
               )}
-              <View style={{height: 14}} />
-              <Text style={{color: '#000', fontSize: 17}}>
-                Phone <Text style={{color: '#FF0000'}}>*</Text>
+              <View style={{ height: 14 }} />
+              <Text style={{ color: '#000', fontSize: 17 }}>
+                Phone <Text style={{ color: '#FF0000' }}>*</Text>
               </Text>
               <CustomTextInput
                 placeholder="Phone"
@@ -415,15 +401,15 @@ export default function UpdateProfileScreen({navigation}) {
               />
 
               {phoneError ? (
-                <Text style={{...commonStyles.fs13_400, color: 'red'}}>
+                <Text style={{ ...commonStyles.fs13_400, color: 'red' }}>
                   Phone is required
                 </Text>
               ) : (
                 <></>
               )}
-              <View style={{height: 14}} />
-              <Text style={{color: '#000', fontSize: 17}}>
-                Email <Text style={{color: '#FF0000'}}>*</Text>
+              <View style={{ height: 14 }} />
+              <Text style={{ color: '#000', fontSize: 17 }}>
+                Email <Text style={{ color: '#FF0000' }}>*</Text>
               </Text>
               <CustomTextInput
                 placeholder="Email"
@@ -436,15 +422,14 @@ export default function UpdateProfileScreen({navigation}) {
                 }}
               />
 
-              <View style={{height: 14}} />
+              <View style={{ height: 14 }} />
               {userType == 'shop' && (
                 <>
-                  <Text style={{color: '#000', fontSize: 17}}>
-                    Shop Category <Text style={{color: '#FF0000'}}>*</Text>
+                  <Text style={{ color: '#000', fontSize: 17 }}>
+                    Shop Category <Text style={{ color: '#FF0000' }}>*</Text>
                   </Text>
                   <SelectList
                     setSelected={val => {
-                      // console.log(val, '<<<< sdfcategory');
                       setShopCategory(val);
                     }}
                     data={shopCategoryData}
@@ -452,15 +437,14 @@ export default function UpdateProfileScreen({navigation}) {
                   />
                 </>
               )}
-              <View style={{height: 14}} />
+              <View style={{ height: 14 }} />
               {userType == 'shop' && (
                 <>
-                  <Text style={{color: '#000', fontSize: 17}}>
+                  <Text style={{ color: '#000', fontSize: 17 }}>
                     Purpose of Registration
                   </Text>
                   <SelectList
                     setSelected={val => {
-                      // console.log(val, '<<<< sdfcategory');
                       setpurposeOfRegistration(val);
                     }}
                     data={purposeData}
@@ -468,11 +452,11 @@ export default function UpdateProfileScreen({navigation}) {
                   />
                 </>
               )}
-              <View style={{height: 14}} />
+              <View style={{ height: 14 }} />
 
               {userType == 'user' && (
                 <>
-                  <Text style={{color: '#000', fontSize: 17}}>Mother name</Text>
+                  <Text style={{ color: '#000', fontSize: 17 }}>Mother name</Text>
                   <CustomTextInput
                     placeholder="Mother Name"
                     value={formData.mothername}
@@ -489,7 +473,7 @@ export default function UpdateProfileScreen({navigation}) {
               )}
 
               {userType == 'user' && formData.mothername?.trim() == '' ? (
-                <Text style={{...commonStyles.fs13_400, color: 'red'}}>
+                <Text style={{ ...commonStyles.fs13_400, color: 'red' }}>
                   Mother name is required
                 </Text>
               ) : (
@@ -498,8 +482,8 @@ export default function UpdateProfileScreen({navigation}) {
 
               {userType == 'user' && (
                 <>
-                  <View style={{height: 14}} />
-                  <Text style={{color: '#000', fontSize: 17}}>Father name</Text>
+                  <View style={{ height: 14 }} />
+                  <Text style={{ color: '#000', fontSize: 17 }}>Father name</Text>
                   <CustomTextInput
                     placeholder="Father Name"
                     value={formData.fathername}
@@ -513,7 +497,7 @@ export default function UpdateProfileScreen({navigation}) {
                     }}
                   />
                   {formData.fathername?.trim() == '' ? (
-                    <Text style={{...commonStyles.fs13_400, color: 'red'}}>
+                    <Text style={{ ...commonStyles.fs13_400, color: 'red' }}>
                       Father name is required
                     </Text>
                   ) : (
@@ -522,18 +506,17 @@ export default function UpdateProfileScreen({navigation}) {
                 </>
               )}
 
-              <View style={{height: 14}} />
-              <Text style={{color: '#000', fontSize: 17}}>
+              <View style={{ height: 14 }} />
+              <Text style={{ color: '#000', fontSize: 17 }}>
                 {userType == 'user' ? 'Permanent Address' : 'Shop Address'}
-                <Text style={{color: '#FF0000'}}>*</Text>
-                <Text style={{fontSize: 10, color: '#FF0000'}}>
-                  {`${
-                    !canChangeAddress ? '(Contact Admin To change Address)' : ''
-                  }`}
+                <Text style={{ color: '#FF0000' }}>*</Text>
+                <Text style={{ fontSize: 10, color: '#FF0000' }}>
+                  {`${!canChangeAddress ? '(Contact Admin To change Address)' : ''
+                    }`}
                 </Text>
               </Text>
               {!canChangeAddress && (
-                <Text style={{fontSize: 14}}>{formData.pAddress}</Text>
+                <Text style={{ fontSize: 14 }}>{formData.pAddress}</Text>
               )}
               {canChangeAddress && (
                 <CustomTextInput
@@ -560,20 +543,19 @@ export default function UpdateProfileScreen({navigation}) {
               )}
 
               {formData.pAddress?.trim() == '' ? (
-                <Text style={{...commonStyles.fs13_400, color: 'red'}}>
+                <Text style={{ ...commonStyles.fs13_400, color: 'red' }}>
                   Permanenet Address is required
                 </Text>
               ) : (
                 <></>
               )}
 
-              <View style={{height: 14}} />
-              <Text style={{color: '#000', fontSize: 17}}>
-                Residential Address <Text style={{color: '#FF0000'}}>*</Text>
-                <Text style={{fontSize: 10, color: '#FF0000'}}>
-                  {`${
-                    !canChangeAddress ? '(Contact Admin To change Address)' : ''
-                  }`}
+              <View style={{ height: 14 }} />
+              <Text style={{ color: '#000', fontSize: 17 }}>
+                Residential Address <Text style={{ color: '#FF0000' }}>*</Text>
+                <Text style={{ fontSize: 10, color: '#FF0000' }}>
+                  {`${!canChangeAddress ? '(Contact Admin To change Address)' : ''
+                    }`}
                 </Text>
               </Text>
               {canChangeAddress ? (
@@ -594,17 +576,17 @@ export default function UpdateProfileScreen({navigation}) {
               )}
 
               {formData.rAddress?.trim() == '' ? (
-                <Text style={{...commonStyles.fs13_400, color: 'red'}}>
+                <Text style={{ ...commonStyles.fs13_400, color: 'red' }}>
                   Redential Address is required
                 </Text>
               ) : (
                 <></>
               )}
-              <View style={{height: 14}} />
+              <View style={{ height: 14 }} />
               {userType == 'user' && (
                 <>
-                  <Text style={{color: '#000', fontSize: 17}}>
-                    Marital Status <Text style={{color: '#FF0000'}}>*</Text>
+                  <Text style={{ color: '#000', fontSize: 17 }}>
+                    Marital Status <Text style={{ color: '#FF0000' }}>*</Text>
                   </Text>
                   {['Married', 'Not-Married'].map((item, key) => {
                     return (
@@ -625,14 +607,14 @@ export default function UpdateProfileScreen({navigation}) {
                               borderRadius: 100,
                               backgroundColor:
                                 formData.martialStatus ==
-                                item.toLocaleLowerCase()
+                                  item.toLocaleLowerCase()
                                   ? '#000'
                                   : '#fff',
                             }}
                           />
                         </View>
                         <Text
-                          style={{...commonStyles.fs14_400, marginLeft: 10}}>
+                          style={{ ...commonStyles.fs14_400, marginLeft: 10 }}>
                           {item}
                         </Text>
                       </TouchableOpacity>
@@ -643,8 +625,8 @@ export default function UpdateProfileScreen({navigation}) {
 
               {userType == 'user' && (
                 <>
-                  <View style={{height: 14}} />
-                  <Text style={{color: '#000', fontSize: 17}}>
+                  <View style={{ height: 14 }} />
+                  <Text style={{ color: '#000', fontSize: 17 }}>
                     {' '}
                     Certified Course Name
                   </Text>
@@ -665,8 +647,8 @@ export default function UpdateProfileScreen({navigation}) {
 
               {userType == 'user' && (
                 <>
-                  <View style={{height: 14}} />
-                  <Text style={{color: '#000', fontSize: 17}}>
+                  <View style={{ height: 14 }} />
+                  <Text style={{ color: '#000', fontSize: 17 }}>
                     {' '}
                     Upload Certificate
                   </Text>
@@ -682,27 +664,26 @@ export default function UpdateProfileScreen({navigation}) {
                       underlayColor="#f7f8f9">
                       <Image
                         source={require('../../assets/img/attach.png')}
-                        style={{width: 24, height: 24, tintColor: '#BDBDBD'}}
+                        style={{ width: 24, height: 24, tintColor: '#BDBDBD' }}
                       />
                     </TouchableHighlight>
                   ) : (
                     <View style={[styles.attachCV, commonStyles.rowBetween]}>
                       <Text
-                        style={{...commonStyles.fs14_500}}
+                        style={{ ...commonStyles.fs14_500 }}
                         onPress={() => {
-                          // console.log(userData, '<<this is userdata');
                           Linking.openURL(userData[0].certificate);
                         }}>
                         {formData?.certificate?.name}
                       </Text>
                       <TouchableHighlight
                         onPress={() =>
-                          setFormData({...formData, certificate: null})
+                          setFormData({ ...formData, certificate: null })
                         }
                         underlayColor="#f7f8f9">
                         <Image
                           source={require('../../assets/img/cross.png')}
-                          style={{width: 20, height: 20, tintColor: '#BDBDBD'}}
+                          style={{ width: 20, height: 20, tintColor: '#BDBDBD' }}
                         />
                       </TouchableHighlight>
                     </View>
@@ -711,8 +692,8 @@ export default function UpdateProfileScreen({navigation}) {
               )}
               {userType == 'user' && (
                 <>
-                  <View style={{height: 14}} />
-                  <Text style={{color: '#000', fontSize: 17}}>
+                  <View style={{ height: 14 }} />
+                  <Text style={{ color: '#000', fontSize: 17 }}>
                     Experience Years
                   </Text>
                   <CustomTextInput
@@ -728,7 +709,7 @@ export default function UpdateProfileScreen({navigation}) {
                     }}
                   />
                   {formData.experienceYears?.trim() == '' ? (
-                    <Text style={{...commonStyles.fs13_400, color: 'red'}}>
+                    <Text style={{ ...commonStyles.fs13_400, color: 'red' }}>
                       Experience Year is required
                     </Text>
                   ) : (
@@ -737,11 +718,11 @@ export default function UpdateProfileScreen({navigation}) {
                 </>
               )}
 
-              <View style={{height: 14}} />
+              <View style={{ height: 14 }} />
               {userType == 'user' && (
                 <>
-                  <Text style={{color: '#000', fontSize: 17}}>
-                    Religion <Text style={{color: '#FF0000'}}>*</Text>
+                  <Text style={{ color: '#000', fontSize: 17 }}>
+                    Religion <Text style={{ color: '#FF0000' }}>*</Text>
                   </Text>
                   <CustomTextInput
                     placeholder="Religion"
@@ -756,7 +737,7 @@ export default function UpdateProfileScreen({navigation}) {
                     }}
                   />
                   {formData.religion?.trim() == '' ? (
-                    <Text style={{...commonStyles.fs13_400, color: 'red'}}>
+                    <Text style={{ ...commonStyles.fs13_400, color: 'red' }}>
                       Religion is required
                     </Text>
                   ) : (
@@ -767,8 +748,8 @@ export default function UpdateProfileScreen({navigation}) {
 
               {userType == 'user' && (
                 <>
-                  <View style={{height: 14}} />
-                  <Text style={{color: '#000', fontSize: 17}}>
+                  <View style={{ height: 14 }} />
+                  <Text style={{ color: '#000', fontSize: 17 }}>
                     Educational Details
                   </Text>
                   <CustomTextInput
@@ -785,7 +766,7 @@ export default function UpdateProfileScreen({navigation}) {
                   />
 
                   {formData.eduction?.trim() == '' ? (
-                    <Text style={{...commonStyles.fs13_400, color: 'red'}}>
+                    <Text style={{ ...commonStyles.fs13_400, color: 'red' }}>
                       Education Details is required
                     </Text>
                   ) : (
@@ -816,7 +797,7 @@ export default function UpdateProfileScreen({navigation}) {
             <></>
           )} */}
 
-              <View style={{height: 14}} />
+              <View style={{ height: 14 }} />
               <Custom_Auth_Btn
                 btnText="Update Profile"
                 onPress={() => {

@@ -10,21 +10,20 @@ import {
   StyleSheet,
   Linking,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {commonStyles} from '../../utils/styles';
-import {COLORS, SIZES} from '../../utils/theme';
-import {getAppliedCandidate, getUserByIDPostAPI} from '../../utils/API';
+import React, { useEffect, useState } from 'react';
+import { commonStyles } from '../../utils/styles';
+import { COLORS, SIZES } from '../../utils/theme';
+import { getAppliedCandidate, getUserByIDPostAPI } from '../../utils/API';
 import Auth from '../../services/Auth';
-import {RFC_2822} from 'moment';
+import { RFC_2822 } from 'moment';
 
-export default function GetAllCandidatesScreen({navigation, route}) {
-  const {item} = route.params;
+export default function GetAllCandidatesScreen({ navigation, route }) {
+  const { item } = route.params;
   const [allCandidate, setAllCandidate] = useState([]);
   const [tempData, setTempData] = useState([]);
   useEffect(() => {
     Auth.getLocalStorageData('bearer').then(token => {
       getAppliedCandidate(token, item._id, res => {
-        console.log(res, '<<<<<jobdetail');
         setAllCandidate(res);
         setTempData(res);
       });
@@ -43,9 +42,8 @@ export default function GetAllCandidatesScreen({navigation, route}) {
     setAllCandidate(filter);
   };
 
-  console.log(item, '<<<this is item');
   return (
-    <View style={{width: '100%', height: '100%', backgroundColor: '#fff'}}>
+    <View style={{ width: '100%', height: '100%', backgroundColor: '#fff' }}>
       {/* {membersHeader(navigation, setSearchInput, searchInput)} */}
       <View style={styles.headerContainer}>
         <TouchableHighlight
@@ -54,7 +52,7 @@ export default function GetAllCandidatesScreen({navigation, route}) {
           <Image
             source={require('../../assets/img/left-arrow.png')}
             resizeMode="contain"
-            style={{width: 25, height: 25}}
+            style={{ width: 25, height: 25 }}
           />
         </TouchableHighlight>
         <Text
@@ -71,7 +69,6 @@ export default function GetAllCandidatesScreen({navigation, route}) {
           placeholder="Search Members"
           placeholderTextColor="#999"
           onChangeText={text => {
-            console.log(text);
             searchIt(text);
           }}
           style={styles.searchInput}
@@ -118,19 +115,17 @@ export default function GetAllCandidatesScreen({navigation, route}) {
           //   );
         })}
 
-        <View style={{height: 20}} />
+        <View style={{ height: 20 }} />
       </ScrollView>
     </View>
   );
 }
 
-export const GetAllCandidateScreen = ({item, index, navigation}) => {
-  console.log('this is item at user profile', item);
+export const GetAllCandidateScreen = ({ item, index, navigation }) => {
   const [userData, setUserData] = useState({});
   useEffect(() => {
     Auth.getLocalStorageData('bearer').then(token => {
       getUserByIDPostAPI(item.applicantId, token, res => {
-        console.log('this is uer data', res);
         setUserData(res.data[0]);
       });
     });
@@ -141,7 +136,6 @@ export const GetAllCandidateScreen = ({item, index, navigation}) => {
       if (supported) {
         Linking.openURL(link);
       } else {
-        console.log("Don't know how to open URI: " + link);
       }
       return false;
     });
@@ -152,11 +146,11 @@ export const GetAllCandidateScreen = ({item, index, navigation}) => {
       style={styles.itemWrapper}
       key={index}
       activeOpacity={0.9}
-      // onPress={() => {
-      //   navigation.navigate('MemberDetailScreen', {
-      //     item: item,
-      //   });
-      // }}
+    // onPress={() => {
+    //   navigation.navigate('MemberDetailScreen', {
+    //     item: item,
+    //   });
+    // }}
     >
       <View style={styles.itemContent}>
         <Image
@@ -179,7 +173,7 @@ export const GetAllCandidateScreen = ({item, index, navigation}) => {
         "https://res.cloudinary.com/strix-digital/image/upload/v1670751786/ohnjl7ifo1t32a4lv3ej.jpg"
         userType : "shop" */}
         <View style={styles.memberNameBlock}>
-          <Text style={[styles.memberName, {color: '#000'}]}>
+          <Text style={[styles.memberName, { color: '#000' }]}>
             {/* {item.applicantName} */}
             {userData.name}
           </Text>

@@ -11,8 +11,8 @@ import {
 import React from 'react';
 import CustomInputHeader from '../../components/CustomInputHeader';
 import ImagePicker from 'react-native-image-crop-picker';
-import {SIZES} from '../../utils/theme';
-import {commonStyles} from '../../utils/styles';
+import { SIZES } from '../../utils/theme';
+import { commonStyles } from '../../utils/styles';
 import Custom_Auth_Btn from '../../components/Custom_Auth_Btn';
 import {
   addNewWorkPostRequest,
@@ -20,21 +20,21 @@ import {
   getWorksByOwnerIdPostRequest,
 } from '../../utils/API';
 import Auth from '../../services/Auth';
-import CustomLoader, {CustomPanel} from '../../components/CustomLoader';
-import {useState} from 'react';
+import CustomLoader, { CustomPanel } from '../../components/CustomLoader';
+import { useState } from 'react';
 import DayNightModal from '../home/DayNightModal';
-import {useEffect} from 'react';
+import { useEffect } from 'react';
 import Toast from 'react-native-simple-toast';
-import {useSelector} from 'react-redux';
-import {RenderUpload, ReqField} from '../offer/AddSaleOfferScreen';
+import { useSelector } from 'react-redux';
+import { RenderUpload, ReqField } from '../offer/AddSaleOfferScreen';
 
-export default function AddWorksScreen({navigation}) {
+export default function AddWorksScreen({ navigation }) {
   const [nameError, setNameError] = React.useState(false);
   const [shopNameError, setshopNameError] = React.useState(false);
   const [descError, setDescError] = React.useState(false);
   const [locationError, setLocationError] = React.useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
-  const {userData} = useSelector(state => state.User);
+  const { userData } = useSelector(state => state.User);
 
   const [shiftError, setShiftError] = useState(false);
   // const [salaryError, setSalaryError] = React.useState(false);
@@ -89,7 +89,6 @@ export default function AddWorksScreen({navigation}) {
           if (response?.data !== null || response?.data !== undefined) {
             setCategories(response?.data);
             setAllCategory(response.data);
-            console.log(response, '<<<<<response');
           }
         }
       });
@@ -102,7 +101,6 @@ export default function AddWorksScreen({navigation}) {
         if (response !== null) {
           if (response?.message === 'Item Found') {
             // setWorkData(response?.data);
-            console.log('this is work data', response);
             if (response.data.length > 3) {
               setCanApply(false);
             }
@@ -117,29 +115,19 @@ export default function AddWorksScreen({navigation}) {
       Toast.show('Please buy membership to Add more Work!!');
       return null;
     }
-    // console.log(imageData, '<<<<<');
-    // return null;
-    console.log('handle submit');
     if (desc.length < 3) {
-      console.log('description');
       setDescError(true);
     } else if (name.length < 3) {
-      console.log('name');
       setNameError(true);
     } else if (shopName.length < 3) {
-      console.log('shop');
       setshopNameError(true);
     } else if (location.length < 3) {
-      console.log('location');
       setLocationError(true);
     } else if (designation.length < 3) {
-      console.log('designation');
       setDesignationError(true);
     } else if (contact.length != 10) {
-      console.log('contact');
       setContactError(true);
     } else if (imageData.length == 0) {
-      console.log('image');
       setImageError(true);
       return true;
     }
@@ -149,10 +137,8 @@ export default function AddWorksScreen({navigation}) {
     const isCorrectEmailFormat = emailRegex.test(emailId);
     if (!isCorrectEmailFormat && emailId.length > 0) {
       setemailIDError(true);
-      console.log('email error');
       return true;
     } else {
-      console.log('callin gapi');
       setLoading(true);
       Auth.getAccount().then(userData => {
         Auth.getLocalStorageData('bearer').then(token => {
@@ -188,7 +174,7 @@ export default function AddWorksScreen({navigation}) {
                         },
                       },
                     ],
-                    {cancelable: false},
+                    { cancelable: false },
                   );
                 }
                 if (response?.message?.includes('Work validation failed')) {
@@ -226,7 +212,6 @@ export default function AddWorksScreen({navigation}) {
     }).then(response => {
       let tempArray = [];
       response.forEach(item => {
-        console.log(item);
         let image = {
           name: item?.path,
           uri: item?.path,
@@ -248,7 +233,7 @@ export default function AddWorksScreen({navigation}) {
     <>
       <CustomInputHeader navigation={navigation} title="Add Work" />
       <ScrollView
-        style={{width: '100%', height: '100%', backgroundColor: '#fff'}}>
+        style={{ width: '100%', height: '100%', backgroundColor: '#fff' }}>
         <View
           style={{
             paddingHorizontal: 16,
@@ -267,10 +252,10 @@ export default function AddWorksScreen({navigation}) {
 
           <View>
             {imageError && (
-              <Text style={{color: '#FF0000'}}>Image is mandatory</Text>
+              <Text style={{ color: '#FF0000' }}>Image is mandatory</Text>
             )}
             <>
-              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+              <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>
                 Service Provider <ReqField />
               </Text>
               <TextInput
@@ -283,11 +268,11 @@ export default function AddWorksScreen({navigation}) {
                 }}
                 style={[
                   styles.descriptionInput,
-                  {borderColor: nameError ? 'red' : '#BDBDBD'},
+                  { borderColor: nameError ? 'red' : '#BDBDBD' },
                 ]}
               />
               {nameError ? (
-                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+                <Text style={{ ...commonStyles.fs12_400, color: 'red' }}>
                   Owner Name is mandatory
                 </Text>
               ) : (
@@ -295,7 +280,7 @@ export default function AddWorksScreen({navigation}) {
               )}
             </>
             <>
-              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+              <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>
                 Shop Name <ReqField />
               </Text>
               <TextInput
@@ -308,11 +293,11 @@ export default function AddWorksScreen({navigation}) {
                 }}
                 style={[
                   styles.descriptionInput,
-                  {borderColor: nameError ? 'red' : '#BDBDBD'},
+                  { borderColor: nameError ? 'red' : '#BDBDBD' },
                 ]}
               />
               {shopNameError ? (
-                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+                <Text style={{ ...commonStyles.fs12_400, color: 'red' }}>
                   Shop Name is mandatory
                 </Text>
               ) : (
@@ -339,7 +324,7 @@ export default function AddWorksScreen({navigation}) {
             </> */}
 
             <>
-              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+              <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>
                 Work Description <ReqField />
               </Text>
               <TextInput
@@ -352,11 +337,11 @@ export default function AddWorksScreen({navigation}) {
                 }}
                 style={[
                   styles.descriptionInput,
-                  {borderColor: descError ? 'red' : '#BDBDBD'},
+                  { borderColor: descError ? 'red' : '#BDBDBD' },
                 ]}
               />
               {descError ? (
-                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+                <Text style={{ ...commonStyles.fs12_400, color: 'red' }}>
                   Description is mandatory
                 </Text>
               ) : (
@@ -365,7 +350,7 @@ export default function AddWorksScreen({navigation}) {
             </>
 
             <>
-              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+              <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>
                 Relationship <ReqField />
               </Text>
               <TextInput
@@ -378,11 +363,11 @@ export default function AddWorksScreen({navigation}) {
                 }}
                 style={[
                   styles.descriptionInput,
-                  {borderColor: designationError ? 'red' : '#BDBDBD'},
+                  { borderColor: designationError ? 'red' : '#BDBDBD' },
                 ]}
               />
               {designationError ? (
-                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+                <Text style={{ ...commonStyles.fs12_400, color: 'red' }}>
                   Relationship is mandatory
                 </Text>
               ) : (
@@ -391,7 +376,7 @@ export default function AddWorksScreen({navigation}) {
             </>
 
             <>
-              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+              <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>
                 Location <ReqField />
               </Text>
               <TextInput
@@ -405,11 +390,11 @@ export default function AddWorksScreen({navigation}) {
                 }}
                 style={[
                   styles.descriptionInput,
-                  {borderColor: locationError ? 'red' : '#BDBDBD'},
+                  { borderColor: locationError ? 'red' : '#BDBDBD' },
                 ]}
               />
               {locationError ? (
-                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+                <Text style={{ ...commonStyles.fs12_400, color: 'red' }}>
                   Location is mandatory
                 </Text>
               ) : (
@@ -418,7 +403,7 @@ export default function AddWorksScreen({navigation}) {
             </>
 
             <>
-              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+              <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>
                 Add Category
               </Text>
               {/* <TouchableOpacity onPress={() => setShowCategoryModal(true)}> */}
@@ -435,7 +420,7 @@ export default function AddWorksScreen({navigation}) {
                     }}
                     style={[
                       styles.locationInput,
-                      {borderColor: locationError ? 'red' : '#BDBDBD'},
+                      { borderColor: locationError ? 'red' : '#BDBDBD' },
                     ]}
                   />
 
@@ -487,7 +472,7 @@ export default function AddWorksScreen({navigation}) {
             </>
 
             <>
-              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+              <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>
                 Shift
               </Text>
             </>
@@ -521,27 +506,27 @@ export default function AddWorksScreen({navigation}) {
                 borderRadius: 5,
                 borderColor: '#bbb',
               }}>
-              <View style={{...commonStyles.rowStart, alignItems: 'center'}}>
-                <View style={{marginLeft: 6}}>
+              <View style={{ ...commonStyles.rowStart, alignItems: 'center' }}>
+                <View style={{ marginLeft: 6 }}>
                   <TouchableHighlight
                     underlayColor="#f7f8f9"
-                    // onPress={() => {
-                    //   navigation.navigate('UserDetailsScreen', {
-                    //     userId: item?.ownerId,
-                    //     user: user,
-                    //   });
-                    // }}
+                  // onPress={() => {
+                  //   navigation.navigate('UserDetailsScreen', {
+                  //     userId: item?.ownerId,
+                  //     user: user,
+                  //   });
+                  // }}
                   >
-                    <Text style={{...commonStyles.fs14_700}}>{categoryId}</Text>
+                    <Text style={{ ...commonStyles.fs14_700 }}>{categoryId}</Text>
                   </TouchableHighlight>
                   <View
-                    style={{...commonStyles.rowStart, alignItems: 'center'}}>
+                    style={{ ...commonStyles.rowStart, alignItems: 'center' }}>
                     <TouchableHighlight
                       onPress={() => {
                         // navigation.navigate('LocationScreen');
                       }}
                       underlayColor="#f7f8f9">
-                      <Text style={{...commonStyles.fs12_400, marginLeft: 2}}>
+                      <Text style={{ ...commonStyles.fs12_400, marginLeft: 2 }}>
                         {/* {item?.location} */}
                       </Text>
                     </TouchableHighlight>
@@ -555,7 +540,7 @@ export default function AddWorksScreen({navigation}) {
                 <Image
                   source={require('../../assets/img/3dots.png')}
                   resizeMode="contain"
-                  style={{width: 24, height: 24, borderRadius: 100}}
+                  style={{ width: 24, height: 24, borderRadius: 100 }}
                 />
               </TouchableHighlight>
             </View>
@@ -569,7 +554,7 @@ export default function AddWorksScreen({navigation}) {
               }}
             />
             <>
-              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+              <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>
                 Contact <ReqField />
               </Text>
               <TextInput
@@ -584,11 +569,11 @@ export default function AddWorksScreen({navigation}) {
                 }}
                 style={[
                   styles.descriptionInput,
-                  {borderColor: contactError ? 'red' : '#BDBDBD'},
+                  { borderColor: contactError ? 'red' : '#BDBDBD' },
                 ]}
               />
               {contactError ? (
-                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+                <Text style={{ ...commonStyles.fs12_400, color: 'red' }}>
                   Please enter correct contact number (10 digit)
                 </Text>
               ) : (
@@ -596,7 +581,7 @@ export default function AddWorksScreen({navigation}) {
               )}
             </>
             <>
-              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+              <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>
                 Email ID <ReqField />
               </Text>
               <TextInput
@@ -611,11 +596,11 @@ export default function AddWorksScreen({navigation}) {
                 }}
                 style={[
                   styles.descriptionInput,
-                  {borderColor: contactError ? 'red' : '#BDBDBD'},
+                  { borderColor: contactError ? 'red' : '#BDBDBD' },
                 ]}
               />
               {emailIDError ? (
-                <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+                <Text style={{ ...commonStyles.fs12_400, color: 'red' }}>
                   Please enter correct email address
                 </Text>
               ) : (
@@ -623,7 +608,7 @@ export default function AddWorksScreen({navigation}) {
               )}
             </>
             <>
-              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+              <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>
                 Facebook Id
               </Text>
               <TextInput
@@ -637,12 +622,12 @@ export default function AddWorksScreen({navigation}) {
                 }}
                 style={[
                   styles.descriptionInput,
-                  {borderColor: contactError ? 'red' : '#BDBDBD'},
+                  { borderColor: contactError ? 'red' : '#BDBDBD' },
                 ]}
               />
             </>
             <>
-              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+              <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>
                 Instagram Id
               </Text>
               <TextInput
@@ -656,12 +641,12 @@ export default function AddWorksScreen({navigation}) {
                 }}
                 style={[
                   styles.descriptionInput,
-                  {borderColor: contactError ? 'red' : '#BDBDBD'},
+                  { borderColor: contactError ? 'red' : '#BDBDBD' },
                 ]}
               />
             </>
             <>
-              <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+              <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>
                 Website address
               </Text>
               <TextInput
@@ -675,7 +660,7 @@ export default function AddWorksScreen({navigation}) {
                 }}
                 style={[
                   styles.descriptionInput,
-                  {borderColor: contactError ? 'red' : '#BDBDBD'},
+                  { borderColor: contactError ? 'red' : '#BDBDBD' },
                 ]}
               />
             </>

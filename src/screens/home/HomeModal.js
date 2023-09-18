@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Modal,
   StyleSheet,
@@ -10,12 +10,12 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import CustomCheckbox from '../../components/CustomCheckbox';
 import Auth from '../../services/Auth';
-import {addNewFeedbackPostAPI} from '../../utils/API';
-import {commonStyles} from '../../utils/styles';
-import {SIZES} from '../../utils/theme';
+import { addNewFeedbackPostAPI } from '../../utils/API';
+import { commonStyles } from '../../utils/styles';
+import { SIZES } from '../../utils/theme';
 import Toast from 'react-native-simple-toast';
 
 const HomeModal = ({
@@ -24,11 +24,11 @@ const HomeModal = ({
   feedbackNumber,
   callback,
   showSave = true,
-  onSaveIT = () => {},
+  onSaveIT = () => { },
   setModalVisible,
   savedCallback,
 }) => {
-  const {userData} = useSelector(state => state.User);
+  const { userData } = useSelector(state => state.User);
 
   const [showCheck, setShowCheck] = useState(false);
   const [isChecked, setIsChecked] = useState('');
@@ -58,7 +58,6 @@ const HomeModal = ({
           isChecked,
           token,
           response => {
-            console.log(response, '\n\n\n\n\n<<<< this is response');
             setLoading(false);
             if (response !== null) {
               if (response?.created_feedback) {
@@ -75,7 +74,7 @@ const HomeModal = ({
   const [isSaved, setIsSaved] = useState(false);
 
   return (
-    <View style={{alignItems: 'flex-start'}}>
+    <View style={{ alignItems: 'flex-start' }}>
       <Modal
         animationType="fade"
         transparent={true}
@@ -127,7 +126,7 @@ const HomeModal = ({
             )}
 
             {showCheck ? (
-              <View style={{marginVertical: 10}}>
+              <View style={{ marginVertical: 10 }}>
                 <TextInput
                   placeholder=""
                   placeholderTextColor="#999"
@@ -136,7 +135,7 @@ const HomeModal = ({
                     setIsChecked(val);
                     setError(false);
                   }}
-                  style={{...styles.reportInput}}
+                  style={{ ...styles.reportInput }}
                 />
                 {error ? (
                   <Text
@@ -204,16 +203,16 @@ const HomeModal = ({
   );
 };
 
-function SubmitFeedbackbtn({btnText, onPress}) {
+function SubmitFeedbackbtn({ btnText, onPress }) {
   return (
     <LinearGradient
       colors={['#E27127', '#EDAA26']}
-      style={{zIndex: 1, borderRadius: 4, marginTop: 6}}>
+      style={{ zIndex: 1, borderRadius: 4, marginTop: 6 }}>
       <TouchableHighlight
         style={[styles.btnWrapper]}
         onPress={onPress}
         underlayColor="E27127">
-        <Text style={{...commonStyles.fs16_500, color: '#fff'}}>{btnText}</Text>
+        <Text style={{ ...commonStyles.fs16_500, color: '#fff' }}>{btnText}</Text>
       </TouchableHighlight>
     </LinearGradient>
   );

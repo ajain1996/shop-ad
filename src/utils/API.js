@@ -1,7 +1,7 @@
-import {Alert} from 'react-native';
+import { Alert } from 'react-native';
 import Auth from '../services/Auth';
 
-const BASE_URL2 = 'https://shop-backend2.onrender.com/';
+const BASE_URL2 = 'https://api.shopad.in/';
 //const BASE_URL2 =
 //'http://ec2-43-204-38-110.ap-south-1.compute.amazonaws.com:5000/';
 const BASE_URL = BASE_URL2 + 'user/';
@@ -14,38 +14,32 @@ export const mobileRegisterPostRequest = async (
   userType,
   successCallBack,
 ) => {
-  // const userImage = {
-  //     name: image?.assets[0].fileName,
-  //     uri: image.assets[0].uri,
-  //     type: image.assets[0].type
-  // }
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
 
-  var body = {
-    email: email,
-    password: password,
-    mobile: phone,
-    userType: userType,
-    name: name,
-    // "userImage": userImage
+  var raw = JSON.stringify({
+    "name": name,
+    "password": password,
+    "mobile": phone,
+    "userType": userType,
+    "email": email,
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
   };
 
-  try {
-    console.log('api calling');
-    let response = await fetch(BASE_URL + 'signup', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
+  fetch(BASE_URL + "signup", requestOptions)
+    .then(response => response.json())
+    .then(result => {
+      successCallBack(result);
+    })
+    .catch(error => {
+      successCallBack(null);
     });
-    let json = await response.json();
-    console.log(json, '<<<< json');
-    successCallBack(json);
-  } catch (error) {
-    console.error('error', error);
-    successCallBack(null);
-  }
 };
 
 export const mobileLoginPostRequest = async (
@@ -61,7 +55,6 @@ export const mobileLoginPostRequest = async (
   };
 
   try {
-    console.log('kljkljkljkl');
     let response = await fetch(BASE_URL + 'login', {
       method: 'POST',
       headers: {
@@ -71,7 +64,6 @@ export const mobileLoginPostRequest = async (
       body: JSON.stringify(body),
     });
     let json = await response.json();
-    console.log(json, '<<<<thisis json');
     successCallBack(json);
   } catch (error) {
     console.error('error', error);
@@ -123,21 +115,6 @@ export const addNewOfferPostRequest = async (
   successCallBack,
 ) => {
   var formdata = new FormData();
-  console.log(
-    {
-      desc,
-      location,
-      startDate,
-      endDate,
-      image,
-      ownerId,
-      shopId,
-      cateoryId,
-      price,
-      code,
-    },
-    '<<<< thisisofferreq',
-  );
   // return null;
   formdata.append('description', desc);
   formdata.append('location', location);
@@ -162,7 +139,6 @@ export const addNewOfferPostRequest = async (
   formdata.append('cateoryId', cateoryId);
   formdata.append('price', price);
   formdata.append('code', code);
-  console.log('herererer');
   try {
     let response = await fetch(BASE_URL2 + 'salesoffer', {
       method: 'POST',
@@ -170,9 +146,7 @@ export const addNewOfferPostRequest = async (
       redirect: 'follow',
     });
 
-    console.log('offeraddnew', response);
     let json = await response.json();
-    console.log(response);
     successCallBack(json);
   } catch (error) {
     console.error('error', error);
@@ -194,7 +168,6 @@ export const addNewOfferPostRequest1 = async (
   successCallBack,
 ) => {
   let formData = new FormData();
-  console.log('callign apis');
   formData.append('description', desc);
   formData.append('location', location);
   formData.append('price', price);
@@ -221,7 +194,6 @@ export const addNewOfferPostRequest1 = async (
     });
 
     let json = await response.json();
-    console.log(json);
     successCallBack(json);
   } catch (error) {
     console.error('error', error);
@@ -231,16 +203,13 @@ export const addNewOfferPostRequest1 = async (
 
 export const getAllOffersPostRequest = async (bearerToken, successCallBack) => {
   try {
-    console.log(BASE_URL2 + 'salesoffer', '<<<callingthis');
     let response = await fetch(BASE_URL2 + 'salesoffer', {
       method: 'GET',
-      headers: {Authorization: `Bearer ${bearerToken}`},
+      headers: { Authorization: `Bearer ${bearerToken}` },
     });
     let json = await response.json();
     successCallBack(json);
-    console.log(json, '<<<alloffers');
   } catch (error) {
-    console.error('error', error);
     successCallBack(null);
   }
 };
@@ -265,7 +234,6 @@ export const getOffersByOwnerIdPostRequest = async (
       body: JSON.stringify(body),
     });
     let json = await response.json();
-    console.log(json, '<<<\n\n\n these are offers');
     successCallBack(json);
   } catch (error) {
     console.error('error', error);
@@ -320,9 +288,7 @@ export const commonSearch = async (location, ask, token, callBack) => {
     .then(response => response.text())
     .then(result => {
       callBack(JSON.parse(result));
-      console.log(result);
     })
-    .catch(error => console.log('error', error));
 };
 
 export const searchWork = async (location, ask, token, callBack) => {
@@ -347,9 +313,7 @@ export const searchWork = async (location, ask, token, callBack) => {
     .then(response => response.text())
     .then(result => {
       callBack(JSON.parse(result));
-      console.log(result);
     })
-    .catch(error => console.log('error', error));
 };
 export const searchJobs = async (location, ask, token, callBack) => {
   var myHeaders = new Headers();
@@ -373,9 +337,7 @@ export const searchJobs = async (location, ask, token, callBack) => {
     .then(response => response.text())
     .then(result => {
       callBack(JSON.parse(result));
-      console.log(result);
     })
-    .catch(error => console.log('error', error));
 };
 
 export const getOffersByCategoryAPI = async (
@@ -487,7 +449,6 @@ export const addNewJobPostRequest = async (
     isPolice: true,
     isExperience: true,
   };
-  console.log(body, '<<<< \n\n\n\n body data');
   try {
     let response = await fetch(BASE_URL2 + 'job', {
       method: 'POST',
@@ -499,7 +460,6 @@ export const addNewJobPostRequest = async (
       body: JSON.stringify(body),
     });
     let json = await response.json();
-    console.log(json, '<<<<< this is job created');
     successCallBack(json);
   } catch (error) {
     console.error('error', error);
@@ -511,7 +471,7 @@ export const getAllJobsPostRequest = async (bearerToken, successCallBack) => {
   try {
     let response = await fetch(BASE_URL2 + 'job', {
       method: 'GET',
-      headers: {Authorization: `Bearer ${bearerToken}`},
+      headers: { Authorization: `Bearer ${bearerToken}` },
     });
     let json = await response.json();
     successCallBack(json);
@@ -540,10 +500,8 @@ export const getAppliedCandidate = async (token, jobId, successCallBack) => {
   fetch(BASE_URL2 + 'jobapply/jobId', requestOptions)
     .then(response => response.text())
     .then(result => {
-      console.log(JSON.parse(result));
       successCallBack(JSON.parse(result));
     })
-    .catch(error => console.log('error', error));
 };
 
 export const getJobsByOwnerIdPostRequest = async (
@@ -596,7 +554,6 @@ export const getJobsByLocationPostRequest = async (
       },
     );
     // let json = await response.json();
-    console.log(response.json(), '<<< searchlocation');
     // successCallBack(json);
   } catch (error) {
     console.error('error', error);
@@ -624,28 +581,8 @@ export const addNewWorkPostRequest = async (
   successCallBack,
 ) => {
   let formData = new FormData();
-  // return null;
-  console.log(
-    'adding work',
-    description,
-    shopName,
-    name, // here this is owner name
-    location,
-    salary,
-    shiftTime,
-    designationName,
-    ownerId,
-    contactNumber,
-    contactEmail,
-    imageData,
-    instaId,
-    facebookId,
-    emailId,
-    websiteAddress,
-  );
   var myHeaders = new Headers();
   myHeaders.append('Authorization', 'Bearer ' + bearerToken);
-  console.log(imageData, '<<<this is imagedata');
   formData.append('description', description);
   formData.append('shopName', shopName);
   formData.append('location', location);
@@ -699,17 +636,15 @@ export const addNewWorkPostRequest = async (
   fetch(BASE_URL2 + 'work', requestOptions)
     .then(response => response.text())
     .then(result => {
-      console.log('success', result);
       successCallBack(JSON.parse(result));
     })
-    .catch(error => console.log('error', error));
 };
 
 export const getAllWorksPostRequest = async (bearerToken, successCallBack) => {
   try {
     let response = await fetch(BASE_URL2 + 'work', {
       method: 'GET',
-      headers: {Authorization: `Bearer ${bearerToken}`},
+      headers: { Authorization: `Bearer ${bearerToken}` },
     });
 
     let json = await response.json();
@@ -791,7 +726,6 @@ export const getUserByIDPostAPI = async (id, bearerToken, successCallBack) => {
       body: JSON.stringify(body),
     });
     let json = await response.json();
-    console.log('tis is user Data', json);
     successCallBack(json);
   } catch (error) {
     console.error('error', error);
@@ -818,14 +752,11 @@ export const getJobDetailByID = (token, id, callBack) => {
   fetch(BASE_URL2 + 'job/uid', requestOptions)
     .then(response => response.text())
     .then(result => {
-      console.log(result);
       callBack(JSON.parse(result));
     })
-    .catch(error => console.log('error', error));
 };
 
 export const getJobByApplicantId = (token, id, callBAck) => {
-  console.log('gettingalljobsbyapplicant ID', id);
   var myHeaders = new Headers();
   myHeaders.append('Authorization', 'Bearer ' + token);
   myHeaders.append('Content-Type', 'application/json');
@@ -844,7 +775,6 @@ export const getJobByApplicantId = (token, id, callBAck) => {
   fetch(BASE_URL2 + 'jobapply/applicantId', requestOptions)
     .then(response => response.text())
     .then(result => callBAck(JSON.parse(result)))
-    .catch(error => console.log('error', error));
 };
 
 export const getLikesCountByIDPostAPI = async (
@@ -1081,18 +1011,6 @@ export const updateUserPostRequest1 = async (
   bearerToken,
   successCallBack,
 ) => {
-  console.log(
-    '\n\n\n\n\n',
-    uid,
-    email,
-    name,
-    mobile,
-    userType,
-    image,
-    bearerToken,
-    '\n\n\n data at sending to update',
-  );
-
   // const userImage = {
   //   name: image?.assets[0].fileName,
   //   uri: image.assets[0].uri,
@@ -1119,10 +1037,8 @@ export const updateUserPostRequest1 = async (
       body: formData,
     });
     let json = await response.json();
-    console.log('\n\n\n\n ->>>>', json, '<<<<< update profile dta at api.js');
     successCallBack(json);
   } catch (error) {
-    console.log('\n\n\n\n updateUserPostRequest error', error);
     successCallBack(null);
   }
 };
@@ -1142,21 +1058,6 @@ export const updateUserPostRequest = async (
   purposeOfRegistration,
   successCallBack,
 ) => {
-  console.log(
-    '\n\n\n\n\n',
-    uid,
-    email,
-    name,
-    mobile,
-    userType,
-    image,
-    bearerToken,
-    formData,
-    '\n\n\n data at sending to update',
-    imageChanged,
-    categoryOfShop,
-  );
-
   //return null;
   // const userImage = {
   //   name: image?.assets[0].fileName,
@@ -1175,7 +1076,6 @@ export const updateUserPostRequest = async (
   // formdata.append('userType', userType);
   formdata.append('mobile', mobile);
   if (imageChanged == true) {
-    console.log('data changed');
     formdata.append('image', image, image.name);
   }
 
@@ -1209,7 +1109,6 @@ export const updateUserPostRequest = async (
   fetch(BASE_URL2 + 'user/update', requestOptions)
     .then(response => response.text())
     .then(result => {
-      console.log(result, '<<<update image api');
       successCallBack(JSON.parse(result));
     })
 
@@ -1223,7 +1122,6 @@ export const updateUserPostRequest = async (
 
 export const getUserDataById = async (uid, token, successCallBack) => {
   try {
-    console.log('userbyid', uid);
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('Authorization', `Bearer ${token}`);
@@ -1242,12 +1140,9 @@ export const getUserDataById = async (uid, token, successCallBack) => {
     fetch(BASE_URL + 'uid', requestOptions)
       .then(response => response.text())
       .then(result => {
-        console.log('\n\n\n user datails', result);
         successCallBack(JSON.parse(result));
       })
-      .catch(error => console.log('error', error));
   } catch (e) {
-    console.log(e);
   }
 };
 
@@ -1336,10 +1231,8 @@ export const unFollowPostAPI = async (payload, successCallBack) => {
   fetch(BASE_URL + 'unfollow', requestOptions)
     .then(response => response.text())
     .then(result => {
-      console.log(result);
       successCallBack(JSON.parse(result));
     })
-    .catch(error => console.log('error', error));
 };
 
 export const GetFacilities = callBack => {
@@ -1351,7 +1244,6 @@ export const GetFacilities = callBack => {
   fetch(BASE_URL2 + 'job/facility', requestOptions)
     .then(response => response.text())
     .then(result => callBack(JSON.parse(result)))
-    .catch(error => console.log('error', error));
 };
 
 export const applyJobPostAPI = async (
@@ -1367,24 +1259,6 @@ export const applyJobPostAPI = async (
   bearerToken,
   successCallBack,
 ) => {
-  console.log(
-    '\n\n applyJobPostAPI Called: ',
-    jobId,
-    applicantId,
-    applicantEmail,
-    applicantName,
-    applicantContact,
-    bearerToken,
-    '\n resumeLink: ',
-    resumeLink,
-    '\n policeLink: ',
-    policeLink,
-    '\n experienceLink: ',
-    experienceLink,
-    '\n certificateLink: ',
-    certificateLink,
-  );
-
   // return null;
   let formData = new FormData();
 
@@ -1413,7 +1287,6 @@ export const applyJobPostAPI = async (
       body: formData,
     });
     let json = await response.json();
-    console.log(json, '<<<< \n\n\n json');
     successCallBack(json);
   } catch (error) {
     console.error('error', error.message);
@@ -1456,7 +1329,6 @@ export const getCategoryById = (token, id, callBack) => {
   fetch(BASE_URL2 + 'category/byId', requestOptions)
     .then(response => response.text())
     .then(result => callBack(JSON.parse(result)))
-    .catch(error => console.log('error', error));
 };
 
 export const GetCategoryName = (id, token, callBack) => {
@@ -1478,8 +1350,6 @@ export const GetCategoryName = (id, token, callBack) => {
   fetch(BASE_URL2 + 'category/byId', requestOptions)
     .then(response => response.text())
     .then(result => {
-      console.log('categoryitem calling', JSON.parse(result), id);
       callBack(JSON.parse(result));
     })
-    .catch(error => console.log('error', error));
 };

@@ -9,14 +9,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import CustomInputHeader from '../../components/CustomInputHeader';
-import {SIZES} from '../../utils/theme';
-import {launchImageLibrary, openPicker} from 'react-native-image-picker';
+import { SIZES } from '../../utils/theme';
+import { launchImageLibrary, openPicker } from 'react-native-image-picker';
 import Toast from 'react-native-simple-toast';
-import {commonStyles} from '../../utils/styles';
+import { commonStyles } from '../../utils/styles';
 import ImagePicker from 'react-native-image-crop-picker';
-import {useIsFocused} from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 import moment from 'moment';
 import Custom_Auth_Btn from '../../components/Custom_Auth_Btn';
 import {
@@ -26,14 +26,14 @@ import {
   monthsArray,
 } from '../../utils/API';
 import Auth from '../../services/Auth';
-import CustomLoader, {CustomPanel} from '../../components/CustomLoader';
+import CustomLoader, { CustomPanel } from '../../components/CustomLoader';
 import PersonalLeaveDatePicker from '../../components/CustomDatePicker';
 import AllCategoryModal from './AllCategoriesModal';
-import {useSelector} from 'react-redux';
-import {useState} from 'react';
+import { useSelector } from 'react-redux';
+import { useState } from 'react';
 
-export default function AddSaleOfferScreen({navigation}) {
-  const {userData} = useSelector(state => state.User);
+export default function AddSaleOfferScreen({ navigation }) {
+  const { userData } = useSelector(state => state.User);
   const [imageError, setImageError] = React.useState(false);
   const [descriptionError, setDescriptionError] = React.useState(false);
   const [locationError, setLocationError] = React.useState(false);
@@ -65,7 +65,6 @@ export default function AddSaleOfferScreen({navigation}) {
     }).then(response => {
       let tempArray = [];
       response.forEach(item => {
-        console.log(item, '<<<theseareimage');
         let image = {
           name: 'imagename',
           uri: item?.path,
@@ -89,7 +88,6 @@ export default function AddSaleOfferScreen({navigation}) {
   const onFocus = useIsFocused();
 
   React.useEffect(() => {
-    console.log(userData[0].pAddress, '<<<<< thisisuserdata');
     if (
       userData[0]?.pAddress == undefined ||
       userData[0].pAddress == 'undefined' ||
@@ -113,7 +111,6 @@ export default function AddSaleOfferScreen({navigation}) {
           if (response?.data !== null || response?.data !== undefined) {
             setCategories(response?.data);
             setAllCategory(response.data);
-            console.log(response, '<<<<<responsecategory');
           }
         }
       });
@@ -125,16 +122,9 @@ export default function AddSaleOfferScreen({navigation}) {
         setLoading(false);
         if (response !== null) {
           if (response?.message === 'Data From Database') {
-            // setOfferData(response?.data);
-            console.log(response, '<<<< this is sales offer screen');
             if (response.data.length > 3) {
               setCanApply(false);
             }
-            // console.log(
-            //   '\n\n\n\n\n\n\n\n\n\n\n',
-            //   response.data,
-            //   '\n\n\n\n\n\n\n\n\n\n offer data',
-            // );
           }
         }
       });
@@ -167,13 +157,11 @@ export default function AddSaleOfferScreen({navigation}) {
     };
     const diffInMs =
       moment(
-        `${parseInt(convertArr(endDate)[0])}-${
-          monthsArray[parseInt(convertArr(endDate)[1])]
+        `${parseInt(convertArr(endDate)[0])}-${monthsArray[parseInt(convertArr(endDate)[1])]
         }-${parseInt(convertArr(endDate)[2])}`,
       ) -
       moment(
-        `${parseInt(convertArr(startDate)[0])}-${
-          monthsArray[parseInt(convertArr(startDate)[1])]
+        `${parseInt(convertArr(startDate)[0])}-${monthsArray[parseInt(convertArr(startDate)[1])]
         }-${parseInt(convertArr(startDate)[2])}`,
       );
 
@@ -187,12 +175,6 @@ export default function AddSaleOfferScreen({navigation}) {
     var start1 = moment(startDate).format('DD/MM/YYYY');
     var end1 = moment(endDate).format('DD/MM/YYYY');
     var diffDays = dayDiff(start1, end1);
-    // console.log(diffDays, '<<<this is deiff');
-    console.log(getCategoryId());
-    // if (!canApply) {
-    //   Toast.show('Please buy membership to create more Offers!!');
-    //   return null;
-    // }
     if (description.length === 0) {
       setDescriptionError(true);
     } else if (location.length === 0) {
@@ -205,13 +187,9 @@ export default function AddSaleOfferScreen({navigation}) {
       setImageError(true);
     } else {
       const getMonthShort = da => da.split('-');
-      console.log(getMonthShort(startDate)[1]);
-
-      const finalStartDate = `${
-        getMonthShort(startDate)[0]
-      }-${monthsArray.indexOf(getMonthShort(startDate)[1])}-${
-        getMonthShort(startDate)[2]
-      }`;
+      const finalStartDate = `${getMonthShort(startDate)[0]
+        }-${monthsArray.indexOf(getMonthShort(startDate)[1])}-${getMonthShort(startDate)[2]
+        }`;
       const finalEndDate = `${getMonthShort(endDate)[0]}-${monthsArray.indexOf(
         getMonthShort(endDate)[1],
       )}-${getMonthShort(endDate)[2]}`;
@@ -224,30 +202,15 @@ export default function AddSaleOfferScreen({navigation}) {
         return null;
       }
       // return null;
-      console.log('submit it \n\n\n\n\n\n\n', {
-        description,
-        startDate: finalStartDate,
-        location,
-        category: category.id,
-        price: price,
-        code: code,
-        endDate: finalEndDate,
-        imageData,
-      });
-      // return null;
       setLoading(true);
       Auth.getLocalStorageData('bearer').then(token => {
-        console.log(token, '<<<<< \n\n\n\n this is token');
         Auth.getAccount().then(userData => {
-          console.log(userData, '<<< userdata');
-          // return null;
           addNewOfferPostRequest(
             description,
             location,
             startDate,
             endDate,
             imageData,
-
             userData[0]._id,
             null,
             getCategoryId(),
@@ -269,7 +232,7 @@ export default function AddSaleOfferScreen({navigation}) {
                         },
                       },
                     ],
-                    {cancelable: false},
+                    { cancelable: false },
                   );
                 }
                 if (response.errors) {
@@ -297,10 +260,10 @@ export default function AddSaleOfferScreen({navigation}) {
 
   return (
     <>
-      <ScrollView style={{width: '100%', height: SIZES.height}}>
+      <ScrollView style={{ width: '100%', height: SIZES.height }}>
         <CustomInputHeader navigation={navigation} title="Add Sale Offer" />
 
-        <View style={{paddingHorizontal: 16}}>
+        <View style={{ paddingHorizontal: 16 }}>
           <RenderUpload
             image={imageData}
             getImage={getImage}
@@ -310,7 +273,7 @@ export default function AddSaleOfferScreen({navigation}) {
           />
 
           <>
-            <Text style={{...commonStyles.fs16_500, marginTop: 10}}>
+            <Text style={{ ...commonStyles.fs16_500, marginTop: 10 }}>
               Description <ReqField />
             </Text>
             <TextInput
@@ -326,11 +289,11 @@ export default function AddSaleOfferScreen({navigation}) {
               }}
               style={[
                 styles.descriptionInput,
-                {borderColor: descriptionError ? 'red' : '#BDBDBD'},
+                { borderColor: descriptionError ? 'red' : '#BDBDBD' },
               ]}
             />
             {descriptionError ? (
-              <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+              <Text style={{ ...commonStyles.fs12_400, color: 'red' }}>
                 Description is mandatory
               </Text>
             ) : (
@@ -338,7 +301,7 @@ export default function AddSaleOfferScreen({navigation}) {
             )}
           </>
           <>
-            <Text style={{...commonStyles.fs16_500, marginTop: 10}}>
+            <Text style={{ ...commonStyles.fs16_500, marginTop: 10 }}>
               Price <ReqField />
             </Text>
             <TextInput
@@ -355,11 +318,11 @@ export default function AddSaleOfferScreen({navigation}) {
               }}
               style={[
                 styles.locationInput,
-                {borderColor: descriptionError ? 'red' : '#BDBDBD'},
+                { borderColor: descriptionError ? 'red' : '#BDBDBD' },
               ]}
             />
             {priceError ? (
-              <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+              <Text style={{ ...commonStyles.fs12_400, color: 'red' }}>
                 Price is mandatory
               </Text>
             ) : (
@@ -367,7 +330,7 @@ export default function AddSaleOfferScreen({navigation}) {
             )}
           </>
           <>
-            <Text style={{...commonStyles.fs16_500, marginTop: 10}}>Offer</Text>
+            <Text style={{ ...commonStyles.fs16_500, marginTop: 10 }}>Offer</Text>
             <TextInput
               placeholder="Offer Percent (ex: 20%)"
               placeholderTextColor="#999"
@@ -379,13 +342,13 @@ export default function AddSaleOfferScreen({navigation}) {
               }}
               style={[
                 styles.locationInput,
-                {borderColor: locationError ? '#BDBDBD' : '#BDBDBD'},
+                { borderColor: locationError ? '#BDBDBD' : '#BDBDBD' },
               ]}
             />
           </>
 
           <>
-            <Text style={{...commonStyles.fs16_500, marginTop: 14}}>
+            <Text style={{ ...commonStyles.fs16_500, marginTop: 14 }}>
               Location <ReqField />
             </Text>
             <View>
@@ -400,7 +363,7 @@ export default function AddSaleOfferScreen({navigation}) {
                 }}
                 style={[
                   styles.locationInput,
-                  {borderColor: locationError ? 'red' : '#BDBDBD'},
+                  { borderColor: locationError ? 'red' : '#BDBDBD' },
                 ]}
               />
               <Image
@@ -415,7 +378,7 @@ export default function AddSaleOfferScreen({navigation}) {
               />
             </View>
             {locationError ? (
-              <Text style={{...commonStyles.fs12_400, color: 'red'}}>
+              <Text style={{ ...commonStyles.fs12_400, color: 'red' }}>
                 Location is mandatory
               </Text>
             ) : (
@@ -423,7 +386,7 @@ export default function AddSaleOfferScreen({navigation}) {
             )}
           </>
 
-          <View style={{...commonStyles.rowBetween, marginBottom: 20}}>
+          <View style={{ ...commonStyles.rowBetween, marginBottom: 20 }}>
             <View>
               <PersonalLeaveDatePicker
                 heading="Start Date"
@@ -481,7 +444,7 @@ export default function AddSaleOfferScreen({navigation}) {
           </View>
 
           <>
-            <Text style={{...commonStyles.fs16_500, marginTop: -20}}>
+            <Text style={{ ...commonStyles.fs16_500, marginTop: -20 }}>
               Add Category
             </Text>
             {/* <TouchableOpacity onPress={() => setShowCategoryModal(true)}> */}
@@ -498,7 +461,7 @@ export default function AddSaleOfferScreen({navigation}) {
                   }}
                   style={[
                     styles.locationInput,
-                    {borderColor: locationError ? 'red' : '#BDBDBD'},
+                    { borderColor: locationError ? 'red' : '#BDBDBD' },
                   ]}
                 />
 
@@ -547,10 +510,10 @@ export default function AddSaleOfferScreen({navigation}) {
               </View>
             )}
           </>
-          <View style={{marginTop: 30}} />
+          <View style={{ marginTop: 30 }} />
 
           <Custom_Auth_Btn btnText="Preview" onPress={handlePreview} />
-          <View style={{marginTop: 10}} />
+          <View style={{ marginTop: 10 }} />
 
           <Custom_Auth_Btn btnText="Upload" onPress={handleSubmit} />
           <Text />
@@ -624,7 +587,7 @@ const styles = StyleSheet.create({
 });
 
 export const ReqField = () => {
-  return <Text style={{color: '#FF0000'}}>*</Text>;
+  return <Text style={{ color: '#FF0000' }}>*</Text>;
 };
 
 export const RenderUpload = ({
@@ -646,8 +609,8 @@ export const RenderUpload = ({
                 setImageError(false);
               }
             }}
-            style={{paddingVertical: 16}}>
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
+            style={{ paddingVertical: 16 }}>
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
               <Image
                 source={require('../../assets/img/work_img.png')}
                 resizeMode="contain"
@@ -662,19 +625,19 @@ export const RenderUpload = ({
                   <Image
                     source={require('../../assets/img/upload.png')}
                     resizeMode="contain"
-                    style={{width: 23, height: 23, tintColor: '#000'}}
+                    style={{ width: 23, height: 23, tintColor: '#000' }}
                   />
                 </View>
               )}
             </View>
           </TouchableHighlight>
         ) : (
-          <View style={{flex: 1}}>
-            <ScrollView horizontal={true} contentContainerStyle={{flexGrow: 1}}>
+          <View style={{ flex: 1 }}>
+            <ScrollView horizontal={true} contentContainerStyle={{ flexGrow: 1 }}>
               {image.map(res => {
                 return (
                   <Image
-                    source={{uri: res?.uri}}
+                    source={{ uri: res?.uri }}
                     resizeMode="stretch"
                     style={{
                       width: SIZES.width / 1.3,
@@ -698,7 +661,7 @@ export const RenderUpload = ({
                 underlayColor="#f7f8f9">
                 <Image
                   source={require('../../assets/img/cross.png')}
-                  style={{width: 25, height: 25, tintColor: '#fff'}}
+                  style={{ width: 25, height: 25, tintColor: '#fff' }}
                 />
               </TouchableHighlight>
             )}
@@ -706,7 +669,7 @@ export const RenderUpload = ({
         )}
       </View>
       {imageError ? (
-        <Text style={{...commonStyles.fs12_400, color: 'red', marginTop: -24}}>
+        <Text style={{ ...commonStyles.fs12_400, color: 'red', marginTop: -24 }}>
           Image is mandatory
         </Text>
       ) : (

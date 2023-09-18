@@ -10,9 +10,9 @@ import {
   Linking,
 } from 'react-native';
 import React from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import UserdetailsHeader from '../home/details/UserdetailsHeader';
-import {commonStyles} from '../../utils/styles';
+import { commonStyles } from '../../utils/styles';
 import {
   followersAndCount,
   followingAndCount,
@@ -24,30 +24,30 @@ import {
   getWorksByOwnerIdPostRequest,
 } from '../../utils/API';
 import Auth from '../../services/Auth';
-import {RenderSingleWork} from '../works/WorksScreen';
-import {SIZES} from '../../utils/theme';
-import CustomLoader, {CustomPanel} from '../../components/CustomLoader';
-import {TouchableHighlight} from 'react-native';
-import {Modal} from 'react-native';
-import {Toast} from 'react-native-toast-message/lib/src/Toast';
-import {setUserType} from '../../redux/reducer/userType';
+import { RenderSingleWork } from '../works/WorksScreen';
+import { SIZES } from '../../utils/theme';
+import CustomLoader, { CustomPanel } from '../../components/CustomLoader';
+import { TouchableHighlight } from 'react-native';
+import { Modal } from 'react-native';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import { setUserType } from '../../redux/reducer/userType';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useIsFocused} from '@react-navigation/native';
-import {JobsDetails} from '../jobs/JobsDetails';
-import {useState} from 'react';
-import {useEffect} from 'react';
+import { useIsFocused } from '@react-navigation/native';
+import { JobsDetails } from '../jobs/JobsDetails';
+import { useState } from 'react';
+import { useEffect } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
-import {setUser} from '../../redux/reducer/user';
+import { setUser } from '../../redux/reducer/user';
 
-export default function ProfileScreen({navigation, route}) {
+export default function ProfileScreen({ navigation, route }) {
   const [offerData, setOfferData] = React.useState([]);
   const [jobsData, setJobsData] = React.useState([]);
   const [workData, setWorkData] = React.useState([]);
   const [userTypeModalVisible, setUserTypeModalVisible] = React.useState(false);
   const dispatch = useDispatch();
   const [savedJob, setSavedJob] = useState([]);
-  const {userData} = useSelector(state => state.User);
-  const {userType} = useSelector(state => state.UserType);
+  const { userData } = useSelector(state => state.User);
+  const { userType } = useSelector(state => state.UserType);
   const [savedOffers, setSavedOffers] = React.useState([]);
   const isFocused = useIsFocused();
   const [followerCount, setFollowerCount] = React.useState(0);
@@ -66,12 +66,10 @@ export default function ProfileScreen({navigation, route}) {
   const [totalSaved, settotalSaved] = React.useState(0);
   const getToken = async () => {
     const token = await Auth.getLocalStorageData('bearer');
-    console.log('\n\n\n\n\n----> ', token, '\n\n\n\n', userData[0]);
 
     return null;
   };
 
-  console.log(userData, '<<<<<<<userdatafinal');
   React.useEffect(() => {
     setLoading(true);
     getToken();
@@ -83,11 +81,6 @@ export default function ProfileScreen({navigation, route}) {
           if (response !== null) {
             if (response?.message === 'Data From Database') {
               setOfferData(response?.data);
-              // console.log(
-              //   '\n\n\n\n\n\n\n\n\n\n\n',
-              //   response.data,
-              //   '\n\n\n\n\n\n\n\n\n\n offer data',
-              // );
             }
           }
         });
@@ -97,7 +90,6 @@ export default function ProfileScreen({navigation, route}) {
           if (response !== null) {
             if (response?.message === 'Item Found') {
               setJobsData(response?.data);
-              console.log('these are jobdata', response.data);
             }
           }
         });
@@ -128,13 +120,10 @@ export default function ProfileScreen({navigation, route}) {
     } else {
       (async () => {
         const token = await Auth.getLocalStorageData('bearer');
-        console.log('calling jobs by applicant idprofile');
         getJobByApplicantId(token, userData[0]._id, res => {
-          console.log(res, '<<<<< applied jobs by user');
           setJobsData(res.data);
         });
         getUserDataById(userData[0]?._id, token, async res => {
-          console.log('thisisuserdata', res.data, '\n\n\n\n');
           dispatch(setUser(res.data));
         });
         const data = await AsyncStorage.getItem('SAVED_OFFER');
@@ -143,23 +132,18 @@ export default function ProfileScreen({navigation, route}) {
         if (data != null) {
           const parsedata = JSON.parse(data);
           setOfferData(parsedata);
-          console.log(parsedata, '<<<< Tehsearesavedoffers');
         } else setOfferData([]);
         const data2 = await AsyncStorage.getItem('SAVED_JOBS');
         if (data2 != null) {
           const parsedata2 = JSON.parse(data2);
-          console.log(parsedata2, '<<<this is for saved jobs');
           setSavedJob(parsedata2);
         } else setSavedJob([]);
-        // Alert.alert(data);
         const alllike = await AsyncStorage.getItem('LIKED_OFFER');
         if (alllike == 'null' || alllike == null || alllike == 'NaN') {
           setCountLike(0);
         } else {
           setCountLike(alllike);
         }
-
-        // ---
 
         const data3 = await AsyncStorage.getItem('SAVED_WORK');
         if (data3 != null) {
@@ -174,34 +158,22 @@ export default function ProfileScreen({navigation, route}) {
           setFollowingCount(count);
         }
         setLoading(false);
-        // Alert.alert(data);
-        // console.log(
-        //   '\n\n\n\n\n',
-        //   setSavedOffers(JSON.parse(data)),
-        //   '<<<<<< \n\n\n\n this is saved item',
-        // );
       })();
     }
   }, [isFocused, userType]);
   React.useEffect(() => {
     (async () => {
       const data = await AsyncStorage.getItem('Saved_Item');
-      // Alert.alert(data);
-      console.log(
-        '\n\n\n\n\n',
-        // setSavedOffers(JSON.parse(data)),
-        '<<<<<< \n\n\n\n this is saved item',
-      );
     })();
   }, [isFocused]);
 
   return (
     <>
       <ScrollView
-        style={{width: '100%', height: SIZES.height, backgroundColor: '#fff'}}>
+        style={{ width: '100%', height: SIZES.height, backgroundColor: '#fff' }}>
         <UserdetailsHeader navigation={navigation} title={userName} />
 
-        <View style={{marginBottom: 20}}>
+        <View style={{ marginBottom: 20 }}>
           <View
             style={{
               paddingHorizontal: 14,
@@ -219,15 +191,15 @@ export default function ProfileScreen({navigation, route}) {
               }}>
               {userData?.length && userData[0]?.userProfile ? (
                 <Image
-                  source={{uri: userData[0]?.userProfile}}
+                  source={{ uri: userData[0]?.userProfile }}
                   resizeMode="contain"
-                  style={{width: 75, height: 75, borderRadius: 100}}
+                  style={{ width: 75, height: 75, borderRadius: 100 }}
                 />
               ) : (
                 <Image
                   source={userImage}
                   resizeMode="contain"
-                  style={{width: 60, height: 60, borderRadius: 100}}
+                  style={{ width: 60, height: 60, borderRadius: 100 }}
                 />
               )}
             </View>
@@ -239,33 +211,33 @@ export default function ProfileScreen({navigation, route}) {
                   width: SIZES.width - 120,
                   marginTop: 5,
                 }}>
-                <View style={{alignItems: 'center'}}>
-                  <Text style={{...commonStyles.fs24_700}}>
+                <View style={{ alignItems: 'center' }}>
+                  <Text style={{ ...commonStyles.fs24_700 }}>
                     {offerData?.length + jobsData?.length + workData?.length}
                   </Text>
-                  <Text style={{...commonStyles.fs14_500}}>Post</Text>
+                  <Text style={{ ...commonStyles.fs14_500 }}>Post</Text>
                 </View>
 
-                <View style={{alignItems: 'center'}}>
+                <View style={{ alignItems: 'center' }}>
                   {loading ? (
                     <ActivityIndicator color="#000" size={34} />
                   ) : (
-                    <Text style={{...commonStyles.fs24_700}}>
+                    <Text style={{ ...commonStyles.fs24_700 }}>
                       {followerCount}
                     </Text>
                   )}
-                  <Text style={{...commonStyles.fs14_500}}>Followers</Text>
+                  <Text style={{ ...commonStyles.fs14_500 }}>Followers</Text>
                 </View>
 
-                <View style={{alignItems: 'center'}}>
+                <View style={{ alignItems: 'center' }}>
                   {loading ? (
                     <ActivityIndicator color="#000" size={34} />
                   ) : (
-                    <Text style={{...commonStyles.fs24_700}}>
+                    <Text style={{ ...commonStyles.fs24_700 }}>
                       {followingCount}
                     </Text>
                   )}
-                  <Text style={{...commonStyles.fs14_500}}>Followings</Text>
+                  <Text style={{ ...commonStyles.fs14_500 }}>Followings</Text>
                 </View>
               </View>
             )}
@@ -276,19 +248,19 @@ export default function ProfileScreen({navigation, route}) {
                   width: SIZES.width - 120,
                   marginTop: 5,
                 }}>
-                <View style={{alignItems: 'center'}}>
-                  <Text style={{...commonStyles.fs24_700}}>
+                <View style={{ alignItems: 'center' }}>
+                  <Text style={{ ...commonStyles.fs24_700 }}>
                     {/* {offerData?.length + jobsData?.length + workData?.length} */}
                     {countLike}
                   </Text>
-                  <Text style={{...commonStyles.fs14_500}}>Liked</Text>
+                  <Text style={{ ...commonStyles.fs14_500 }}>Liked</Text>
                 </View>
 
-                <View style={{alignItems: 'center'}}>
+                <View style={{ alignItems: 'center' }}>
                   {loading ? (
                     <ActivityIndicator color="#000" size={34} />
                   ) : (
-                    <Text style={{...commonStyles.fs24_700}}>
+                    <Text style={{ ...commonStyles.fs24_700 }}>
                       {(() => {
                         let count = 0;
                         if (
@@ -315,18 +287,18 @@ export default function ProfileScreen({navigation, route}) {
                         : offerData?.length} */}
                     </Text>
                   )}
-                  <Text style={{...commonStyles.fs14_500}}>Saved</Text>
+                  <Text style={{ ...commonStyles.fs14_500 }}>Saved</Text>
                 </View>
 
-                <View style={{alignItems: 'center'}}>
+                <View style={{ alignItems: 'center' }}>
                   {loading ? (
                     <ActivityIndicator color="#000" size={34} />
                   ) : (
-                    <Text style={{...commonStyles.fs24_700}}>
+                    <Text style={{ ...commonStyles.fs24_700 }}>
                       {followingCount}
                     </Text>
                   )}
-                  <Text style={{...commonStyles.fs14_500}}>Shared</Text>
+                  <Text style={{ ...commonStyles.fs14_500 }}>Shared</Text>
                 </View>
               </View>
             )}
@@ -338,17 +310,17 @@ export default function ProfileScreen({navigation, route}) {
               alignItems: 'flex-start',
               marginTop: 5,
             }}>
-            <Text style={{...commonStyles.fs16_700, textAlign: 'center'}}>
+            <Text style={{ ...commonStyles.fs16_700, textAlign: 'center' }}>
               {userName}
             </Text>
             {userData != null && userData[0]?.location ? (
-              <View style={{...commonStyles.rowStart}}>
+              <View style={{ ...commonStyles.rowStart }}>
                 <Image
                   source={require('../../assets/img/location.png')}
                   resizeMode="contain"
-                  style={{width: 22, height: 28, tintColor: '#0073FF'}}
+                  style={{ width: 22, height: 28, tintColor: '#0073FF' }}
                 />
-                <Text style={{...commonStyles.fs16_500, color: '#0073FF'}}>
+                <Text style={{ ...commonStyles.fs16_500, color: '#0073FF' }}>
                   {userData[0]?.location}
                 </Text>
               </View>
@@ -366,27 +338,27 @@ export default function ProfileScreen({navigation, route}) {
             justifyContent: 'flex-start',
           }}>
           <TouchableHighlight
-            style={{...styles.switchAccount}}
+            style={{ ...styles.switchAccount }}
             underlayColor="#eee"
             onPress={async () => {
               setShowJobProfile(false);
               setUserTypeModalVisible(true);
             }}>
-            <View style={{...commonStyles.rowBetween}}>
-              <Text style={{...commonStyles.fs13_400}}>
+            <View style={{ ...commonStyles.rowBetween }}>
+              <Text style={{ ...commonStyles.fs13_400 }}>
                 {' '}
                 {userType == 'shop' ? 'Shop Owner' : 'User'}
               </Text>
               <Image
                 source={require('../../assets/img/caret-down.png')}
                 resizeMode="contain"
-                style={{width: 11, height: 11, marginLeft: 6}}
+                style={{ width: 11, height: 11, marginLeft: 6 }}
               />
             </View>
           </TouchableHighlight>
           {userType != 'shop' && (
             <TouchableOpacity
-              style={{marginLeft: 10, marginTop: 7}}
+              style={{ marginLeft: 10, marginTop: 7 }}
               onPress={() => {
                 setShowJobProfile(true);
               }}>
@@ -405,8 +377,8 @@ export default function ProfileScreen({navigation, route}) {
         </View>
         {!showJobProfile && (
           <>
-            <View style={{padding: 9, paddingHorizontal: 12}}>
-              <Text style={{...commonStyles.fs18_500, marginBottom: 5}}>
+            <View style={{ padding: 9, paddingHorizontal: 12 }}>
+              <Text style={{ ...commonStyles.fs18_500, marginBottom: 5 }}>
                 {userType == 'user' ? 'Saved Offers' : 'All Offers'}
               </Text>
 
@@ -414,7 +386,7 @@ export default function ProfileScreen({navigation, route}) {
                 <ScrollView horizontal>
                   {offerData?.map((item, index) => {
                     return (
-                      <View key={index} style={{marginRight: 20}}>
+                      <View key={index} style={{ marginRight: 20 }}>
                         <TouchableOpacity
                           activeOpacity={0.5}
                           onPress={() => {
@@ -445,10 +417,10 @@ export default function ProfileScreen({navigation, route}) {
                           />
 
                           <Text
-                            style={{...commonStyles.fs16_500, marginTop: 8}}>
+                            style={{ ...commonStyles.fs16_500, marginTop: 8 }}>
                             {item?.description}
                           </Text>
-                          <Text style={{...commonStyles.fs13_400}}>
+                          <Text style={{ ...commonStyles.fs13_400 }}>
                             Location: {item?.location}
                           </Text>
                         </TouchableOpacity>
@@ -457,9 +429,9 @@ export default function ProfileScreen({navigation, route}) {
                   })}
                 </ScrollView>
               ) : (
-                <Text style={{...commonStyles.fs13_500}}>No Offers Found</Text>
+                <Text style={{ ...commonStyles.fs13_500 }}>No Offers Found</Text>
               )}
-              <Text style={{...commonStyles.fs18_500, marginBottom: 5}}>
+              <Text style={{ ...commonStyles.fs18_500, marginBottom: 5 }}>
                 Saved Jobs
               </Text>
               <ScrollView horizontal>
@@ -476,7 +448,7 @@ export default function ProfileScreen({navigation, route}) {
               </ScrollView>
             </View>
 
-            <View style={{padding: 9, paddingHorizontal: 12}}>
+            <View style={{ padding: 9, paddingHorizontal: 12 }}>
               <Text
                 style={{
                   ...commonStyles.fs18_500,
@@ -662,12 +634,12 @@ export default function ProfileScreen({navigation, route}) {
                   })}
                 </ScrollView>
               ) : (
-                <Text style={{...commonStyles.fs13_500}}>No Jobs Found</Text>
+                <Text style={{ ...commonStyles.fs13_500 }}>No Jobs Found</Text>
               )}
             </View>
 
             {userType == 'shop' && (
-              <View style={{paddingVertical: 10, paddingHorizontal: 3}}>
+              <View style={{ paddingVertical: 10, paddingHorizontal: 3 }}>
                 <Text
                   style={{
                     ...commonStyles.fs18_500,
@@ -677,12 +649,12 @@ export default function ProfileScreen({navigation, route}) {
                   All Works
                 </Text>
                 {workData != 'null' &&
-                workData != null &&
-                workData?.length !== 0 ? (
+                  workData != null &&
+                  workData?.length !== 0 ? (
                   <ScrollView horizontal>
                     {workData.map((item, index) => {
                       return (
-                        <View key={index} style={{marginTop: -4}}>
+                        <View key={index} style={{ marginTop: -4 }}>
                           <RenderSingleWork
                             item={item}
                             showDot={false}
@@ -783,14 +755,14 @@ export default function ProfileScreen({navigation, route}) {
                   onPress={() => {
                     Linking.openURL(userData[0]?.certificate);
                   }}>
-                  <Text style={{textAlign: 'center'}}> Open Certificate</Text>
+                  <Text style={{ textAlign: 'center' }}> Open Certificate</Text>
                 </TouchableOpacity>
               )}
             </View>
           </View>
         )}
         <View>
-          <View style={{height: 60}} />
+          <View style={{ height: 60 }} />
         </View>
       </ScrollView>
 
@@ -821,20 +793,17 @@ export default function ProfileScreen({navigation, route}) {
   );
 }
 
-export const SingleJob = ({item, index, userType, navigation}) => {
+export const SingleJob = ({ item, index, userType, navigation }) => {
   const [showJobData, setshowJobData] = useState(false);
   const [jobData, setjobData] = useState({});
   const [jobDetails, setJobDetails] = useState({});
   useEffect(() => {
     (async () => {
       if (userType == 'shop') {
-        console.log(item, '<<<thisissinglejobdata----shop');
         setJobDetails(item);
       } else {
         const token = await Auth.getLocalStorageData('bearer');
-        // console.log(item, '<<<thisissinglejobdata----');
         getJobDetailByID(token, item.jobId, res => {
-          console.log(res.data[0], item, '<<<thisissinglejobdata----user');
           setJobDetails(res.data[0]);
         });
       }
@@ -902,7 +871,7 @@ export const SingleJob = ({item, index, userType, navigation}) => {
           <JobsDetails text="Message:" item={jobDetails?.message} />
           <JobsDetails text="StartDate:" item={jobDetails?.startDate} />
           <JobsDetails text="EndDate:" item={jobDetails?.endDate} />
-          <Text style={{height: 8}} />
+          <Text style={{ height: 8 }} />
           {/* {userType === 'user' ? <> </> : <></>} */}
           {userType == 'shop' && (
             <Text
@@ -945,21 +914,20 @@ export const SingleJob = ({item, index, userType, navigation}) => {
           setshowJobData(!showJobData);
         }}>
         {showJobData ? (
-          <Text style={{...commonStyles.fs12_400}}>Collapse</Text>
+          <Text style={{ ...commonStyles.fs12_400 }}>Collapse</Text>
         ) : (
-          <Text style={{...commonStyles.fs12_400}}>Expand</Text>
+          <Text style={{ ...commonStyles.fs12_400 }}>Expand</Text>
         )}
       </TouchableHighlight>
     </View>
   );
 };
-export const ShowSingJobSaved = ({item, index, userType, navigation}) => {
+export const ShowSingJobSaved = ({ item, index, userType, navigation }) => {
   const [showJobData, setshowJobData] = useState(false);
   const [jobData, setjobData] = useState({});
   const [jobDetails, setJobDetails] = useState({});
   useEffect(() => {
     (async () => {
-      console.log(item, '<<<show users----shop');
       setJobDetails(item);
     })();
   }, []);
@@ -1027,7 +995,7 @@ export const ShowSingJobSaved = ({item, index, userType, navigation}) => {
           <JobsDetails text="Message:" item={jobDetails?.message} />
           <JobsDetails text="StartDate:" item={jobDetails?.startDate} />
           <JobsDetails text="EndDate:" item={jobDetails?.endDate} />
-          <Text style={{height: 8}} />
+          <Text style={{ height: 8 }} />
           {/* {userType === 'user' ? <> </> : <></>} */}
           {userType == 'shop' && (
             <Text
@@ -1070,16 +1038,16 @@ export const ShowSingJobSaved = ({item, index, userType, navigation}) => {
           setshowJobData(!showJobData);
         }}>
         {showJobData ? (
-          <Text style={{...commonStyles.fs12_400}}>Collapse</Text>
+          <Text style={{ ...commonStyles.fs12_400 }}>Collapse</Text>
         ) : (
-          <Text style={{...commonStyles.fs12_400}}>Expand</Text>
+          <Text style={{ ...commonStyles.fs12_400 }}>Expand</Text>
         )}
       </TouchableHighlight>
     </View>
   );
 };
 
-const UserTypeModal = ({modalVisible, callback2, setUserTypeModalVisible}) => {
+const UserTypeModal = ({ modalVisible, callback2, setUserTypeModalVisible }) => {
   return (
     <Modal
       animationType="slide"

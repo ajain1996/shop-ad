@@ -9,9 +9,9 @@ import {
 } from 'react-native';
 import React from 'react';
 import UserdetailsHeader from './UserdetailsHeader';
-import {commonStyles} from '../../../utils/styles';
-import {SIZES} from '../../../utils/theme';
-import {useSelector} from 'react-redux';
+import { commonStyles } from '../../../utils/styles';
+import { SIZES } from '../../../utils/theme';
+import { useSelector } from 'react-redux';
 import {
   followersAndCount,
   followingAndCount,
@@ -23,25 +23,24 @@ import {
   unFollowPostAPI,
 } from '../../../utils/API';
 import Auth from '../../../services/Auth';
-import {RenderSingleWork} from '../../works/WorksScreen';
+import { RenderSingleWork } from '../../works/WorksScreen';
 import Toast from 'react-native-simple-toast';
-import {JobsDetails} from '../../jobs/JobsDetails';
-import {LinearGradient} from 'react-native-svg';
-import {useState} from 'react';
+import { JobsDetails } from '../../jobs/JobsDetails';
+import { LinearGradient } from 'react-native-svg';
+import { useState } from 'react';
 
-export default function UserDetailsScreen({navigation, route}) {
+export default function UserDetailsScreen({ navigation, route }) {
   const [offerData, setOfferData] = React.useState([]);
   const [jobsData, setJobsData] = React.useState([]);
   const [workData, setWorkData] = React.useState([]);
 
-  const {userId, user} = route.params;
+  const { userId, user } = route.params;
   const [profileUserData, setProfileUserData] = useState({});
-  const {userData} = useSelector(state => state.User);
+  const { userData } = useSelector(state => state.User);
   const [followerCount, setFollowerCount] = React.useState(0);
   const [followingCount, setFollowingCount] = React.useState(0);
   const [isFollowed, setIsFollowed] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  console.log(user, '<<< this is user');
   React.useEffect(() => {
     (async () => {
       const unsubscribe = navigation.addListener('focus', () => {
@@ -75,7 +74,6 @@ export default function UserDetailsScreen({navigation, route}) {
     setLoading(true);
     Auth.getLocalStorageData('bearer').then(token => {
       getUserByIDPostAPI(userId, token, res => {
-        console.log(res, '<<this is res');
         setProfileUserData(res?.data[0]);
       });
       getOffersByOwnerIdPostRequest(userId, token, response => {
@@ -127,14 +125,11 @@ export default function UserDetailsScreen({navigation, route}) {
   }, [followerCount, followingCount, isFollowed]);
 
   const handleFollow = () => {
-    // setIsFollowed(true);
-
     if (isFollowed) {
-      console.log(' unfollowing');
       setFollowerCount(prev => prev + 1);
       Auth.getLocalStorageData('bearer').then(token => {
         unFollowPostAPI(
-          {userId, follwedId: userData[0]?._id, bearerToken: token},
+          { userId, follwedId: userData[0]?._id, bearerToken: token },
           response => {
             if (response !== null) {
               Toast.show(response.message);
@@ -144,8 +139,6 @@ export default function UserDetailsScreen({navigation, route}) {
         );
       });
     } else {
-      console.log(' following');
-
       Auth.getLocalStorageData('bearer').then(token => {
         followUserPostAPI(userId, userData[0]?._id, token, response => {
           if (response !== null) {
@@ -171,11 +164,10 @@ export default function UserDetailsScreen({navigation, route}) {
   const [showJobData, setshowJobData] = React.useState(false);
 
   return (
-    <ScrollView
-      style={{width: '100%', height: '100%', backgroundColor: '#fff'}}>
+    <ScrollView style={{ width: '100%', height: '100%', backgroundColor: '#fff', marginTop: 28 }}>
       <UserdetailsHeader navigation={navigation} title={user?.name} />
 
-      <View style={{marginBottom: 20}}>
+      <View style={{ marginBottom: 20 }}>
         <View
           style={{
             paddingHorizontal: 24,
@@ -193,15 +185,15 @@ export default function UserDetailsScreen({navigation, route}) {
             }}>
             {user?.userProfile !== undefined ? (
               <Image
-                source={{uri: profileUserData?.userProfile}}
+                source={{ uri: profileUserData?.userProfile }}
                 resizeMode="contain"
-                style={{width: 75, height: 75, borderRadius: 100}}
+                style={{ width: 75, height: 75, borderRadius: 100 }}
               />
             ) : (
               <Image
                 source={require('../../../assets/img/profile-tab.png')}
                 resizeMode="contain"
-                style={{width: 60, height: 60, borderRadius: 100}}
+                style={{ width: 60, height: 60, borderRadius: 100 }}
               />
             )}
           </View>
@@ -212,29 +204,29 @@ export default function UserDetailsScreen({navigation, route}) {
               width: SIZES.width - 120,
               marginTop: 5,
             }}>
-            <View style={{alignItems: 'center'}}>
-              <Text style={{...commonStyles.fs24_700}}>
+            <View style={{ alignItems: 'center' }}>
+              <Text style={{ ...commonStyles.fs24_700 }}>
                 {offerData?.length + jobsData?.length + workData?.length}
               </Text>
-              <Text style={{...commonStyles.fs14_500}}>Post</Text>
+              <Text style={{ ...commonStyles.fs14_500 }}>Post</Text>
             </View>
 
-            <View style={{alignItems: 'center'}}>
+            <View style={{ alignItems: 'center' }}>
               {loading ? (
                 <ActivityIndicator color="#000" size={34} />
               ) : (
-                <Text style={{...commonStyles.fs24_700}}>{followerCount}</Text>
+                <Text style={{ ...commonStyles.fs24_700 }}>{followerCount}</Text>
               )}
-              <Text style={{...commonStyles.fs14_500}}>Followers</Text>
+              <Text style={{ ...commonStyles.fs14_500 }}>Followers</Text>
             </View>
 
-            <View style={{alignItems: 'center'}}>
+            <View style={{ alignItems: 'center' }}>
               {loading ? (
                 <ActivityIndicator color="#000" size={34} />
               ) : (
-                <Text style={{...commonStyles.fs24_700}}>{followingCount}</Text>
+                <Text style={{ ...commonStyles.fs24_700 }}>{followingCount}</Text>
               )}
-              <Text style={{...commonStyles.fs14_500}}>Followings</Text>
+              <Text style={{ ...commonStyles.fs14_500 }}>Followings</Text>
             </View>
           </View>
         </View>
@@ -245,7 +237,7 @@ export default function UserDetailsScreen({navigation, route}) {
             alignItems: 'flex-start',
             marginTop: 5,
           }}>
-          <Text style={{...commonStyles.fs16_700, textAlign: 'center'}}>
+          <Text style={{ ...commonStyles.fs16_700, textAlign: 'center' }}>
             {profileUserData?.name}
           </Text>
           <TouchableHighlight
@@ -254,13 +246,13 @@ export default function UserDetailsScreen({navigation, route}) {
               navigation.navigate('LocationScreen');
             }}>
             {user[0]?.location ? (
-              <View style={{...commonStyles.rowStart}}>
+              <View style={{ ...commonStyles.rowStart }}>
                 <Image
                   source={require('../../../assets/img/location.png')}
                   resizeMode="contain"
-                  style={{width: 22, height: 28, tintColor: '#0073FF'}}
+                  style={{ width: 22, height: 28, tintColor: '#0073FF' }}
                 />
-                <Text style={{...commonStyles.fs16_500, color: '#0073FF'}}>
+                <Text style={{ ...commonStyles.fs16_500, color: '#0073FF' }}>
                   {user[0]?.location}
                 </Text>
               </View>
@@ -281,22 +273,22 @@ export default function UserDetailsScreen({navigation, route}) {
             }}
             underlayColor="#eee"
             onPress={handleFollow}>
-            <Text style={{...commonStyles.fs13_400}}>
+            <Text style={{ ...commonStyles.fs13_400 }}>
               {isFollowed ? 'Following' : 'Follow'}
             </Text>
           </TouchableHighlight>
         </View>
       </View>
 
-      <View style={{padding: 9}}>
-        <Text style={{...commonStyles.fs18_500, marginBottom: 5}}>
+      <View style={{ padding: 9 }}>
+        <Text style={{ ...commonStyles.fs18_500, marginBottom: 5 }}>
           All Offers
         </Text>
         {offerData.length !== 0 ? (
           <ScrollView horizontal>
             {offerData.map((item, index) => {
               return (
-                <View key={index} style={{marginRight: 20}}>
+                <View key={index} style={{ marginRight: 20 }}>
                   <TouchableOpacity
                     activeOpacity={0.5}
                     onPress={() => {
@@ -327,10 +319,10 @@ export default function UserDetailsScreen({navigation, route}) {
                       }}
                     />
 
-                    <Text style={{...commonStyles.fs16_500, marginTop: 8}}>
+                    <Text style={{ ...commonStyles.fs16_500, marginTop: 8 }}>
                       {item?.description}
                     </Text>
-                    <Text style={{...commonStyles.fs13_400}}>
+                    <Text style={{ ...commonStyles.fs13_400 }}>
                       Location: {item?.location}
                     </Text>
                   </TouchableOpacity>
@@ -339,12 +331,12 @@ export default function UserDetailsScreen({navigation, route}) {
             })}
           </ScrollView>
         ) : (
-          <Text style={{...commonStyles.fs13_500}}>No Offer Found</Text>
+          <Text style={{ ...commonStyles.fs13_500 }}>No Offer Found</Text>
         )}
       </View>
 
-      <View style={{padding: 9}}>
-        <Text style={{...commonStyles.fs18_500, marginBottom: 5}}>
+      <View style={{ padding: 9 }}>
+        <Text style={{ ...commonStyles.fs18_500, marginBottom: 5 }}>
           All Jobs
         </Text>
         {jobsData.length !== 0 ? (
@@ -426,7 +418,7 @@ export default function UserDetailsScreen({navigation, route}) {
                       <JobsDetails text="Message:" item={item?.message} />
                       <JobsDetails text="StartDate:" item={item?.startDate} />
                       <JobsDetails text="EndDate:" item={item?.endDate} />
-                      <Text style={{height: 8}} />
+                      <Text style={{ height: 8 }} />
                       {userType === 'user' ? (
                         <LinearGradient
                           colors={['#EDAA26', '#E27127']}
@@ -449,7 +441,7 @@ export default function UserDetailsScreen({navigation, route}) {
                               borderRadius: 5,
                             }}>
                             <Text
-                              style={{...commonStyles.fs15_600, color: '#fff'}}>
+                              style={{ ...commonStyles.fs15_600, color: '#fff' }}>
                               Apply Job
                             </Text>
                           </TouchableHighlight>
@@ -476,9 +468,9 @@ export default function UserDetailsScreen({navigation, route}) {
                       setshowJobData(!showJobData);
                     }}>
                     {showJobData ? (
-                      <Text style={{...commonStyles.fs12_400}}>Collapse</Text>
+                      <Text style={{ ...commonStyles.fs12_400 }}>Collapse</Text>
                     ) : (
-                      <Text style={{...commonStyles.fs12_400}}>Expand</Text>
+                      <Text style={{ ...commonStyles.fs12_400 }}>Expand</Text>
                     )}
                   </TouchableHighlight>
                 </View>
@@ -519,19 +511,19 @@ export default function UserDetailsScreen({navigation, route}) {
             })}
           </ScrollView>
         ) : (
-          <Text style={{...commonStyles.fs13_500}}>No Jobs Found</Text>
+          <Text style={{ ...commonStyles.fs13_500 }}>No Jobs Found</Text>
         )}
       </View>
 
-      <View style={{paddingVertical: 9}}>
-        <Text style={{...commonStyles.fs18_500, marginLeft: 10}}>
+      <View style={{ paddingVertical: 9 }}>
+        <Text style={{ ...commonStyles.fs18_500, marginLeft: 10 }}>
           All Works
         </Text>
         {workData.length !== 0 ? (
           <ScrollView horizontal>
             {workData.map((item, index) => {
               return (
-                <View key={index} style={{marginTop: -4}}>
+                <View key={index} style={{ marginTop: -4 }}>
                   <RenderSingleWork item={item} navigation={navigation} />
                 </View>
               );
@@ -539,14 +531,14 @@ export default function UserDetailsScreen({navigation, route}) {
           </ScrollView>
         ) : (
           <Text
-            style={{...commonStyles.fs13_500, marginLeft: 10, marginTop: 4}}>
+            style={{ ...commonStyles.fs13_500, marginLeft: 10, marginTop: 4 }}>
             No Works Found
           </Text>
         )}
       </View>
 
       <View>
-        <View style={{height: 4}} />
+        <View style={{ height: 4 }} />
       </View>
 
       {/* <CustomPanel loading={loading} />

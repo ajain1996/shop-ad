@@ -7,23 +7,23 @@ import {
   Image,
 } from 'react-native';
 import React from 'react';
-import {SIZES} from '../utils/theme';
+import { SIZES } from '../utils/theme';
 import Auth_BG_Component from '../components/Auth_BG_Component';
-import {commonStyles} from '../utils/styles';
+import { commonStyles } from '../utils/styles';
 import Custom_Auth_Btn from '../components/Custom_Auth_Btn';
 import CustomTextInput from '../components/CustomTextInput';
-import {mobileRegisterPostRequest} from '../utils/API';
+import { mobileRegisterPostRequest } from '../utils/API';
 import Toast from 'react-native-simple-toast';
 import Auth from '../services/Auth';
-import {useDispatch, useSelector} from 'react-redux';
-import {setUser} from '../redux/reducer/user';
-import CustomLoader, {CustomPanel} from '../components/CustomLoader';
-import {launchImageLibrary} from 'react-native-image-picker';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser } from '../redux/reducer/user';
+import CustomLoader, { CustomPanel } from '../components/CustomLoader';
+import { launchImageLibrary } from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function RegisterScreen({navigation}) {
+export default function RegisterScreen({ navigation }) {
   const dispatch = useDispatch();
-  const {userType} = useSelector(state => state.UserType);
+  const { userType } = useSelector(state => state.UserType);
 
   const [nameError, setNameError] = React.useState(false);
   const [emailError, setEmailError] = React.useState(false);
@@ -60,7 +60,7 @@ export default function RegisterScreen({navigation}) {
         phone,
         userType,
         async response => {
-          console.log(' api called');
+          // console.log('\n\n mobileRegisterPostRequest api response: ', response);
           setLoading(false);
           if (response !== null) {
             if (response?.message !== undefined) {
@@ -100,8 +100,8 @@ export default function RegisterScreen({navigation}) {
   }
 
   return (
-    <Auth_BG_Component>
-      <StatusBar barStyle="light-content" backgroundColor="#1572B9" />
+    <View style={{ width: "100%", height: "100%", backgroundColor: "#fff" }}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       <View
         style={{
           justifyContent: 'center',
@@ -111,15 +111,16 @@ export default function RegisterScreen({navigation}) {
           paddingVertical: '28%',
         }}>
         <View>
-          <Text style={{fontSize: 32, fontWeight: '900', color: '#fff'}}>
+          <Text style={{ fontSize: 24, fontWeight: '600', color: '#FF800B' }}>
             {btnText}
           </Text>
           <Text
             style={{
-              ...commonStyles.fs18_400,
-              color: '#fff',
+              ...commonStyles.fs14_400,
+              color: '#000',
               marginTop: 8,
-              marginBottom: 20,
+              marginBottom: 40,
+              width: "90%"
             }}>
             Register Now to access all the features of ShopAd!
           </Text>
@@ -135,13 +136,13 @@ export default function RegisterScreen({navigation}) {
             }}
           />
           {nameError ? (
-            <Text style={{...commonStyles.fs13_400, color: 'red'}}>
+            <Text style={{ ...commonStyles.fs12_400, color: 'red' }}>
               Name is required
             </Text>
           ) : (
             <></>
           )}
-          <View style={{height: 14}} />
+          <View style={{ height: 14 }} />
 
           <CustomTextInput
             placeholder="shopad@gmail.com"
@@ -155,13 +156,13 @@ export default function RegisterScreen({navigation}) {
             }}
           />
           {emailError ? (
-            <Text style={{...commonStyles.fs13_400, color: 'red'}}>
+            <Text style={{ ...commonStyles.fs12_400, color: 'red' }}>
               Email is required
             </Text>
           ) : (
             <></>
           )}
-          <View style={{height: 14}} />
+          <View style={{ height: 14 }} />
 
           <CustomTextInput
             placeholder="Mobile"
@@ -174,13 +175,13 @@ export default function RegisterScreen({navigation}) {
             }}
           />
           {phoneError ? (
-            <Text style={{...commonStyles.fs13_400, color: 'red', zIndex: 1}}>
+            <Text style={{ ...commonStyles.fs13_400, color: 'red', zIndex: 1 }}>
               Mobile number is required
             </Text>
           ) : (
             <></>
           )}
-          <View style={{height: 14}} />
+          <View style={{ height: 14 }} />
 
           <CustomTextInput
             placeholder="Password"
@@ -193,34 +194,36 @@ export default function RegisterScreen({navigation}) {
             }}
           />
           {passwordError ? (
-            <Text style={{...commonStyles.fs13_400, color: 'red', zIndex: 1}}>
+            <Text style={{ ...commonStyles.fs13_400, color: 'red', zIndex: 1 }}>
               Password is required
             </Text>
           ) : (
             <></>
           )}
-          <View style={{height: 14}} />
+          <View style={{ height: "20%" }} />
 
           <Custom_Auth_Btn
             btnText={'Register as ' + btnText}
             onPress={() => {
               handleRegister(); /*navigation.navigate("Root")*/
             }}
+            colors={["#E68927", "#E68927"]}
+            style={{ borderRadius: 14 }}
           />
         </View>
 
-        <View style={{alignItems: 'center', zIndex: 1, marginTop: 40}}>
-          <View style={{...commonStyles.row}}>
-            <Text style={{...commonStyles.fs18_500, color: '#fff'}}>
+        <View style={{ alignItems: 'center', zIndex: 1, marginTop: 20 }}>
+          <View style={{ ...commonStyles.row }}>
+            <Text style={{ ...commonStyles.fs14_400, color: '#000' }}>
               Already have an account?{' '}
             </Text>
             <TouchableHighlight
               onPress={() => {
                 navigation.navigate('LoginScreen');
               }}
-              underlayColor="#1572B9">
-              <Text style={{...commonStyles.fs18_500, color: '#EDAA26'}}>
-                Login
+              underlayColor="transparent">
+              <Text style={{ ...commonStyles.fs14_400, color: '#1178BB' }}>
+                Login here
               </Text>
             </TouchableHighlight>
           </View>
@@ -229,6 +232,6 @@ export default function RegisterScreen({navigation}) {
       <CustomPanel loading={loading} />
 
       <CustomLoader loading={loading} />
-    </Auth_BG_Component>
+    </View>
   );
 }

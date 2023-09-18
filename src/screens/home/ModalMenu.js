@@ -7,20 +7,19 @@ import {
   TouchableHighlight,
   Image,
 } from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-import {removeUser, userSlice} from '../../redux/reducer/user';
-import {setUserType} from '../../redux/reducer/userType';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeUser, userSlice } from '../../redux/reducer/user';
+import { setUserType } from '../../redux/reducer/userType';
 import Auth from '../../services/Auth';
-import {commonStyles} from '../../utils/styles';
-import {SIZES} from '../../utils/theme';
+import { commonStyles } from '../../utils/styles';
+import { SIZES } from '../../utils/theme';
 import Toast from 'react-native-simple-toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ModalMenu = ({modalVisible, callback, navigation}) => {
+const ModalMenu = ({ modalVisible, callback, navigation }) => {
   const dispatch = useDispatch();
-  const {userData} = useSelector(state => state.User);
-  const {userType} = useSelector(state => state.UserType);
-  //   console.log('this is user type \n\n\n\n', userType, '<<<< this is user type');
+  const { userData } = useSelector(state => state.User);
+  const { userType } = useSelector(state => state.UserType);
 
   var username = '';
   if (userData !== null && userData !== undefined) {
@@ -30,7 +29,7 @@ const ModalMenu = ({modalVisible, callback, navigation}) => {
   const [userTypeModalVisible, setUserTypeModalVisible] = React.useState(false);
 
   return (
-    <View style={{alignItems: 'flex-start'}}>
+    <View style={{ alignItems: 'flex-start' }}>
       <Modal
         animationType="fade"
         transparent={true}
@@ -43,11 +42,11 @@ const ModalMenu = ({modalVisible, callback, navigation}) => {
           }}
           underlayColor="transparent">
           <View style={styles.modalView}>
-            <View style={{...commonStyles.rowStart, alignItems: 'center'}}>
+            <View style={{ ...commonStyles.rowStart, alignItems: 'center' }}>
               <View>
                 {userData?.userProfile !== undefined ? (
                   <Image
-                    source={{uri: userData?.userProfile}}
+                    source={{ uri: userData?.userProfile }}
                     resizeMode="contain"
                     style={{
                       width: 80,
@@ -70,29 +69,29 @@ const ModalMenu = ({modalVisible, callback, navigation}) => {
                     <Image
                       source={require('../../assets/img/profile-tab.png')}
                       resizeMode="contain"
-                      style={{width: 45, height: 45, borderRadius: 100}}
+                      style={{ width: 45, height: 45, borderRadius: 100 }}
                     />
                   </View>
                 )}
               </View>
 
-              <View style={{marginLeft: 9, marginTop: -5}}>
+              <View style={{ marginLeft: 9, marginTop: -5 }}>
                 <Text style={[commonStyles.fs16_500]}>{userData[0]?.name}</Text>
                 <TouchableHighlight
-                  style={{...styles.switchAccount}}
+                  style={{ ...styles.switchAccount }}
                   underlayColor="#eee"
                   onPress={async () => {
                     setUserTypeModalVisible(true);
                   }}>
-                  <View style={{...commonStyles.rowBetween}}>
-                    <Text style={{...commonStyles.fs13_400}}>
+                  <View style={{ ...commonStyles.rowBetween }}>
+                    <Text style={{ ...commonStyles.fs13_400 }}>
                       {' '}
                       {userType == 'shop' ? 'Shop Owner' : 'User'}
                     </Text>
                     <Image
                       source={require('../../assets/img/caret-down.png')}
                       resizeMode="contain"
-                      style={{width: 11, height: 11, marginLeft: 6}}
+                      style={{ width: 11, height: 11, marginLeft: 6 }}
                     />
                   </View>
                 </TouchableHighlight>
@@ -185,7 +184,7 @@ const ModalMenu = ({modalVisible, callback, navigation}) => {
   );
 };
 
-const UserTypeModal = ({modalVisible, callback2, setUserTypeModalVisible}) => {
+const UserTypeModal = ({ modalVisible, callback2, setUserTypeModalVisible }) => {
   return (
     <Modal
       animationType="slide"

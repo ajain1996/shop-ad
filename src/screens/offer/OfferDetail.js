@@ -10,34 +10,31 @@ import {
   StyleSheet,
   Linking,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {commonStyles} from '../../utils/styles';
-import {COLORS, SIZES} from '../../utils/theme';
+import React, { useEffect, useState } from 'react';
+import { commonStyles } from '../../utils/styles';
+import { COLORS, SIZES } from '../../utils/theme';
 import {
   getAppliedCandidate,
   getCategoryById,
   getUserByIDPostAPI,
 } from '../../utils/API';
 import Auth from '../../services/Auth';
-import {RFC_2822} from 'moment';
-import {RenderUpload} from './AddSaleOfferScreen';
+import { RFC_2822 } from 'moment';
+import { RenderUpload } from './AddSaleOfferScreen';
 
-export default function Offerdetail({navigation, route}) {
-  const {item} = route.params;
+export default function Offerdetail({ navigation, route }) {
+  const { item } = route.params;
   const [allCandidate, setAllCandidate] = useState([]);
   const [category, setcategory] = useState('');
   const [tempData, setTempData] = useState([]);
   useEffect(() => {
     Auth.getLocalStorageData('bearer').then(token => {
       getAppliedCandidate(token, item._id, res => {
-        console.log(res, '<<<<<jobdetail');
         setAllCandidate(res);
         setTempData(res);
       });
 
       getCategoryById(token, item.cateoryId, res => {
-        console.log(res, item, '<<<this is category');
-        // setcategory(res.data[0].categoryName);
         setcategory(res.data[0].categoryName);
       });
     });
@@ -55,9 +52,8 @@ export default function Offerdetail({navigation, route}) {
     setAllCandidate(filter);
   };
 
-  console.log(item, '<<<this is itemb');
   return (
-    <View style={{width: '100%', height: '100%', backgroundColor: '#fff'}}>
+    <View style={{ width: '100%', height: '100%', backgroundColor: '#fff' }}>
       {/* {membersHeader(navigation, setSearchInput, searchInput)} */}
       <View style={styles.headerContainer}>
         <TouchableHighlight
@@ -66,7 +62,7 @@ export default function Offerdetail({navigation, route}) {
           <Image
             source={require('../../assets/img/left-arrow.png')}
             resizeMode="contain"
-            style={{width: 25, height: 25}}
+            style={{ width: 25, height: 25 }}
           />
         </TouchableHighlight>
 
@@ -74,7 +70,6 @@ export default function Offerdetail({navigation, route}) {
             placeholder="Search Members"
             placeholderTextColor="#999"
             onChangeText={text => {
-              console.log(text);
               searchIt(text);
             }}
             style={styles.searchInput}
@@ -87,21 +82,18 @@ export default function Offerdetail({navigation, route}) {
           category={category}
         />
 
-        <View style={{height: 20}} />
+        <View style={{ height: 20 }} />
       </ScrollView>
     </View>
   );
 }
 
-export const GetAllCandidateScreen = ({item, index, navigation, category}) => {
+export const GetAllCandidateScreen = ({ item, index, navigation, category }) => {
   const userImage = require('../../assets/img/profile-tab.png');
-  // const userImage = require('../../assets/img/pro');
-  console.log('OFferdetailitem', item);
   const [userData, setUserData] = useState({});
   useEffect(() => {
     Auth.getLocalStorageData('bearer').then(token => {
       getUserByIDPostAPI(item?.ownerId, token, res => {
-        console.log('this is uer data', res);
         setUserData(res.data[0]);
       });
     });
@@ -112,7 +104,6 @@ export const GetAllCandidateScreen = ({item, index, navigation, category}) => {
       if (supported) {
         Linking.openURL(link);
       } else {
-        console.log("Don't know how to open URI: " + link);
       }
       return false;
     });
@@ -175,11 +166,11 @@ export const GetAllCandidateScreen = ({item, index, navigation, category}) => {
       style={styles.itemWrapper}
       activeOpacity={0.9}
 
-      // onPress={() => {
-      //   navigation.navigate('MemberDetailScreen', {
-      //     item: item,
-      //   });
-      // }}
+    // onPress={() => {
+    //   navigation.navigate('MemberDetailScreen', {
+    //     item: item,
+    //   });
+    // }}
     >
       <View>
         {/* <ScrollView horizontal={true}>
@@ -218,10 +209,10 @@ export const GetAllCandidateScreen = ({item, index, navigation, category}) => {
         <RenderUpload
           image={converIageArray()}
           showCross={false}
-          // getImage={getImage}
-          // imageError={false}
-          // setImageError={setImageError}
-          // setImageData={setImageData}
+        // getImage={getImage}
+        // imageError={false}
+        // setImageError={setImageError}
+        // setImageData={setImageData}
         />
       </View>
 
@@ -240,7 +231,7 @@ export const GetAllCandidateScreen = ({item, index, navigation, category}) => {
         )}
 
         <View style={styles.memberNameBlock}>
-          <Text style={[styles.memberName, {color: '#000'}]}>
+          <Text style={[styles.memberName, { color: '#000' }]}>
             {/* {item.applicantName} */}
             {userData.name ? userData.name : '(loading...)'}
           </Text>
@@ -257,7 +248,7 @@ export const GetAllCandidateScreen = ({item, index, navigation, category}) => {
           </Text>
           <Text style={styles.conpanyName}>start date: {item?.startDate}</Text>
           <Text style={styles.conpanyName}>End date: {item?.endDate}</Text>
-          <Text style={{fontWeight: 'bold', marginTop: 10}}>
+          <Text style={{ fontWeight: 'bold', marginTop: 10 }}>
             Price: Rs {item?.price}
           </Text>
         </View>

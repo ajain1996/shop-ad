@@ -1,8 +1,8 @@
-import {View, Text, Image, TextInput} from 'react-native';
+import { View, Text, Image, TextInput, StyleSheet } from 'react-native';
 import React from 'react';
-import {commonStyles} from '../../utils/styles';
-import {useDispatch, useSelector} from 'react-redux';
-import {setUserType} from '../../redux/reducer/userType';
+import { commonStyles } from '../../utils/styles';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUserType } from '../../redux/reducer/userType';
 
 export default function HomeSearch({
   width,
@@ -10,35 +10,20 @@ export default function HomeSearch({
   showSwitchText = false,
   ...rest
 }) {
-  const {userType} = useSelector(state => state.UserType);
+  const { userType } = useSelector(state => state.UserType);
   const dispatch = useDispatch();
 
   return (
-    <>
-      <View
-        style={{
-          width: width ? width : '100%',
-          // borderWidth: 1,
-          height: 24,
-          ...commonStyles.rowStart,
-          padding: 16,
-          backgroundColor: '#EFEFEF',
-          alignItems: 'center',
-          padding: 20,
-          // elevation: 1,
-          borderColor: 'grey',
-          // borderWidth: 0.4,
-          // borderRadius: 11,
-          shadowColor: '#999',
-        }}>
+    <View style={styles.main}>
+      <View style={[styles.container, { width: width ? width : '100%', }]}>
         <Image
           source={require('../../assets/img/searchicon.png')}
           resizeMode="contain"
-          style={{width: 22, height: 24}}
+          style={{ width: 16, height: 16, tintColor: "#999" }}
         />
 
         <TextInput
-          placeholder="Search"
+          // placeholder="Search"
           placeholderTextColor="#999"
           onChangeText={onChange}
           style={{
@@ -49,8 +34,16 @@ export default function HomeSearch({
           }}
           {...rest}
         />
+
       </View>
-      {showSwitchText && userType == 'shop' && (
+      <View style={styles.filter}>
+        <Image
+          source={require('../../assets/img/filter3.png')}
+          resizeMode="contain"
+          style={{ width: 22, height: 22, tintColor: "#fff" }}
+        />
+      </View>
+      {/* {showSwitchText && userType == 'shop' && (
         <View
           style={{
             display: 'flex',
@@ -84,7 +77,33 @@ export default function HomeSearch({
             switch to user
           </Text>
         </View>
-      )}
-    </>
+      )} */}
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  main: {
+    paddingHorizontal: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  container: {
+    height: 24,
+    ...commonStyles.rowStart,
+    padding: 16,
+    backgroundColor: '#F2F2F2',
+    alignItems: 'center',
+    height: 44,
+    borderRadius: 14
+  },
+  filter: {
+    width: 44,
+    height: 44,
+    backgroundColor: "#E68927",
+    borderRadius: 14,
+    ...commonStyles.centerStyles
+  }
+})

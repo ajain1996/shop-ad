@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 
 import React from 'react';
-import {commonStyles} from '../../utils/styles';
-import {useEffect} from 'react';
+import { commonStyles } from '../../utils/styles';
+import { useEffect } from 'react';
 
 import {
   addLikesByIDPostAPI,
@@ -23,20 +23,18 @@ import {
   unLikesByIDPostAPI,
 } from '../../utils/API';
 
-import {useState} from 'react';
+import { useState } from 'react';
 import Auth from '../../services/Auth';
-import CustomLoader, {CustomPanel} from '../../components/CustomLoader';
+import CustomLoader, { CustomPanel } from '../../components/CustomLoader';
 import PTRView from 'react-native-pull-to-refresh';
-import {useDispatch, useSelector} from 'react-redux';
-import {setJob} from '../../redux/reducer/jobs';
-import {SIZES} from '../../utils/theme';
-import {RenderUpload} from '../offer/AddSaleOfferScreen';
+import { useDispatch, useSelector } from 'react-redux';
+import { setJob } from '../../redux/reducer/jobs';
+import { SIZES } from '../../utils/theme';
+import { RenderUpload } from '../offer/AddSaleOfferScreen';
 
-export default function WorkDetailPreview({navigation, route}) {
+export default function WorkDetailPreview({ navigation, route }) {
   const dispatch = useDispatch();
-  const {data} = route.params;
-  console.log(data, '<<<<this is preview data');
-  // const {jobsData} = useSelector(state => state.Job);
+  const { data } = route.params;
   const [jobsData, setJobData] = useState([]);
   const [bearerToken, setBearerToken] = useState('');
   const [loading, setLoading] = React.useState(false);
@@ -121,7 +119,7 @@ export default function WorkDetailPreview({navigation, route}) {
               }}
             /> */}
       <PTRView onRefresh={_refresh}>
-        <ScrollView style={{marginTop: 20}}>
+        <ScrollView style={{ marginTop: 20 }}>
           <RenderSingleWork
             item={data}
             bearerToken={bearerToken}
@@ -141,7 +139,7 @@ export default function WorkDetailPreview({navigation, route}) {
               })} */}
         </ScrollView>
 
-        <View style={{height: 64}} />
+        <View style={{ height: 64 }} />
       </PTRView>
       <CustomPanel loading={loading} />
       <CustomLoader loading={loading} />
@@ -149,9 +147,8 @@ export default function WorkDetailPreview({navigation, route}) {
   );
 }
 
-const RenderSingleWork = ({item, showDot}) => {
+const RenderSingleWork = ({ item, showDot }) => {
   const [homeModalVisible, setHomeModalVisible] = useState(false);
-  console.log(item, '<<<<< thisispreviewitem');
   const converIageArray = () => {
     let imageData = [];
     if (item.image) {
@@ -219,10 +216,10 @@ const RenderSingleWork = ({item, showDot}) => {
         <RenderUpload
           image={converIageArray()}
           showCross={false}
-          // getImage={getImage}
-          // imageError={false}
-          // setImageError={setImageError}
-          // setImageData={setImageData}
+        // getImage={getImage}
+        // imageError={false}
+        // setImageError={setImageError}
+        // setImageData={setImageData}
         />
       )}
       <View>
@@ -233,31 +230,31 @@ const RenderSingleWork = ({item, showDot}) => {
             : 'Image Not Found'}
         </Text>
       </View>
-      <View style={{...commonStyles.rowBetween, alignItems: 'flex-start'}}>
+      <View style={{ ...commonStyles.rowBetween, alignItems: 'flex-start' }}>
         {/* {item?.image && (
             <Image source={{uri: item?.image}} style={{width: 101, height: 61}} />
           )} */}
-        <View style={{width: SIZES.width / 1.85, marginHorizontal: 10}}>
-          <Text style={{...commonStyles.fs18_700}}>{item?.description}</Text>
-          <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+        <View style={{ width: SIZES.width / 1.85, marginHorizontal: 10 }}>
+          <Text style={{ ...commonStyles.fs18_700 }}>{item?.description}</Text>
+          <Text style={{ ...commonStyles.fs16_700, marginTop: 12 }}>
             Shop Name:
           </Text>
-          <Text style={{...commonStyles.fs14_400}}>{item?.shopName}</Text>
-          <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+          <Text style={{ ...commonStyles.fs14_400 }}>{item?.shopName}</Text>
+          <Text style={{ ...commonStyles.fs16_700, marginTop: 12 }}>
             Service Provider Name:
           </Text>
-          <Text style={{...commonStyles.fs14_400}}>{item?.name}</Text>
-          <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+          <Text style={{ ...commonStyles.fs14_400 }}>{item?.name}</Text>
+          <Text style={{ ...commonStyles.fs16_700, marginTop: 12 }}>
             Relationship:{' '}
           </Text>
-          <Text style={{...commonStyles.fs14_400}}>{item?.designation}</Text>
-          <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+          <Text style={{ ...commonStyles.fs14_400 }}>{item?.designation}</Text>
+          <Text style={{ ...commonStyles.fs16_700, marginTop: 12 }}>
             Contact Info:{' '}
           </Text>
-          <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+          <Text style={{ ...commonStyles.fs16_700, marginTop: 12 }}>
             Location:{' '}
           </Text>
-          <Text style={{...commonStyles.fs14_400}}>{item?.location}</Text>
+          <Text style={{ ...commonStyles.fs14_400 }}>{item?.location}</Text>
           {/* <Text style={{...commonStyles.fs14_400}}>{item?.contactEmail}</Text> */}
 
           {/* <Text style={{...commonStyles.fs14_400}}>{item?.salary}</Text> */}
@@ -266,35 +263,35 @@ const RenderSingleWork = ({item, showDot}) => {
 
           {item?.instaId && (
             <>
-              <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+              <Text style={{ ...commonStyles.fs16_700, marginTop: 12 }}>
                 Instagram:{' '}
               </Text>
-              <Text style={{...commonStyles.fs14_400}}>{item?.instaId}</Text>
+              <Text style={{ ...commonStyles.fs14_400 }}>{item?.instaId}</Text>
             </>
           )}
           {item?.facebookId && (
             <>
-              <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+              <Text style={{ ...commonStyles.fs16_700, marginTop: 12 }}>
                 Facebook:{' '}
               </Text>
-              <Text style={{...commonStyles.fs14_400}}>{item?.facebookId}</Text>
+              <Text style={{ ...commonStyles.fs14_400 }}>{item?.facebookId}</Text>
             </>
           )}
 
           {item?.emailId && (
             <>
-              <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+              <Text style={{ ...commonStyles.fs16_700, marginTop: 12 }}>
                 Eamil Id:{' '}
               </Text>
-              <Text style={{...commonStyles.fs14_400}}>{item?.emailId}</Text>
+              <Text style={{ ...commonStyles.fs14_400 }}>{item?.emailId}</Text>
             </>
           )}
           {item?.websiteAddress && (
             <>
-              <Text style={{...commonStyles.fs16_700, marginTop: 12}}>
+              <Text style={{ ...commonStyles.fs16_700, marginTop: 12 }}>
                 Website address:{' '}
               </Text>
-              <Text style={{...commonStyles.fs14_400}}>
+              <Text style={{ ...commonStyles.fs14_400 }}>
                 {item?.websiteAddress}
               </Text>
             </>
@@ -308,13 +305,11 @@ const RenderSingleWork = ({item, showDot}) => {
             feedbackFor="work"
             onSaveIT={async () => {
               const prev = await AsyncStorage.getItem('SAVED_WORK');
-              console.log(prev);
             }}
             feedbackNumber={item?.ownerId}
             savedCallback={async () => {
               // setSavedItems(oldArray => [...oldArray, item]);
               const oldData = await AsyncStorage.getItem('SAVED_WORK');
-              // console.log(parseIT, '<<<this is od');
               if (oldData == null) {
                 await AsyncStorage.setItem('SAVED_WORK', JSON.stringify([item]));
               } else {

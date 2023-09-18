@@ -8,12 +8,12 @@ import {
   Share,
 } from 'react-native';
 import React from 'react';
-import {useEffect} from 'react';
-import {useState} from 'react';
+import { useEffect } from 'react';
+import { useState } from 'react';
 import UserdetailsHeader from './UserdetailsHeader';
-import CustomLoader, {CustomPanel} from '../../../components/CustomLoader';
-import {commonStyles} from '../../../utils/styles';
-import {SIZES} from '../../../utils/theme';
+import CustomLoader, { CustomPanel } from '../../../components/CustomLoader';
+import { commonStyles } from '../../../utils/styles';
+import { SIZES } from '../../../utils/theme';
 import {
   addLikesByIDPostAPI,
   getLikesCountByIDPostAPI,
@@ -23,11 +23,11 @@ import {
 } from '../../../utils/API';
 import Auth from '../../../services/Auth';
 import Toast from 'react-native-simple-toast';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import moment from 'moment';
 
-export default function UserPostScreen({navigation, route}) {
-  const {item, user, userId} = route.params;
+export default function UserPostScreen({ navigation, route }) {
+  const { item, user, userId } = route.params;
 
   const [loading, setLoading] = React.useState(false);
 
@@ -49,8 +49,8 @@ export default function UserPostScreen({navigation, route}) {
   );
 }
 
-const RenderSingleOffer = ({item, navigation, user, userId}) => {
-  const {userData} = useSelector(state => state.User);
+const RenderSingleOffer = ({ item, navigation, user, userId }) => {
+  const { userData } = useSelector(state => state.User);
 
   const [likesCount, setLikesCount] = useState(0);
   const [isLike, setIsLike] = useState(false);
@@ -120,24 +120,19 @@ const RenderSingleOffer = ({item, navigation, user, userId}) => {
   };
 
   var email = user?.email?.split('@')[0];
-  console.log(user, '<<< this is user');
   function dayDiff(startDate, endDate, des, id) {
     const convertArr = d => {
       const a = d.replace('/', '-');
       const b = a.replace('/', '-');
       return b.split('-');
     };
-
-    // const diffInMs = moment(`12-Dec-2022`) - moment(`10-Dec-2022`);
     const diffInMs =
       moment(
-        `${parseInt(convertArr(endDate)[0])}-${
-          monthsArray[parseInt(convertArr(endDate)[1])]
+        `${parseInt(convertArr(endDate)[0])}-${monthsArray[parseInt(convertArr(endDate)[1])]
         }-${parseInt(convertArr(endDate)[2])}`,
       ) -
       moment(
-        `${parseInt(convertArr(startDate)[0])}-${
-          monthsArray[parseInt(convertArr(startDate)[1])]
+        `${parseInt(convertArr(startDate)[0])}-${monthsArray[parseInt(convertArr(startDate)[1])]
         }-${parseInt(convertArr(startDate)[2])}`,
       );
 
@@ -165,7 +160,7 @@ const RenderSingleOffer = ({item, navigation, user, userId}) => {
           width: '100%',
           padding: 20,
         }}>
-        <View style={{...commonStyles.rowStart, alignItems: 'center'}}>
+        <View style={{ ...commonStyles.rowStart, alignItems: 'center' }}>
           <TouchableHighlight
             underlayColor="#f7f8f9"
             onPress={() => {
@@ -176,7 +171,7 @@ const RenderSingleOffer = ({item, navigation, user, userId}) => {
             }}>
             {user?.userProfile !== undefined ? (
               <Image
-                source={{uri: user?.userProfile}}
+                source={{ uri: user?.userProfile }}
                 resizeMode="contain"
                 style={{
                   width: 45,
@@ -220,7 +215,7 @@ const RenderSingleOffer = ({item, navigation, user, userId}) => {
                 userId: item?.ownerId,
               });
             }}>
-            <Text style={{...commonStyles.fs16_700, marginLeft: 10}}>
+            <Text style={{ ...commonStyles.fs16_700, marginLeft: 10 }}>
               {user?.name}
             </Text>
           </TouchableHighlight>
@@ -228,22 +223,22 @@ const RenderSingleOffer = ({item, navigation, user, userId}) => {
         <Image
           source={require('../../../assets/img/3dots.png')}
           resizeMode="contain"
-          style={{width: 24, height: 24, borderRadius: 100}}
+          style={{ width: 24, height: 24, borderRadius: 100 }}
         />
       </View>
 
       <Image
-        source={{uri: item?.offerImage}}
-        style={{width: SIZES.width, height: 311}}
+        source={{ uri: item?.offerImage }}
+        style={{ width: SIZES.width, height: 311 }}
       />
 
-      <View style={{...commonStyles.rowBetween, padding: 20}}>
-        <View style={{...commonStyles.rowStart}}>
+      <View style={{ ...commonStyles.rowBetween, padding: 20 }}>
+        <View style={{ ...commonStyles.rowStart }}>
           <TouchableHighlight
             onPress={handleLike}
             underlayColor="#eee"
-            style={{padding: 5}}>
-            <View style={{...commonStyles.row}}>
+            style={{ padding: 5 }}>
+            <View style={{ ...commonStyles.row }}>
               <Image
                 source={
                   isLike
@@ -256,7 +251,7 @@ const RenderSingleOffer = ({item, navigation, user, userId}) => {
                   tintColor: isLike ? '#FF0000' : '#000',
                 }}
               />
-              <Text style={{...commonStyles.fs14_500, marginLeft: 9}}>
+              <Text style={{ ...commonStyles.fs14_500, marginLeft: 9 }}>
                 {likesCount} Likes
               </Text>
             </View>
@@ -265,13 +260,13 @@ const RenderSingleOffer = ({item, navigation, user, userId}) => {
           <TouchableHighlight
             onPress={handleShare}
             underlayColor="#eee"
-            style={{padding: 5, marginLeft: 34}}>
-            <View style={{...commonStyles.row}}>
+            style={{ padding: 5, marginLeft: 34 }}>
+            <View style={{ ...commonStyles.row }}>
               <Image
                 source={require('../../../assets/img/share.png')}
-                style={{width: 21, height: 21, tintColor: '#000000'}}
+                style={{ width: 21, height: 21, tintColor: '#000000' }}
               />
-              <Text style={{...commonStyles.fs14_500, marginLeft: 9}}>
+              <Text style={{ ...commonStyles.fs14_500, marginLeft: 9 }}>
                 Share
               </Text>
             </View>
@@ -279,8 +274,8 @@ const RenderSingleOffer = ({item, navigation, user, userId}) => {
         </View>
       </View>
 
-      <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -16}}>
-        <Text style={{...commonStyles.fs14_500, marginBottom: 12}}>
+      <View style={{ ...commonStyles.rowStart, marginLeft: 20, marginTop: -16 }}>
+        <Text style={{ ...commonStyles.fs14_500, marginBottom: 12 }}>
           @{email}
         </Text>
         <Text
@@ -293,15 +288,15 @@ const RenderSingleOffer = ({item, navigation, user, userId}) => {
           {item?.description}
         </Text>
       </View>
-      <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -10}}>
-        <Text style={{...commonStyles.fs13_500, marginBottom: 12}}>
+      <View style={{ ...commonStyles.rowStart, marginLeft: 20, marginTop: -10 }}>
+        <Text style={{ ...commonStyles.fs13_500, marginBottom: 12 }}>
           Start Date: {item.startDate}
         </Text>
-        <Text style={{...commonStyles.fs13_500, marginBottom: 12}}>
+        <Text style={{ ...commonStyles.fs13_500, marginBottom: 12 }}>
           End Date: {item.endDate}
         </Text>
         <Text
-          style={{...commonStyles.fs12_400, marginLeft: 8, marginBottom: 12}}>
+          style={{ ...commonStyles.fs12_400, marginLeft: 8, marginBottom: 12 }}>
           {item?.date}
         </Text>
       </View>

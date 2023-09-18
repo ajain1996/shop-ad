@@ -39,7 +39,6 @@ export default function SavedScreen() {
 
     useEffect(() => {
         Auth.getLocalStorageData("Saved_Item").then((localData) => {
-            console.log("\n\n Get Saved items from local storage: ", JSON.parse(localData));
             setSavedItems(JSON.parse(localData));
         })
     }, [])
@@ -52,7 +51,6 @@ export default function SavedScreen() {
                 data={savedItems}
                 contentContainerStyle={{}}
                 renderItem={({ item }) => {
-                    console.log("\n\n item: ", item)
                     return (
                         <TouchableOpacity style={styles.productItem}
                             onPress={() => { }}

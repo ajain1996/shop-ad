@@ -9,11 +9,11 @@ import {
 } from 'react-native';
 
 import React from 'react';
-import {commonStyles} from '../../utils/styles';
-import {SIZES} from '../../utils/theme';
+import { commonStyles } from '../../utils/styles';
+import { SIZES } from '../../utils/theme';
 import HomeHeader from '../home/HomeHeader';
 import HomeSearch from '../home/HomeSearch';
-import {useEffect} from 'react';
+import { useEffect } from 'react';
 
 import {
   addLikesByIDPostAPI,
@@ -26,23 +26,21 @@ import {
   unLikesByIDPostAPI,
 } from '../../utils/API';
 
-import {useState} from 'react';
+import { useState } from 'react';
 import Auth from '../../services/Auth';
-import CustomLoader, {CustomPanel} from '../../components/CustomLoader';
+import CustomLoader, { CustomPanel } from '../../components/CustomLoader';
 import PTRView from 'react-native-pull-to-refresh';
-import {useDispatch, useSelector} from 'react-redux';
-import {setJob} from '../../redux/reducer/jobs';
+import { useDispatch, useSelector } from 'react-redux';
+import { setJob } from '../../redux/reducer/jobs';
 import Toast from 'react-native-simple-toast';
 import HomeModal from '../home/HomeModal';
 import LinearGradient from 'react-native-linear-gradient';
-import {JobsDetails} from './JobsDetails';
+import { JobsDetails } from './JobsDetails';
 import moment from 'moment';
 
-export default function PreviewJobScreen({navigation, route}) {
+export default function PreviewJobScreen({ navigation, route }) {
   const dispatch = useDispatch();
   const data = route.params;
-  console.log(data, '<<<<this is preview data');
-  // const {jobsData} = useSelector(state => state.Job);
   const [jobsData, setJobData] = useState([]);
   const [bearerToken, setBearerToken] = useState('');
   const [loading, setLoading] = React.useState(false);
@@ -126,7 +124,7 @@ export default function PreviewJobScreen({navigation, route}) {
         }}
       /> */}
       <PTRView onRefresh={_refresh}>
-        <ScrollView style={{marginTop: 20}}>
+        <ScrollView style={{ marginTop: 20 }}>
           {jobsData.map((item, index) => {
             return (
               <View key={index}>
@@ -140,7 +138,7 @@ export default function PreviewJobScreen({navigation, route}) {
           })}
         </ScrollView>
 
-        <View style={{height: 64}} />
+        <View style={{ height: 64 }} />
       </PTRView>
       <CustomPanel loading={loading} />
       <CustomLoader loading={loading} />
@@ -148,15 +146,14 @@ export default function PreviewJobScreen({navigation, route}) {
   );
 }
 
-const RenderSingleJob = ({item, bearerToken, navigation}) => {
-  const {userType} = useSelector(state => state.UserType);
-  const {userData} = useSelector(state => state.User);
+const RenderSingleJob = ({ item, bearerToken, navigation }) => {
+  const { userType } = useSelector(state => state.UserType);
+  const { userData } = useSelector(state => state.User);
 
   const [user, setUser] = useState(userData[0]);
   const [likesCount, setLikesCount] = useState(0);
   const [isLike, setIsLike] = useState(false);
   const [commentsCount, setCommentsCount] = useState(0);
-  console.log(item, '<<<<< job item');
   React.useEffect(() => {
     (async () => {
       const unsubscribe = navigation.addListener('focus', () => {
@@ -197,7 +194,6 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
       Auth.getLocalStorageData('bearer').then(token => {
         getUserByIDPostAPI(item?.ownerId, token, response => {
           if (response !== null) {
-            console.log(response, '<< thisisuseratjobscreen');
             // setUser(response?.data[0]);
           }
         });
@@ -227,7 +223,6 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
     })();
   }, [item]);
 
-  console.log('This is user data', userData);
   const handleLike = () => {
     if (isLike) {
       setLikesCount(prev => prev - 1);
@@ -303,23 +298,13 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
     const inlocal = today.toLocaleDateString();
     var currDate = moment(inlocal).format('DD/MM/YYYY');
 
-    // const diffInMs = moment(`12-Dec-2022`) - moment(`10-Dec-2022`);
-    // console.log(
-    //   startDate,
-    //   inlocal,
-    //   moment(startDate).format('DD/MM/YYYY'),
-    //   moment('10/1/22').format('DD/MM/YYYY'),
-    //   '<<<< this is inlocal',
-    // );
     const diffInMs =
       moment(
-        `${parseInt(convertArr(endDate)[0])}-${
-          monthsArray[parseInt(convertArr(endDate)[1])]
+        `${parseInt(convertArr(endDate)[0])}-${monthsArray[parseInt(convertArr(endDate)[1])]
         }-${parseInt(convertArr(endDate)[2])}`,
       ) -
       moment(
-        `${parseInt(convertArr(currDate)[0])}-${
-          monthsArray[parseInt(convertArr(currDate)[1])]
+        `${parseInt(convertArr(currDate)[0])}-${monthsArray[parseInt(convertArr(currDate)[1])]
         }-${parseInt(convertArr(currDate)[2])}`,
       );
 
@@ -346,7 +331,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
           width: '100%',
           padding: 20,
         }}>
-        <View style={{...commonStyles.rowStart, alignItems: 'center'}}>
+        <View style={{ ...commonStyles.rowStart, alignItems: 'center' }}>
           <TouchableHighlight
             underlayColor="#f7f8f9"
             onPress={() => {
@@ -357,7 +342,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
             }}>
             {userData[0]?.userProfile !== undefined ? (
               <Image
-                source={{uri: userData[0]?.userProfile}}
+                source={{ uri: userData[0]?.userProfile }}
                 resizeMode="contain"
                 style={{
                   width: 40,
@@ -393,7 +378,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
             )}
           </TouchableHighlight>
 
-          <View style={{marginLeft: 6}}>
+          <View style={{ marginLeft: 6 }}>
             <TouchableHighlight
               underlayColor="#f7f8f9"
               onPress={() => {
@@ -402,20 +387,20 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
                 //   userId: item?.ownerId,
                 // });
               }}>
-              <Text style={{...commonStyles.fs14_700}}>{user?.name}</Text>
+              <Text style={{ ...commonStyles.fs14_700 }}>{user?.name}</Text>
             </TouchableHighlight>
-            <View style={{...commonStyles.rowStart, alignItems: 'center'}}>
+            <View style={{ ...commonStyles.rowStart, alignItems: 'center' }}>
               <Image
                 source={require('../../assets/img/location.png')}
                 resizeMode="contain"
-                style={{width: 18, height: 16}}
+                style={{ width: 18, height: 16 }}
               />
               <TouchableHighlight
                 // onPress={() => {
                 //   navigation.navigate('LocationScreen');
                 // }}
                 underlayColor="#f7f8f9">
-                <Text style={{...commonStyles.fs12_400, marginLeft: 2}}>
+                <Text style={{ ...commonStyles.fs12_400, marginLeft: 2 }}>
                   {item?.location}
                 </Text>
               </TouchableHighlight>
@@ -465,7 +450,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         <JobsDetails text="Message:" item={item?.message} />
         <JobsDetails text="StartDate:" item={item?.startDate} />
         <JobsDetails text="EndDate:" item={item?.endDate} />
-        <Text style={{height: 8}} />
+        <Text style={{ height: 8 }} />
         {userType === 'user' ? (
           <LinearGradient
             colors={['#EDAA26', '#E27127']}
@@ -485,7 +470,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
                 ...commonStyles.centerStyles,
                 borderRadius: 5,
               }}>
-              <Text style={{...commonStyles.fs15_600, color: '#fff'}}>
+              <Text style={{ ...commonStyles.fs15_600, color: '#fff' }}>
                 Apply Job
               </Text>
             </TouchableHighlight>
@@ -495,13 +480,13 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         )}
       </View>
 
-      <View style={{...commonStyles.rowBetween, padding: 20}}>
-        <View style={{...commonStyles.rowStart}}>
+      <View style={{ ...commonStyles.rowBetween, padding: 20 }}>
+        <View style={{ ...commonStyles.rowStart }}>
           <TouchableHighlight
             // onPress={handleLike}
             underlayColor="#eee"
-            style={{padding: 5}}>
-            <View style={{...commonStyles.row}}>
+            style={{ padding: 5 }}>
+            <View style={{ ...commonStyles.row }}>
               <Image
                 source={
                   isLike
@@ -514,7 +499,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
                   tintColor: isLike ? '#FF0000' : '#000',
                 }}
               />
-              <Text style={{...commonStyles.fs14_500, marginLeft: 9}}>
+              <Text style={{ ...commonStyles.fs14_500, marginLeft: 9 }}>
                 {likesCount} Likes
               </Text>
             </View>
@@ -523,13 +508,13 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
           <TouchableHighlight
             // onPress={handleComment}
             underlayColor="#eee"
-            style={{padding: 5, marginLeft: 34}}>
-            <View style={{...commonStyles.row}}>
+            style={{ padding: 5, marginLeft: 34 }}>
+            <View style={{ ...commonStyles.row }}>
               <Image
                 source={require('../../assets/img/comment.png')}
-                style={{width: 26, height: 26, tintColor: '#000000'}}
+                style={{ width: 26, height: 26, tintColor: '#000000' }}
               />
-              <Text style={{...commonStyles.fs14_500, marginLeft: 9}}>
+              <Text style={{ ...commonStyles.fs14_500, marginLeft: 9 }}>
                 {commentsCount} Comments
               </Text>
             </View>
@@ -538,7 +523,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         <TouchableHighlight underlayColor="#eee">
           <Image
             source={require('../../assets/img/share.png')}
-            style={{width: 22, height: 22, tintColor: '#000000'}}
+            style={{ width: 22, height: 22, tintColor: '#000000' }}
           />
         </TouchableHighlight>
       </View>

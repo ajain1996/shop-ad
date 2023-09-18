@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 
 import React from 'react';
-import {commonStyles} from '../../utils/styles';
-import {useEffect} from 'react';
+import { commonStyles } from '../../utils/styles';
+import { useEffect } from 'react';
 
 import {
   addLikesByIDPostAPI,
@@ -23,20 +23,19 @@ import {
   unLikesByIDPostAPI,
 } from '../../utils/API';
 
-import {useState} from 'react';
+import { useState } from 'react';
 import Auth from '../../services/Auth';
-import CustomLoader, {CustomPanel} from '../../components/CustomLoader';
+import CustomLoader, { CustomPanel } from '../../components/CustomLoader';
 import PTRView from 'react-native-pull-to-refresh';
-import {useDispatch, useSelector} from 'react-redux';
-import {setJob} from '../../redux/reducer/jobs';
-import {COLORS, SIZES} from '../../utils/theme';
+import { useDispatch, useSelector } from 'react-redux';
+import { setJob } from '../../redux/reducer/jobs';
+import { COLORS, SIZES } from '../../utils/theme';
 import moment from 'moment';
 
-export default function PreviewOffer({navigation, route}) {
+export default function PreviewOffer({ navigation, route }) {
   const dispatch = useDispatch();
   const item = route.params;
-  const {userData} = useSelector(state => state.User);
-  console.log(item, '<<<this is itemdata');
+  const { userData } = useSelector(state => state.User);
   const [loading, setLoading] = React.useState(false);
 
   //   useEffect(() => {
@@ -51,7 +50,6 @@ export default function PreviewOffer({navigation, route}) {
   //       });
   //     });
   //   }, []);
-  console.log(userData, '<<<< userData');
 
   return (
     <>
@@ -89,7 +87,7 @@ export default function PreviewOffer({navigation, route}) {
             }}
           /> */}
       <PTRView>
-        <ScrollView style={{marginTop: 20}}>
+        <ScrollView style={{ marginTop: 20 }}>
           <RenderSingleOffer item={item} userData={userData} />
           {/* {jobsData.map((item, index) => {
               return (
@@ -104,7 +102,7 @@ export default function PreviewOffer({navigation, route}) {
             })} */}
         </ScrollView>
 
-        <View style={{height: 64}} />
+        <View style={{ height: 64 }} />
       </PTRView>
       <CustomPanel loading={loading} />
       <CustomLoader loading={loading} />
@@ -119,22 +117,18 @@ const RenderSingleOffer = ({
   setSavedItems,
   savedItems,
 }) => {
-  console.log(item, '<<<<<preview');
-  const {userData} = useSelector(state => state.User);
+  const { userData } = useSelector(state => state.User);
   const user = item.userData[0];
   // const [user, setUser] = useState([]);
   const [likesCount, setLikesCount] = useState(0);
   const [isLike, setIsLike] = useState(false);
   const [commentsCount, setCommentsCount] = useState(0);
-  console.log(item, '<<<thisisitem');
   //   React.useEffect(() => {
   //     (async () => {
   //       const unsubscribe = navigation.addListener('focus', () => {
   //         getUserByIDPostAPI(item?.ownerId, bearerToken, response => {
-  //           console.log(response, '<<<<<userDAta1');
   //           if (response !== null) {
   //             setUser(response?.data[0]);
-  //             console.log(response?.data[0], '<<<<thisisitemofsingleoffer');
   //           }
   //         });
 
@@ -199,7 +193,6 @@ const RenderSingleOffer = ({
   // const handleLike = async () => {
   //   const totalPrev = await AsyncStorage.getItem('LIKED_OFFER');
   //   if (isLike) {
-  //     console.log('going to unlike', totalPrev);
   //     setLikesCount(prev => prev - 1);
   //     setIsLike(false);
   //     unLikesByIDPostAPI(item?._id, userData[0]?._id, bearerToken, response => {
@@ -211,17 +204,14 @@ const RenderSingleOffer = ({
   //     });
 
   //     const alllike = await AsyncStorage.getItem('LIKED_OFFER');
-  //     console.log(alllike, '<<<thisislike');
   //     if (alllike == 'NaN') {
   //       await AsyncStorage.setItem('LIKED_OFFER', `1`);
   //     } else if (alllike && parseInt(alllike) > 0) {
   //       const d = parseInt(alllike) - +1;
   //       await AsyncStorage.setItem('LIKED_OFFER', `${d}`);
-  //       console.log(d);
   //     }
   //     // const alllike=await AsyncStorage.getItem("LIKED_OFFER")
   //   } else if (!isLike) {
-  //     console.log('going to like');
 
   //     setLikesCount(prev => prev + 1);
   //     setIsLike(true);
@@ -240,16 +230,13 @@ const RenderSingleOffer = ({
   //       },
   //     );
   //     const alllike = await AsyncStorage.getItem('LIKED_OFFER');
-  //     // console.log(alllike, 'plus');
   //     if (alllike == 'NaN') {
   //       await AsyncStorage.setItem('LIKED_OFFER', `1`);
   //     }
   //     if (alllike) {
   //       const d = parseInt(alllike) + +1;
   //       await AsyncStorage.setItem('LIKED_OFFER', `${d}`);
-  //       console.log(d, 'minus');
   //     } else {
-  //       console.log(1);
   //       await AsyncStorage.setItem('LIKED_OFFER', `1`);
   //     }
   //   }
@@ -275,15 +262,11 @@ const RenderSingleOffer = ({
   //       url: 'https://play.google.com/store/apps',
   //     });
   //     if (result.action === Share.sharedAction) {
-  //       // console.log('here');
   //       const sharedPost = await AsyncStorage.getItem('TOTAL_SHARED');
   //       if (sharedPost == null) {
-  //         console.log(sharedPost, '<<<sharedpost if');
   //         await AsyncStorage.setItem('TOTAL_SHARED', '1');
   //       } else {
   //         const num = parseInt(sharedPost) + +1;
-  //         console.log(num, '<<<sharedpost else');
-
   //         await AsyncStorage.setItem('TOTAL_SHARED', `${num}`);
   //       }
   //       if (result.activityType) {
@@ -306,22 +289,12 @@ const RenderSingleOffer = ({
     // const diffInMs = moment(`12-Dec-2022`) - moment(`10-Dec-2022`);
     const diffInMs =
       moment(
-        `${parseInt(convertArr(endDate)[0])}-${
-          monthsArray[parseInt(convertArr(endDate)[1])]
+        `${parseInt(convertArr(endDate)[0])}-${monthsArray[parseInt(convertArr(endDate)[1])]
         }-${parseInt(convertArr(endDate)[2])}`,
       ) - moment(startDate);
 
     const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
     if (des == 'Descriptioncheck') {
-      console.log(
-        startDate,
-        endDate,
-        des,
-        id,
-        diffInDays + 1,
-        poststa,
-        '<<<< thisisid',
-      );
     }
     return diffInDays + 1;
   }
@@ -329,9 +302,8 @@ const RenderSingleOffer = ({
   var startDate = moment(item?.startDate).format('DD/MM/YYYY');
   var endDate = moment(item?.endDate).format('DD/MM/YYYY');
   const d = new Date();
-  const today = `${d.getDate()}-${
-    monthsArray[+d.getMonth() + 1]
-  }-${d.getFullYear()}`;
+  const today = `${d.getDate()}-${monthsArray[+d.getMonth() + 1]
+    }-${d.getFullYear()}`;
   var diffDays = dayDiff(today, endDate, item.description, item._id, startDate);
   return (
     <View
@@ -347,7 +319,7 @@ const RenderSingleOffer = ({
           width: '100%',
           padding: 20,
         }}>
-        <View style={{...commonStyles.rowStart, alignItems: 'center'}}>
+        <View style={{ ...commonStyles.rowStart, alignItems: 'center' }}>
           <TouchableHighlight
             underlayColor="#f7f8f9"
             onPress={() => {
@@ -358,7 +330,7 @@ const RenderSingleOffer = ({
             }}>
             {user?.userProfile !== undefined ? (
               <Image
-                source={{uri: user?.userProfile}}
+                source={{ uri: user?.userProfile }}
                 resizeMode="contain"
                 style={{
                   width: 40,
@@ -394,7 +366,7 @@ const RenderSingleOffer = ({
             )}
           </TouchableHighlight>
 
-          <View style={{marginLeft: 6}}>
+          <View style={{ marginLeft: 6 }}>
             <TouchableHighlight
               underlayColor="#f7f8f9"
               onPress={() => {
@@ -403,20 +375,20 @@ const RenderSingleOffer = ({
                   user: user,
                 });
               }}>
-              <Text style={{...commonStyles.fs14_700}}>{user?.name}</Text>
+              <Text style={{ ...commonStyles.fs14_700 }}>{user?.name}</Text>
             </TouchableHighlight>
-            <View style={{...commonStyles.rowStart, alignItems: 'center'}}>
+            <View style={{ ...commonStyles.rowStart, alignItems: 'center' }}>
               <Image
                 source={require('../../assets/img/location.png')}
                 resizeMode="contain"
-                style={{width: 18, height: 16}}
+                style={{ width: 18, height: 16 }}
               />
               <TouchableHighlight
                 onPress={() => {
                   navigation.navigate('LocationScreen');
                 }}
                 underlayColor="#f7f8f9">
-                <Text style={{...commonStyles.fs12_400, marginLeft: 2}}>
+                <Text style={{ ...commonStyles.fs12_400, marginLeft: 2 }}>
                   {item?.location}
                 </Text>
               </TouchableHighlight>
@@ -430,7 +402,7 @@ const RenderSingleOffer = ({
           <Image
             source={require('../../assets/img/3dots.png')}
             resizeMode="contain"
-            style={{width: 24, height: 24, borderRadius: 100}}
+            style={{ width: 24, height: 24, borderRadius: 100 }}
           />
         </TouchableHighlight>
       </View>
@@ -445,8 +417,8 @@ const RenderSingleOffer = ({
           <ScrollView horizontal={true}>
             {item?.offerImage && (
               <Image
-                source={{uri: item?.offerImage}}
-                style={{width: SIZES.width, height: 311}}
+                source={{ uri: item?.offerImage }}
+                style={{ width: SIZES.width, height: 311 }}
               />
             )}
             {/* {item?.offerImage && (
@@ -458,8 +430,8 @@ const RenderSingleOffer = ({
             {item?.imageData?.map(initem => {
               return (
                 <Image
-                  source={{uri: initem?.uri}}
-                  style={{width: SIZES.width, height: 311}}
+                  source={{ uri: initem?.uri }}
+                  style={{ width: SIZES.width, height: 311 }}
                 />
               );
             })}
@@ -498,13 +470,13 @@ const RenderSingleOffer = ({
         </>
       </TouchableHighlight>
 
-      <View style={{...commonStyles.rowBetween, padding: 15}}>
-        <View style={{...commonStyles.rowStart}}>
+      <View style={{ ...commonStyles.rowBetween, padding: 15 }}>
+        <View style={{ ...commonStyles.rowStart }}>
           <TouchableHighlight
             // onPress={handleLike}
             underlayColor="#eee"
-            style={{padding: 5}}>
-            <View style={{...commonStyles.row}}>
+            style={{ padding: 5 }}>
+            <View style={{ ...commonStyles.row }}>
               <Image
                 source={
                   isLike
@@ -517,7 +489,7 @@ const RenderSingleOffer = ({
                   tintColor: isLike ? '#FF0000' : '#000',
                 }}
               />
-              <Text style={{...commonStyles.fs14_500, marginLeft: 9}}>
+              <Text style={{ ...commonStyles.fs14_500, marginLeft: 9 }}>
                 {likesCount} Likes
               </Text>
             </View>
@@ -526,13 +498,13 @@ const RenderSingleOffer = ({
           <TouchableHighlight
             // onPress={handleComment}
             underlayColor="#eee"
-            style={{padding: 5, marginLeft: 34}}>
-            <View style={{...commonStyles.row}}>
+            style={{ padding: 5, marginLeft: 34 }}>
+            <View style={{ ...commonStyles.row }}>
               <Image
                 source={require('../../assets/img/comment.png')}
-                style={{width: 26, height: 26, tintColor: '#000000'}}
+                style={{ width: 26, height: 26, tintColor: '#000000' }}
               />
-              <Text style={{...commonStyles.fs14_500, marginLeft: 9}}>
+              <Text style={{ ...commonStyles.fs14_500, marginLeft: 9 }}>
                 {commentsCount} Comments
               </Text>
             </View>
@@ -541,11 +513,11 @@ const RenderSingleOffer = ({
         <TouchableHighlight underlayColor="#fff">
           <Image
             source={require('../../assets/img/share.png')}
-            style={{width: 22, height: 22, tintColor: '#000000'}}
+            style={{ width: 22, height: 22, tintColor: '#000000' }}
           />
         </TouchableHighlight>
       </View>
-      <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -16}}>
+      <View style={{ ...commonStyles.rowStart, marginLeft: 20, marginTop: -16 }}>
         <Text
           style={{
             ...commonStyles.fs12_400,
@@ -558,8 +530,8 @@ const RenderSingleOffer = ({
         </Text>
       </View>
       {item?.price && (
-        <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -5}}>
-          <Text style={{...commonStyles.fs14_500, marginBottom: 12}}>
+        <View style={{ ...commonStyles.rowStart, marginLeft: 20, marginTop: -5 }}>
+          <Text style={{ ...commonStyles.fs14_500, marginBottom: 12 }}>
             Price
           </Text>
           <Text
@@ -574,13 +546,13 @@ const RenderSingleOffer = ({
           </Text>
         </View>
       )}
-      <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -10}}>
-        <Text style={{...commonStyles.fs13_500, marginBottom: 12}}>
+      <View style={{ ...commonStyles.rowStart, marginLeft: 20, marginTop: -10 }}>
+        <Text style={{ ...commonStyles.fs13_500, marginBottom: 12 }}>
           Category: {item?.category}
         </Text>
       </View>
-      <View style={{...commonStyles.rowStart, marginLeft: 20, marginTop: -10}}>
-        <Text style={{...commonStyles.fs13_500, marginBottom: 12}}>
+      <View style={{ ...commonStyles.rowStart, marginLeft: 20, marginTop: -10 }}>
+        <Text style={{ ...commonStyles.fs13_500, marginBottom: 12 }}>
           Days Left: {diffDays}
         </Text>
       </View>

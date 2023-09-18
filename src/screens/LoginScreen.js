@@ -5,24 +5,26 @@ import {
   StatusBar,
   Image,
   Alert,
+  TouchableOpacity,
+  StyleSheet,
 } from 'react-native';
 import React from 'react';
-import {SIZES} from '../utils/theme';
+import { SIZES } from '../utils/theme';
 import Auth_BG_Component from '../components/Auth_BG_Component';
-import {commonStyles} from '../utils/styles';
+import { commonStyles } from '../utils/styles';
 import Custom_Auth_Btn from '../components/Custom_Auth_Btn';
 import CustomTextInput from '../components/CustomTextInput';
-import {mobileLoginPostRequest} from '../utils/API';
-import {useDispatch, useSelector} from 'react-redux';
-import {setUser} from '../redux/reducer/user';
+import { mobileLoginPostRequest } from '../utils/API';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser } from '../redux/reducer/user';
 import Toast from 'react-native-simple-toast';
 import Auth from '../services/Auth';
-import CustomLoader, {CustomPanel} from '../components/CustomLoader';
+import CustomLoader, { CustomPanel } from '../components/CustomLoader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function LoginScreen({navigation}) {
+export default function LoginScreen({ navigation }) {
   const dispatch = useDispatch();
-  const {userType} = useSelector(state => state.UserType);
+  const { userType } = useSelector(state => state.UserType);
 
   const [emailError, setEmailError] = React.useState(false);
   const [passwordError, setPasswordError] = React.useState(false);
@@ -40,7 +42,7 @@ export default function LoginScreen({navigation}) {
     } else {
       setLoading(true);
       mobileLoginPostRequest(email, password, userType, async response => {
-        console.log('kjekre', response, '<<<this is res');
+        // console.log('\n\n mobileLoginPostRequest api response: ', response);
         setLoading(false);
         if (response !== null) {
           if (response?.message !== undefined) {
@@ -65,12 +67,9 @@ export default function LoginScreen({navigation}) {
               await AsyncStorage.setItem('LIKED_OFFER', `0`);
               await AsyncStorage.setItem('SAVED_OFFER', `[]`);
               await AsyncStorage.setItem('TOTAL_SHARED', `0`);
-
-              // const data = await AsyncStorage.getItem('SAVED_OFFER');
               Toast.show('Login Successfully!');
               setEmail('');
               setPassword('');
-              // navigation.navigate("Root")
             }
           }
         }
@@ -87,27 +86,14 @@ export default function LoginScreen({navigation}) {
 
   return (
     <Auth_BG_Component>
-      <StatusBar barStyle="light-content" backgroundColor="#1572B9" />
-      <View
-        style={{
-          justifyContent: 'center',
-          height: SIZES.height,
-          paddingHorizontal: 20,
-          justifyContent: 'space-between',
-          paddingVertical: '28%',
-        }}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <View style={styles.container}>
         <View>
-          <Text style={{fontSize: 32, fontWeight: '900', color: '#fff'}}>
-            {btnText}
+          <Text style={styles.heading}>
+            Login Account{/* {btnText} */}
           </Text>
-          <Text
-            style={{
-              ...commonStyles.fs18_400,
-              color: '#fff',
-              marginTop: 8,
-              marginBottom: 20,
-            }}>
-            {/* Login now to track all your expenses and income at a place! */}
+          <Text style={styles.subHeading}>
+            Hello, welcome back to our account
           </Text>
 
           <CustomTextInput
@@ -122,13 +108,13 @@ export default function LoginScreen({navigation}) {
             }}
           />
           {emailError ? (
-            <Text style={{...commonStyles.fs13_400, color: 'red'}}>
+            <Text style={{ ...commonStyles.fs13_400, color: 'red' }}>
               Email is required
             </Text>
           ) : (
             <></>
           )}
-          <View style={{height: 14}} />
+          <View style={{ height: 14 }} />
 
           <CustomTextInput
             placeholder="Password"
@@ -141,13 +127,13 @@ export default function LoginScreen({navigation}) {
             }}
           />
           {passwordError ? (
-            <Text style={{...commonStyles.fs13_400, color: 'red'}}>
+            <Text style={{ ...commonStyles.fs13_400, color: 'red' }}>
               Password is required
             </Text>
           ) : (
             <></>
           )}
-          <View style={{alignItems: 'flex-end'}}>
+          <View style={{ alignItems: 'flex-end', marginTop: 8 }}>
             <TouchableHighlight
               underlayColor="#1572B9"
               onPress={() => {
@@ -157,37 +143,54 @@ export default function LoginScreen({navigation}) {
               }}>
               <Text
                 style={{
-                  ...commonStyles.fs15_500,
-                  color: '#303030',
-                  textDecorationColor: '#303030',
+                  ...commonStyles.fs12_400,
+                  color: '#1178BB',
+                  textDecorationColor: '#1178BB',
                   textDecorationLine: 'underline',
                 }}>
                 Forgot Password?
               </Text>
             </TouchableHighlight>
           </View>
-          <View style={{height: 60}} />
+          <View style={{ height: 60 }} />
 
           <Custom_Auth_Btn
-            btnText={'Login as ' + btnText}
+            btnText={'Login'}
             onPress={() => {
               handleLogin();
             }}
+            colors={["#E68927", "#E68927"]}
+            style={{ borderRadius: 14 }}
           />
         </View>
 
-        <View style={{alignItems: 'center', zIndex: 1}}>
-          <View style={{...commonStyles.row}}>
-            <Text style={{...commonStyles.fs18_500, color: '#fff'}}>
-              Don’t have an account?{' '}
+        <View style={styles.orBlock}>
+          <View style={styles.orBorder} />
+          <Text style={styles.orText}>OR</Text>
+          <View style={styles.orBorder} />
+        </View>
+
+        <TouchableOpacity style={styles.googleButton}>
+          <Image
+            source={require("../assets/img/google.png")}
+            style={{ width: 30, height: 30 }}
+          />
+          <Text style={styles.googleButtonText}>Login With Google</Text>
+          <Text />
+        </TouchableOpacity>
+
+        <View style={{ alignItems: 'center', zIndex: 1 }}>
+          <View style={{ ...commonStyles.row }}>
+            <Text style={{ ...commonStyles.fs14_500, color: '#000' }}>
+              Not Registered yet?{' '}
             </Text>
             <TouchableHighlight
               onPress={() => {
                 navigation.navigate('RegisterScreen');
               }}
               underlayColor="#1572B9">
-              <Text style={{...commonStyles.fs18_500, color: '#EDAA26'}}>
-                Register
+              <Text style={{ ...commonStyles.fs14_600, color: '#1178BB' }}>
+                Create an Account
               </Text>
             </TouchableHighlight>
           </View>
@@ -200,3 +203,50 @@ export default function LoginScreen({navigation}) {
     </Auth_BG_Component>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    justifyContent: 'center',
+    height: SIZES.height,
+    paddingHorizontal: 20,
+    justifyContent: 'space-between',
+    paddingVertical: '28%',
+  },
+  heading: {
+    fontSize: 24, fontWeight: '600', color: '#FF800B'
+  },
+  subHeading: {
+    ...commonStyles.fs14_400,
+    color: '#000',
+    marginTop: 8,
+    marginBottom: 20,
+  },
+  orBlock: {
+    flexDirection: "row", alignItems: "center", justifyContent: "center"
+  },
+  orBorder: {
+    width: "40%", height: 1, backgroundColor: "#B6B6B6"
+  },
+  orText: {
+    fontSize: 12, fontWeight: "600", color: "#000", marginHorizontal: 20
+  },
+  googleButton: {
+    borderRadius: 14,
+    elevation: 8,
+    shadowColor: "#999",
+    borderColor: "#595959",
+    borderWidth: 0.4,
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 12,
+    height: 56,
+    backgroundColor: "#fff",
+    justifyContent: "center"
+  },
+  googleButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#000",
+    marginLeft: 20
+  }
+})

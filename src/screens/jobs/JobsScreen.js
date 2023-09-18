@@ -10,11 +10,11 @@ import {
 } from 'react-native';
 
 import React from 'react';
-import {commonStyles} from '../../utils/styles';
-import {SIZES} from '../../utils/theme';
+import { commonStyles } from '../../utils/styles';
+import { SIZES } from '../../utils/theme';
 import HomeHeader from '../home/HomeHeader';
 import HomeSearch from '../home/HomeSearch';
-import {useEffect} from 'react';
+import { useEffect } from 'react';
 
 import {
   addLikesByIDPostAPI,
@@ -27,22 +27,22 @@ import {
   unLikesByIDPostAPI,
 } from '../../utils/API';
 
-import {useState} from 'react';
+import { useState } from 'react';
 import Auth from '../../services/Auth';
-import CustomLoader, {CustomPanel} from '../../components/CustomLoader';
+import CustomLoader, { CustomPanel } from '../../components/CustomLoader';
 import PTRView from 'react-native-pull-to-refresh';
-import {useDispatch, useSelector} from 'react-redux';
-import {setJob} from '../../redux/reducer/jobs';
+import { useDispatch, useSelector } from 'react-redux';
+import { setJob } from '../../redux/reducer/jobs';
 import Toast from 'react-native-simple-toast';
 import HomeModal from '../home/HomeModal';
 import LinearGradient from 'react-native-linear-gradient';
-import {JobsDetails} from './JobsDetails';
+import { JobsDetails } from './JobsDetails';
 import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function JobsScreen({navigation}) {
+export default function JobsScreen({ navigation }) {
   const dispatch = useDispatch();
-  const {jobsData} = useSelector(state => state.Job);
+  const { jobsData } = useSelector(state => state.Job);
 
   const [bearerToken, setBearerToken] = useState('');
   const [loading, setLoading] = React.useState(false);
@@ -54,9 +54,7 @@ export default function JobsScreen({navigation}) {
         Auth.getLocalStorageData('bearer').then(token => {
           setBearerToken(token);
           getAllJobsPostRequest(token, response => {
-            console.log(response.data, '<<<<this is dataofjobs');
             if (response !== null) {
-              // dispatch(setJob([...response?.data].reverse()));
               dispatch(setJob([...response?.data].reverse()));
               setAllJobs([...response?.data].reverse());
             }
@@ -74,7 +72,6 @@ export default function JobsScreen({navigation}) {
       setBearerToken(token);
       getAllJobsPostRequest(token, response => {
         if (response !== null) {
-          console.log(response.data.reverse(), '<<<<these are all jobst');
           dispatch(setJob([...response?.data].reverse()));
         }
       });
@@ -88,7 +85,6 @@ export default function JobsScreen({navigation}) {
       setBearerToken(token);
       getAllJobsPostRequest(token, response => {
         if (response !== null) {
-          // dispatch(setJob([...response?.data].reverse()));
           dispatch(setJob([...response?.data].reverse()));
         }
       });
@@ -96,30 +92,23 @@ export default function JobsScreen({navigation}) {
   }
 
   const filterIt = val => {
-    console.log('value flter', val);
     setLoading(true);
     const smallVal = val.toLocaleLowerCase();
     if (val.trim() == '') {
       dispatch(setJob(allJobs));
       return setLoading(false);
     }
-    // let data = [];
     setLoading(true);
     const data = allJobs.filter(item => {
-      console.log(item, '<<<item');
       const smallLoc = item.location.toLowerCase();
       const matchLoc = smallLoc.match(smallVal);
       if (matchLoc != null) {
-        console.log(matchLoc, '<<<thisisdata');
-
         return true;
       }
       if (item.ownerId) {
         const smallname = item.ownerId.name.toLocaleLowerCase();
         const matchLoc = smallname.match(smallVal);
         if (matchLoc != null) {
-          console.log(matchLoc, '<<<thisisdata');
-
           return true;
         }
       }
@@ -127,8 +116,6 @@ export default function JobsScreen({navigation}) {
         const smallname = item.salary;
         const matchLoc = smallname.match(smallVal);
         if (matchLoc != null) {
-          console.log(matchLoc, '<<<thisisdata');
-
           return true;
         }
       }
@@ -136,8 +123,6 @@ export default function JobsScreen({navigation}) {
         const smallname = item.designationName.toLocaleLowerCase();
         const matchLoc = smallname.match(smallVal);
         if (matchLoc != null) {
-          console.log(matchLoc, '<<<thisisdata');
-
           return true;
         }
       }
@@ -145,8 +130,6 @@ export default function JobsScreen({navigation}) {
         const smallname = item.shopName.toLocaleLowerCase();
         const matchLoc = smallname.match(smallVal);
         if (matchLoc != null) {
-          console.log(matchLoc, '<<<thisisdata');
-
           return true;
         }
       }
@@ -154,19 +137,12 @@ export default function JobsScreen({navigation}) {
         const smallname = item.title.toLocaleLowerCase();
         const matchLoc = smallname.match(smallVal);
         if (matchLoc != null) {
-          console.log(matchLoc, '<<<thisisdata');
-
           return true;
         }
       }
-      // const matchName = smallname.match(smallVal);
-      // console.log(matchLoc, smallLoc, smallVal, '<<<<checkmatch');
     });
     dispatch(setJob(data));
     setLoading(false);
-    // return data;
-    // console.log(data, '<<filterit');
-    // relativeTimeRounding
   };
 
   return (
@@ -180,18 +156,7 @@ export default function JobsScreen({navigation}) {
       <HomeSearch
         showSwitchText={true}
         onChange={val => {
-          // setLoading(true);
           filterIt(val);
-
-          // Auth.getLocalStorageData('bearer').then(token => {
-          // setLoading(false);
-          // getJobsByLocationPostRequest(val, token, response => {
-          //   console.log('thisissearch', response.data);
-          //   if (response !== null) {
-          //     dispatch(setJob(response?.data));
-          //   }
-          // });
-          // });
         }}
       />
       <PTRView onRefresh={_refresh}>
@@ -204,40 +169,27 @@ export default function JobsScreen({navigation}) {
                 return b.split('-');
               };
 
-              // const diffInMs = moment(`12-Dec-2022`) - moment(`10-Dec-2022`);
               const diffInMs =
                 moment(
-                  `${parseInt(convertArr(endDate)[0])}-${
-                    monthsArray[parseInt(convertArr(endDate)[1])]
+                  `${parseInt(convertArr(endDate)[0])}-${monthsArray[parseInt(convertArr(endDate)[1])]
                   }-${parseInt(convertArr(endDate)[2])}`,
                 ) -
                 moment(
-                  `${parseInt(convertArr(startDate)[0])}-${
-                    monthsArray[parseInt(convertArr(startDate)[1])]
+                  `${parseInt(convertArr(startDate)[0])}-${monthsArray[parseInt(convertArr(startDate)[1])]
                   }-${parseInt(convertArr(startDate)[2])}`,
                 );
 
               const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-              console.log(
-                startDate,
-                endDate,
-                des,
-                id,
-                diffInDays,
-                '<<<< these are daydiff',
-              );
               return diffInDays + 1;
             }
 
             var startDate = moment(item?.startDate).format('DD/MM/YYYY');
             var endDate = moment(item?.endDate).format('DD/MM/YYYY');
             const d = new Date();
-            const today = `${d.getDate()}-${
-              monthsArray[+d.getMonth() + 1]
-            }-${d.getFullYear()}`;
+            const today = `${d.getDate()}-${monthsArray[+d.getMonth() + 1]
+              }-${d.getFullYear()}`;
 
             var diffDays = dayDiff(today, endDate, item.description, item._id);
-            console.log(diffDays, '<<<this is diffdays');
             if (diffDays < 0) return null;
             return (
               <View key={index}>
@@ -251,7 +203,7 @@ export default function JobsScreen({navigation}) {
           })}
         </ScrollView>
 
-        <View style={{height: 64}} />
+        <View style={{ height: 64 }} />
       </PTRView>
       <CustomPanel loading={loading} />
       <CustomLoader loading={loading} />
@@ -259,9 +211,9 @@ export default function JobsScreen({navigation}) {
   );
 }
 
-const RenderSingleJob = ({item, bearerToken, navigation}) => {
-  const {userType} = useSelector(state => state.UserType);
-  const {userData} = useSelector(state => state.User);
+const RenderSingleJob = ({ item, bearerToken, navigation }) => {
+  const { userType } = useSelector(state => state.UserType);
+  const { userData } = useSelector(state => state.User);
 
   const [user, setUser] = useState([]);
   const [likesCount, setLikesCount] = useState(0);
@@ -273,11 +225,6 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
     (async () => {
       const unsubscribe = navigation.addListener('focus', () => {
         setUser(item?.ownerId);
-        // getUserByIDPostAPI(item?.ownerId, bearerToken, response => {
-        //   if (response.data) {
-        //     console.log(response, '<<<<responseerror');
-        //   }
-        // });
 
         getLikesCountByIDPostAPI(item?._id, bearerToken, response => {
           if (response !== null) {
@@ -309,10 +256,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
     (async () => {
       Auth.getLocalStorageData('bearer').then(token => {
         getUserByIDPostAPI(item?.ownerId, token, response => {
-          if (response !== null) {
-            console.log(response, '<< thisisuseratjobscreen');
-            // setUser(response?.data[0]);
-          }
+          if (response !== null) { }
         });
 
         getLikesCountByIDPostAPI(item?._id, token, response => {
@@ -341,7 +285,6 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
   }, [item]);
 
   const handleLike = async () => {
-    // Alert.alert('like');
     if (isLike) {
       setLikesCount(prev => prev - 1);
       setIsLike(false);
@@ -353,13 +296,11 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         }
       });
       const alllike = await AsyncStorage.getItem('LIKED_OFFER');
-      console.log(`${alllike}`, '<<<thisislike');
       if (alllike == 'NaN') {
         await AsyncStorage.setItem('LIKED_OFFER', `1`);
       } else if (alllike && parseInt(alllike) > 0) {
         const d = parseInt(alllike) - +1;
         await AsyncStorage.setItem('LIKED_OFFER', `${d}`);
-        console.log(d);
       }
     } else if (!isLike) {
       setLikesCount(prev => prev + 1);
@@ -379,18 +320,13 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         },
       );
       const alllike = await AsyncStorage.getItem('LIKED_OFFER');
-      // console.log(alllike, 'plus');
-      console.log(`${alllike}`, '<<<thisislike');
-
       if (alllike == 'NaN') {
         await AsyncStorage.setItem('LIKED_OFFER', `1`);
       }
       if (alllike) {
         const d = parseInt(alllike) + +1;
         await AsyncStorage.setItem('LIKED_OFFER', `${d}`);
-        console.log(d, 'minus');
       } else {
-        console.log(1);
         await AsyncStorage.setItem('LIKED_OFFER', `1`);
       }
     }
@@ -403,8 +339,6 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
       offerItem: item,
     });
   };
-
-  var email = user?.email?.split('@')[0];
 
   const [homeModalVisible, setHomeModalVisible] = useState(false);
 
@@ -450,8 +384,8 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
 
           paddingTop: 5,
         }}>
-        <View style={{borderWidth: 0}}>
-          <Text style={{fontSize: 15, fontWeight: 'bold', color: '#000'}}>
+        <View style={{ borderWidth: 0 }}>
+          <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#000' }}>
             Required {item?.title}
           </Text>
         </View>
@@ -481,12 +415,12 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
           <Image
             source={require('../../assets/img/3dots.png')}
             resizeMode="contain"
-            style={{width: 24, height: 20, borderRadius: 100}}
+            style={{ width: 24, height: 20, borderRadius: 100 }}
           />
         </TouchableHighlight>
       </View>
 
-      <View style={{paddingHorizontal: 12}}>
+      <View style={{ paddingHorizontal: 12 }}>
         <View
           style={{
             flexWrap: 'wrap',
@@ -737,7 +671,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
           </View>
         </View>
 
-        <View style={{height: 11}} />
+        <View style={{ height: 11 }} />
 
         <View
           style={{
@@ -755,7 +689,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
             }}>
             {user?.userProfile !== undefined ? (
               <Image
-                source={{uri: user?.userProfile}}
+                source={{ uri: user?.userProfile }}
                 resizeMode="contain"
                 style={{
                   width: 40,
@@ -791,7 +725,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
             )}
           </TouchableHighlight>
 
-          <View style={{marginLeft: 12}}>
+          <View style={{ marginLeft: 12 }}>
             <TouchableHighlight
               underlayColor="#f7f8f9"
               onPress={() => {
@@ -800,25 +734,25 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
                   userId: item?.ownerId,
                 });
               }}>
-              <Text style={{...commonStyles.fs14_700}}>{item?.shopName}</Text>
+              <Text style={{ ...commonStyles.fs14_700 }}>{item?.shopName}</Text>
             </TouchableHighlight>
-            <View style={{...commonStyles.rowStart, alignItems: 'center'}}>
+            <View style={{ ...commonStyles.rowStart, alignItems: 'center' }}>
               <Text>Interview Timing: </Text>
               <TouchableHighlight
                 onPress={() => {
                   navigation.navigate('LocationScreen');
                 }}
                 underlayColor="#f7f8f9">
-                <Text style={{...commonStyles.fs14_700, marginLeft: 2}}>
+                <Text style={{ ...commonStyles.fs14_700, marginLeft: 2 }}>
                   {item?.interviewTiming}
                 </Text>
               </TouchableHighlight>
             </View>
           </View>
         </View>
-        <View style={{height: 8}} />
+        <View style={{ height: 8 }} />
 
-        <View style={{paddingHorizontal: 8}}>
+        <View style={{ paddingHorizontal: 8 }}>
           <View
             style={{
               flexDirection: 'row',
@@ -827,10 +761,10 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
             }}>
             <Text>Date: {`${item?.startDate} to ${item.endDate}`}</Text>
           </View>
-          <Text style={{color: '#000', width: '100%'}}>
+          <Text style={{ color: '#000', width: '100%' }}>
             Description: {item?.description}
           </Text>
-          <Text style={{color: '#000', width: '100%'}}>
+          <Text style={{ color: '#000', width: '100%' }}>
             Message: {item?.message}
           </Text>
         </View>
@@ -857,7 +791,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         {/* <JobsDetails text="Salary:" item={item?.salary} /> */}
         {/* <JobsDetails text="Message:" item={item?.message} /> */}
 
-        <Text style={{height: 1}} />
+        <Text style={{ height: 1 }} />
         {userType === 'user' ? (
           <LinearGradient
             colors={['#EDAA26', '#E27127']}
@@ -879,7 +813,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
                 ...commonStyles.centerStyles,
                 borderRadius: 5,
               }}>
-              <Text style={{...commonStyles.fs15_600, color: '#fff'}}>
+              <Text style={{ ...commonStyles.fs15_600, color: '#fff' }}>
                 Apply Job
               </Text>
             </TouchableHighlight>
@@ -889,13 +823,13 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         )}
       </View>
 
-      <View style={{...commonStyles.rowBetween, padding: 20}}>
-        <View style={{...commonStyles.rowStart}}>
+      <View style={{ ...commonStyles.rowBetween, padding: 20 }}>
+        <View style={{ ...commonStyles.rowStart }}>
           <TouchableHighlight
             onPress={handleLike}
             underlayColor="#eee"
-            style={{padding: 5}}>
-            <View style={{...commonStyles.row}}>
+            style={{ padding: 5 }}>
+            <View style={{ ...commonStyles.row }}>
               <Image
                 source={
                   isLike
@@ -908,7 +842,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
                   tintColor: isLike ? '#FF0000' : '#000',
                 }}
               />
-              <Text style={{...commonStyles.fs14_500, marginLeft: 9}}>
+              <Text style={{ ...commonStyles.fs14_500, marginLeft: 9 }}>
                 {likesCount} Likes
               </Text>
             </View>
@@ -917,13 +851,13 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
           <TouchableHighlight
             onPress={handleComment}
             underlayColor="#eee"
-            style={{padding: 5, marginLeft: 34}}>
-            <View style={{...commonStyles.row}}>
+            style={{ padding: 5, marginLeft: 34 }}>
+            <View style={{ ...commonStyles.row }}>
               <Image
                 source={require('../../assets/img/comment.png')}
-                style={{width: 26, height: 26, tintColor: '#000000'}}
+                style={{ width: 26, height: 26, tintColor: '#000000' }}
               />
-              <Text style={{...commonStyles.fs14_500, marginLeft: 9}}>
+              <Text style={{ ...commonStyles.fs14_500, marginLeft: 9 }}>
                 {commentsCount} Comments
               </Text>
             </View>
@@ -932,7 +866,7 @@ const RenderSingleJob = ({item, bearerToken, navigation}) => {
         <TouchableHighlight onPress={handleShare} underlayColor="#eee">
           <Image
             source={require('../../assets/img/share.png')}
-            style={{width: 22, height: 22, tintColor: '#000000'}}
+            style={{ width: 22, height: 22, tintColor: '#000000' }}
           />
         </TouchableHighlight>
       </View>

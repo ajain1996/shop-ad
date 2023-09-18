@@ -2,25 +2,25 @@ import { View, Text, ImageBackground, Image, ScrollView } from 'react-native'
 import React from 'react'
 import { SIZES } from '../utils/theme'
 
-export default function Auth_BG_Component({ children }) {
+export default function Auth_BG_Component({ children, style, contentContainerStyle }) {
     return (
-        <ScrollView>
-            <ImageBackground
-                source={require("../assets/img/auth-bg.png")}
-                style={{ width: SIZES.width, height: SIZES.height }}
+        <ScrollView style={style} contentContainerStyle={contentContainerStyle}>
+            <View
+                // source={require("../assets/img/auth-bg.png")}
+                style={{ width: SIZES.width, height: SIZES.height, backgroundColor: "#fff" }}
             >
-                <Image
+                {/* <Image
                     source={require("../assets/img/auth-top.png")}
                     style={{ position: "absolute", top: 0, width: SIZES.width, height: 233 }}
-                />
+                /> */}
 
                 {children}
 
-                <Image
+                {/* <Image
                     source={require("../assets/img/auth-top.png")}
                     style={{ position: "absolute", bottom: 0, width: SIZES.width, height: 233, transform: [{ rotate: '180deg' }] }}
-                />
-            </ImageBackground>
+                /> */}
+            </View>
         </ScrollView>
     )
 }

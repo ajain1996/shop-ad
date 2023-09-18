@@ -8,11 +8,11 @@ import {
   ScrollView,
 } from 'react-native';
 import Auth from '../../services/Auth';
-import {getAllCategoriesAPI} from '../../utils/API';
-import {commonStyles} from '../../utils/styles';
-import {SIZES} from '../../utils/theme';
+import { getAllCategoriesAPI } from '../../utils/API';
+import { commonStyles } from '../../utils/styles';
+import { SIZES } from '../../utils/theme';
 
-const AllCategoryModal = ({modalVisible, callback}) => {
+const AllCategoryModal = ({ modalVisible, callback }) => {
   const [categories, setCategories] = React.useState([]);
 
   React.useEffect(() => {
@@ -21,7 +21,6 @@ const AllCategoryModal = ({modalVisible, callback}) => {
         if (response !== null) {
           if (response?.data !== null || response?.data !== undefined) {
             setCategories(response?.data);
-            console.log('\n\n getAllCategoriesAPI response: ', response?.data);
           }
         }
       });
@@ -29,7 +28,7 @@ const AllCategoryModal = ({modalVisible, callback}) => {
   }, []);
 
   return (
-    <View style={{alignItems: 'flex-start'}}>
+    <View style={{ alignItems: 'flex-start' }}>
       <Modal
         animationType="fade"
         transparent={true}

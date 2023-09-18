@@ -1,6 +1,6 @@
-import {View, Text, TextInput, Image} from 'react-native';
+import { View, Text, TextInput, Image } from 'react-native';
 import React from 'react';
-import {useState} from 'react';
+import { useState } from 'react';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
@@ -15,8 +15,8 @@ export default function CustomTextInput({
   const [isSelected, setIsSelected] = useState(false);
 
   return (
-    <View>
-      <View style={{position: 'absolute', left: 18, top: 18}}>
+    <View style={{ marginTop: 16 }}>
+      <View style={{ position: 'absolute', left: 4, top: 12 }}>
         {/* <Text style={{ fontSize: 18, color: isSelected ? "#fff" : "#0A5281" }}>@</Text> */}
         {/* <Entypo name='email' size={30} color={isSelected ? "#fff" : "#0A5281"} /> */}
         <Image
@@ -42,17 +42,19 @@ export default function CustomTextInput({
         defaultValue={value}
         style={{
           width: '100%',
-          height: 55,
-          borderWidth: 1,
+          height: 44,
+          borderBottomWidth: 1,
           borderRadius: 4,
-          borderColor: isSelected ? '#0A5281' : '#000',
-          paddingHorizontal: 50,
+          borderBottomColor: isSelected ? '#0A5281' : '#979797',
+          paddingHorizontal: 40,
           color: '#000',
           zIndex: 1,
+          fontSize: 14,
+          fontWeight: "500",
         }}
         {...rest}
       />
-      <View style={{position: 'absolute', right: 18, top: 17}}>
+      <View style={{ position: 'absolute', right: 18, top: 17 }}>
         <Image
           source={require('../assets/img/cross.png')}
           style={{

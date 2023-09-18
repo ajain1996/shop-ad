@@ -4,11 +4,11 @@ import LinearGradient from 'react-native-linear-gradient'
 import { SIZES } from '../utils/theme'
 import { commonStyles } from '../utils/styles'
 
-export default function Custom_Auth_Btn({ btnText, onPress }) {
+export default function Custom_Auth_Btn({ btnText, onPress, style, colors, textStyle }) {
     return (
-        <LinearGradient colors={['#E27127', '#EDAA26']} style={{ zIndex: 1, borderRadius: 4, }}>
+        <LinearGradient colors={colors ? colors : ['#E27127', '#EDAA26']} style={{ zIndex: 1, borderRadius: 4, ...style }}>
             <TouchableHighlight style={[styles.btnWrapper]} onPress={onPress} underlayColor="E27127">
-                <Text style={{ ...commonStyles.fs18_500, color: "#fff" }}>{btnText}</Text>
+                <Text style={{ ...commonStyles.fs14_500, color: "#fff", ...textStyle }}>{btnText}</Text>
             </TouchableHighlight>
         </LinearGradient>
     )
